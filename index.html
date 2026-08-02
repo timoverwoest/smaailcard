@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smaailcard — dev harness</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        background: #eef1f4;
+        margin: 0;
+        padding: 24px;
+        color: #333;
+      }
+      h1 {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #555;
+        text-align: center;
+      }
+      smaail-card {
+        display: block;
+        max-width: 420px;
+        margin: 24px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Smaailcard — dev harness (mock hass, geen Home Assistant)</h1>
+    <smaail-card id="card"></smaail-card>
+    <script type="module" src="/src/dev.ts"></script>
+  </body>
+</html>
