@@ -1,7 +1,7 @@
 import { svg, type SVGTemplateResult } from "lit";
 
 import { dotsPath, maxChars, textDots, textDotsClipped, type Dot } from "./dots";
-import { GLYPH_H } from "./font";
+import { GLYPH_H, normalizeText } from "./font";
 import type { BoardRow, ResolvedConfig, SortOrder } from "./types";
 import { worldMap } from "./worldmap";
 
@@ -214,11 +214,12 @@ export function resolveRows(
   return sortRows(pending, cfg.sort).map(({ row, dest, year }, i) => {
     const destCols = year === "" ? FULL_COLS : DEST_COLS;
     return {
-      dest: dest === null ? null : dest.toUpperCase().slice(0, maxChars(destCols)),
+      dest:
+        dest === null ? null : normalizeText(dest).slice(0, maxChars(destCols)),
       year:
         year === null || year === ""
           ? year
-          : year.toUpperCase().slice(0, maxChars(YEAR_COLS)),
+          : normalizeText(year).slice(0, maxChars(YEAR_COLS)),
       color: rowColor(row, i),
     };
   });

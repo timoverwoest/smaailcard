@@ -48,6 +48,55 @@ export const FONT: Record<string, string> = {
   "'": "00100 00100 01000 00000 00000 00000 00000",
 };
 
+/*
+ * Phones and Macs silently replace typed punctuation with typographic
+ * variants — a straight ' becomes a curly ’ — and none of those have a glyph
+ * here, so they would render as a blank. Map them onto the characters the
+ * board can actually draw.
+ */
+const PUNCTUATION: Record<string, string> = {
+  "‘": "'", // ‘ left single quote
+  "’": "'", // ’ right single quote (what iOS/macOS types)
+  "‛": "'", // ‛ reversed
+  "ʼ": "'", // ʼ modifier letter apostrophe
+  "´": "'", // ´ acute accent used as apostrophe
+  "′": "'", // ′ prime
+  "–": "-", // – en dash
+  "—": "-", // — em dash
+  "‐": "-", // ‐ hyphen
+  "‑": "-", // ‑ non-breaking hyphen
+  "−": "-", // − minus
+  "…": "...", // … ellipsis
+  " ": " ", // non-breaking space
+};
+
+/** Letters that Unicode decomposition leaves alone, spelled out instead. */
+const LETTERS: Record<string, string> = {
+  Ø: "O",
+  Æ: "AE",
+  Œ: "OE",
+  Þ: "TH",
+  Ð: "D",
+  Đ: "D",
+  Ł: "L",
+  "ı": "I", // ı dotless i
+};
+
+/**
+ * Fold text onto the board's character set: upper case, accents stripped
+ * (MÁLAGA -> MALAGA, ZÜRICH -> ZURICH) and typographic punctuation replaced by
+ * its plain equivalent. Anything still unsupported ends up as a blank cell.
+ */
+export function normalizeText(text: string): string {
+  return text
+    .toUpperCase()
+    .normalize("NFD") // split accented letters into letter + combining mark
+    .replace(/[̀-ͯ]/g, "") // drop the marks, keep the base letter
+    .split("")
+    .map((ch) => PUNCTUATION[ch] ?? LETTERS[ch] ?? ch)
+    .join("");
+}
+
 /** Glyph cell size and horizontal advance, in dot columns. */
 export const GLYPH_W = 5;
 export const GLYPH_H = 7;

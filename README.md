@@ -157,10 +157,23 @@ Het bord gebruikt een 5×7 dot-matrix font met een beperkte tekenset:
 A-Z   0-9   spatie   -   .   ?   '
 ```
 
-Andere tekens worden als spatie getekend. Tekst wordt automatisch naar
-hoofdletters omgezet en afgekapt op wat er past: **10 tekens** in de
-bestemmingskolom, **4** in de jaartalkolom, en **16** op een regel over de volle
-breedte.
+Tekst wordt automatisch naar hoofdletters omgezet en afgekapt op wat er past:
+**10 tekens** in de bestemmingskolom, **4** in de jaartalkolom, en **16** op een
+regel over de volle breedte.
+
+Voordat er getekend wordt, worden tekens die buiten die set vallen zo goed
+mogelijk teruggebracht tot iets dat het bord wél kan zetten:
+
+- **Slimme leestekens** worden rechtgezet. Telefoons en Macs vervangen een
+  getypte `'` stilletjes door een typografische `’`; die wordt weer een gewone
+  apostrof. Hetzelfde geldt voor de en- en em-streepjes (`–`, `—`) en het
+  beletselteken (`…`).
+- **Accenten worden gestript**: `MÁLAGA` → `MALAGA`, `ZÜRICH` → `ZURICH`,
+  `REYKJAVÍK` → `REYKJAVIK`.
+- **Letters die Unicode niet vanzelf ontleedt** worden uitgeschreven:
+  `TROMSØ` → `TROMSO`, `ÆRØ` → `AERO`, `ÞINGVELLIR` → `THINGVELLIR`.
+
+Wat daarna nog steeds niet in de tekenset zit, wordt als spatie getekend.
 
 ## Ontwikkelen
 
