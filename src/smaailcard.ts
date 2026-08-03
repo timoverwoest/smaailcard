@@ -31,6 +31,7 @@ const DEFAULTS = {
   dest_label: "DESTINATION",
   year_label: "YEAR",
   row_count: 9,
+  sort: "asc" as const,
   show_header: true,
   show_column_labels: true,
   show_footer: true,

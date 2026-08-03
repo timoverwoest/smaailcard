@@ -24,6 +24,19 @@ const SCHEMA = [
     selector: { number: { min: 1, max: 40, mode: "box", step: 1 } },
   },
   {
+    name: "sort",
+    selector: {
+      select: {
+        mode: "dropdown",
+        options: [
+          { value: "asc", label: "Op jaartal, oudste eerst" },
+          { value: "desc", label: "Op jaartal, nieuwste eerst" },
+          { value: "none", label: "Niet sorteren (volgorde hieronder)" },
+        ],
+      },
+    },
+  },
+  {
     name: "",
     type: "grid",
     schema: [
@@ -60,6 +73,7 @@ const LABELS: Record<string, string> = {
   dest_label: "Kop bestemmingskolom",
   year_label: "Kop jaartalkolom",
   row_count: "Aantal regels (incl. lege)",
+  sort: "Volgorde",
   show_header: "Kop tonen",
   show_column_labels: "Kolomkoppen tonen",
   show_footer: "Voettekst tonen",

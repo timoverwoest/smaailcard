@@ -2,7 +2,7 @@ import { svg, type SVGTemplateResult } from "lit";
 
 import { dotsPath, maxChars, textDots, textDotsClipped, type Dot } from "./dots";
 import { GLYPH_H } from "./font";
-import type { BoardRow, ResolvedConfig } from "./types";
+import type { BoardRow, ResolvedConfig, SortOrder } from "./types";
 import { worldMap } from "./worldmap";
 
 /* ---------------------------------------------------------------- geometry */
@@ -132,15 +132,60 @@ function rowColor(row: BoardRow, index: number): string {
   return index % 2 === 0 ? YELLOW : WHITE;
 }
 
+interface PendingRow {
+  row: BoardRow;
+  dest: string | null;
+  year: string | null;
+}
+
+/** Compare two year strings numerically when possible, alphabetically if not. */
+function compareYears(a: string, b: string): number {
+  const na = Number(a);
+  const nb = Number(b);
+  if (Number.isFinite(na) && Number.isFinite(nb)) {
+    return na - nb;
+  }
+  return a.localeCompare(b);
+}
+
 /**
- * Turn configured rows into plain text, pulling from entities where asked and
- * truncating to what physically fits in each dot-matrix block.
+ * Order the rows by year.
+ *
+ * Only rows that actually carry a year take part. Rows with an empty year
+ * column and full-width rows (the "WHAT'S NEXT?" kind) have nothing to sort on,
+ * so they keep their configured order and follow the sorted ones — which is
+ * also what keeps a closing statement line at the bottom of the board.
+ */
+function sortRows(rows: PendingRow[], order: SortOrder): PendingRow[] {
+  if (order === "none") {
+    return rows;
+  }
+  const dated: PendingRow[] = [];
+  const undated: PendingRow[] = [];
+  for (const row of rows) {
+    (row.year ? dated : undated).push(row);
+  }
+  /* Array.sort is stable, so rows sharing a year stay in configured order. */
+  dated.sort((a, b) => {
+    const cmp = compareYears(a.year as string, b.year as string);
+    return order === "desc" ? -cmp : cmp;
+  });
+  return [...dated, ...undated];
+}
+
+/**
+ * Turn configured rows into plain text, pulling from entities where asked,
+ * ordering them by year, and truncating to what physically fits in each
+ * dot-matrix block.
+ *
+ * Colours are assigned after sorting, so the default yellow/white alternation
+ * follows the order you see on the board rather than the order in the config.
  */
 export function resolveRows(
   cfg: ResolvedConfig,
   states: Record<string, { state: string; attributes: Record<string, unknown> }>,
 ): ResolvedRow[] {
-  return cfg.rows.map((row, i) => {
+  const pending: PendingRow[] = cfg.rows.map((row) => {
     let dest = row.dest ?? null;
     if (row.entity) {
       const st = states[row.entity];
@@ -163,15 +208,19 @@ export function resolveRows(
       year = raw === null || raw === undefined ? "" : String(raw);
     }
 
-    const destCols = year === "" ? FULL_COLS : DEST_COLS;
-    if (dest !== null) {
-      dest = dest.toUpperCase().slice(0, maxChars(destCols));
-    }
-    if (year !== null && year !== "") {
-      year = year.toUpperCase().slice(0, maxChars(YEAR_COLS));
-    }
+    return { row, dest, year };
+  });
 
-    return { dest, year, color: rowColor(row, i) };
+  return sortRows(pending, cfg.sort).map(({ row, dest, year }, i) => {
+    const destCols = year === "" ? FULL_COLS : DEST_COLS;
+    return {
+      dest: dest === null ? null : dest.toUpperCase().slice(0, maxChars(destCols)),
+      year:
+        year === null || year === ""
+          ? year
+          : year.toUpperCase().slice(0, maxChars(YEAR_COLS)),
+      color: rowColor(row, i),
+    };
   });
 }
 

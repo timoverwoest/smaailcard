@@ -1,5 +1,8 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
 
+/** How the board orders its rows. */
+export type SortOrder = "asc" | "desc" | "none";
+
 /** One line on the board. */
 export interface BoardRow {
   /** Static destination text. Ignored when `entity` is set. */
@@ -35,6 +38,12 @@ export interface SmaailcardConfig extends LovelaceCardConfig {
   rows?: BoardRow[];
   /** Total line slots, including empty ones. Default 9. */
   row_count?: number;
+  /**
+   * Order the rows by year: "asc" (oldest first, the default), "desc"
+   * (newest first) or "none" to keep the order they are configured in.
+   * Rows without a year keep their configured order and follow the rest.
+   */
+  sort?: SortOrder;
 
   /** Section toggles — all default to true. */
   show_header?: boolean;
@@ -65,6 +74,7 @@ export interface ResolvedConfig extends SmaailcardConfig {
   year_label: string;
   rows: BoardRow[];
   row_count: number;
+  sort: SortOrder;
   show_header: boolean;
   show_column_labels: boolean;
   show_footer: boolean;

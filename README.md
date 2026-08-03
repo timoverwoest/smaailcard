@@ -75,6 +75,25 @@ rows:
 De kaart tekent alleen opnieuw als een entity die daadwerkelijk op het bord
 staat verandert, niet bij elke willekeurige statuswijziging in HA.
 
+### Volgorde
+
+De kaart zet de regels zelf op jaartal, dus je hoeft `rows` niet in de goede
+volgorde te zetten. Standaard is dat oplopend (oudste eerst); met `sort: desc`
+draai je dat om en met `sort: none` houdt de kaart de volgorde aan die je in
+`rows` hebt opgegeven.
+
+Regels **zonder** jaartal doen niet mee aan het sorteren: die houden hun eigen
+volgorde en komen onder de gesorteerde regels. Zo blijft een afsluitende regel
+als `WHAT'S NEXT?` gewoon onderaan staan.
+
+Jaartallen die geen getal zijn (bijvoorbeeld `SOON`) worden alfabetisch
+gesorteerd en komen ná de numerieke. Regels met hetzelfde jaartal houden
+onderling de volgorde uit `rows`.
+
+De geel/wit-afwisseling volgt de volgorde zoals je die op het bord ziet, niet
+die uit de configuratie — een regel met een eigen `color` houdt uiteraard die
+kleur.
+
 De korte schrijfwijze `"BESTEMMING|JAAR"` uit het originele generator-script
 werkt ook:
 
@@ -93,6 +112,7 @@ rows:
 | `year_label` | `YEAR` | Kop boven de jaartalkolom. |
 | `rows` | `[]` | De regels (zie hierboven). |
 | `row_count` | `9` (of meer als je meer regels opgeeft) | Aantal regelposities, inclusief lege. |
+| `sort` | `asc` | Volgorde: `asc` (op jaartal, oudste eerst), `desc` (nieuwste eerst) of `none` (volgorde uit `rows`). |
 | `show_header` | `true` | Kop met vliegtuigicoon en titel. |
 | `show_column_labels` | `true` | Kolomkoppen. |
 | `show_footer` | `true` | De twee voetteksten met pijlen. |

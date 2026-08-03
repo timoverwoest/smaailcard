@@ -29,13 +29,15 @@ const card = document.getElementById("card") as HTMLElement & {
 
 card.setConfig({
   type: "custom:smaail-card",
+  /* Deliberately out of order: the card sorts by year, so this should render
+     as 1997, 2000, 2011, 2015, 2019 with the statement line last. */
   rows: [
-    { dest: "NEW YORK", year: "1997" },
-    { dest: "MADRID", year: "2000" },
-    { dest: "REYKJAVIK", year: "2011" },
-    { dest: "CAPE TOWN", year: "2015" },
     { dest: "TOKYO", year: "2019" },
     { dest: "WHAT'S NEXT?", year: "" },
+    { dest: "MADRID", year: "2000" },
+    { dest: "CAPE TOWN", year: "2015" },
+    { dest: "NEW YORK", year: "1997" },
+    { dest: "REYKJAVIK", year: "2011" },
   ],
 });
 
