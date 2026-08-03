@@ -10,6 +10,10 @@ import { BG, DIM, H, W, YELLOW, buildBoard, layout, resolveRows } from "./board"
 import { CARD_NAME, CARD_TYPE, CARD_VERSION } from "./const";
 import type { BoardRow, ResolvedConfig, SmaailcardConfig } from "./types";
 
+/* The bundle ships both cards from one file (one HACS/Lovelace resource
+   registers custom:smaail-card and custom:smaail-world-card). */
+import "./worldcard";
+
 console.info(
   `%c ${CARD_NAME.toUpperCase()} %c ${CARD_VERSION} `,
   "color: #0C0C0C; background: #F2DD00; font-weight: 700;",

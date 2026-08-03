@@ -1,12 +1,18 @@
 # Smaailcard
 
-Een custom [Home Assistant](https://www.home-assistant.io/) Lovelace-kaart die
-een **dot-matrix vertrekbord** in de stijl van een reisposter tekent: elke regel
-is een bestemming met een jaartal, opgebouwd uit losse LED-puntjes, met een
-wereldkaart en een tekensetlegenda in de voet.
+Custom [Home Assistant](https://www.home-assistant.io/) Lovelace-kaarten in de
+stijl van de reisposters van Smaail. Deze repository levert **twee** kaarten uit
+één bundel (één HACS-/Lovelace-resource registreert ze allebei):
 
-De kaart is een vector-SVG, dus hij blijft scherp op elk formaat, en alles wat
-je ziet is instelbaar — via de visuele editor in Home Assistant of in YAML.
+- **`custom:smaail-card`** — een **dot-matrix vertrekbord**: elke regel is een
+  bestemming met een jaartal, opgebouwd uit losse LED-puntjes, met een
+  wereldkaart en een tekensetlegenda in de voet.
+- **`custom:smaail-world-card`** — een **dot-matrix wereldkaart** die de landen
+  die je hebt bezocht laat oplichten, met een voortgangsmeter per werelddeel.
+  Zie [World map-kaart](#world-map-kaart).
+
+Beide kaarten zijn vector-SVG, dus ze blijven scherp op elk formaat, en alles
+wat je ziet is instelbaar — via de visuele editor in Home Assistant of in YAML.
 
 <!-- Absolute URL, niet relatief: HACS strijkt relatieve image-paden uit de
      README weg, waardoor het plaatje daar niet laadt. -->
@@ -175,6 +181,69 @@ mogelijk teruggebracht tot iets dat het bord wél kan zetten:
 
 Wat daarna nog steeds niet in de tekenset zit, wordt als spatie getekend.
 
+## World map-kaart
+
+`custom:smaail-world-card` tekent een gestippelde wereldkaart waarop de landen
+die je hebt bezocht oplichten in de accentkleur, met onderaan een
+voortgangsmeter per werelddeel (Noord-Amerika … Oceanië) en een klein
+overzichtskaartje. Voeg de kaart toe via **Kaart toevoegen** → zoek "Smaail
+World Map"; ook deze heeft een volledige visuele editor.
+
+Minimaal voorbeeld — som de bezochte landen op:
+
+```yaml
+type: custom:smaail-world-card
+countries:
+  - NL
+  - BE
+  - FR
+  - Spain          # naam mag ook
+  - USA            # net als een alias
+  - JP
+  - AU
+```
+
+Een land mag als **ISO-code** (`NL`, `FR`), **ISO-3** (`NLD`), **Engelse naam**
+(`Netherlands`) of een bekende **alias** (`USA`, `UK`, `UAE`, `South Korea`, …).
+Elk herkend land kleurt zijn landmassa in; de meters tellen per werelddeel hoe
+veel landen je hebt bezocht.
+
+Live uit Home Assistant, met een entity die een lijst levert (een JSON-array of
+een lijst gescheiden door komma's/nieuwe regels); die wordt samengevoegd met een
+eventuele vaste `countries`-lijst:
+
+```yaml
+type: custom:smaail-world-card
+countries_entity: sensor.bezochte_landen   # status = "NL, BE, MA, JP, ..."
+# countries_attribute: country_codes        # of een attribuut i.p.v. de status
+```
+
+De kaart tekent alleen opnieuw als die entity daadwerkelijk verandert.
+
+### Alle opties (world map)
+
+| Optie | Standaard | Betekenis |
+| --- | --- | --- |
+| `title` | `WORLD MAP` | Tekst in de kop. Wordt automatisch gecentreerd. |
+| `countries` | `[]` | Bezochte landen (zie hierboven). |
+| `countries_entity` | — | Entity waarvan de status/attribuut de landenlijst levert. |
+| `countries_attribute` | — | Attribuut van `countries_entity` i.p.v. de status. |
+| `show_header` | `true` | Kop met globe-icoon en titel. |
+| `show_stats` | `true` | Regel "N landen · M/6 werelddelen" onder de titel. |
+| `show_meters` | `true` | Voortgangsmeters per werelddeel. |
+| `show_overview` | `true` | Klein overzichtskaartje tussen de meters. |
+| `caption` | `""` | Bijschrift onder het overzichtskaartje (leeg = geen). |
+| `accent_color` | `#F2DD00` | Accentkleur (bezochte landen, icoon, aantallen). |
+| `background_color` | `#0C0C0C` | Achtergrond. |
+| `land_color` | `#3A3A3A` | Kleur van land dat je (nog) niet bezocht hebt. |
+
+De kaartgeometrie komt van [Natural Earth](https://www.naturalearthdata.com/)
+110m-landgrenzen, gerasterd op een dot-grid met
+[`tools/gen_worldmap.py`](tools/gen_worldmap.py) (zie
+[`tools/README.md`](tools/README.md)). Op dit vrij grove grid krijgen enkele van
+de kleinste landen één representatief puntje; heel kleine eilandstaten kunnen
+ontbreken.
+
 ## Ontwikkelen
 
 ```bash
@@ -192,14 +261,20 @@ in `src/dev.ts`.
 
 | Pad | Doel |
 | --- | --- |
-| `src/smaailcard.ts` | De kaart (`<smaail-card>`): config, entities, layout. |
+| `src/smaailcard.ts` | Vertrekbord-kaart (`<smaail-card>`) + bundle-entry (importeert ook de world map-kaart). |
 | `src/editor.ts` | Visuele config-editor (`<smaail-card-editor>`). |
-| `src/board.ts` | Bouwt de SVG: geometrie, regels, voet, kaart, legenda. |
+| `src/board.ts` | Bouwt de vertrekbord-SVG: geometrie, regels, voet, kaart, legenda. |
+| `src/worldcard.ts` | World map-kaart (`<smaail-world-card>`): config, entity, layout. |
+| `src/worldeditor.ts` | Visuele config-editor (`<smaail-world-card-editor>`). |
+| `src/worldboard.ts` | Bouwt de world map-SVG: kaart, meters, overzichtskaartje. |
+| `src/worldmapdata.ts` | Gegenereerd: per-land dot-grid + landen-/werelddeeltabel. |
+| `src/countries.ts` | Landen matchen (ISO/naam/alias) en de bezochte set oplossen. |
 | `src/font.ts` | Het 5×7 dot-matrix font. |
 | `src/dots.ts` | Dot- en tekst-primitieven. |
-| `src/worldmap.ts` | Continentcontouren + projectie voor de mini-wereldkaart. |
+| `src/worldmap.ts` | Continentcontouren + projectie voor de mini-wereldkaart (vertrekbord). |
 | `src/types.ts` | Configuratietypen. |
-| `src/dev.ts`, `index.html` | Browser-dev-harness. |
+| `src/dev.ts`, `index.html` | Browser-dev-harness (toont beide kaarten). |
+| `tools/gen_worldmap.py` | Regenereert `src/worldmapdata.ts` uit Natural Earth (zie `tools/README.md`). |
 
 De geometrie (rasterafstand, kolombreedtes, kleuren, het font en de
 continentcontouren) is overgenomen uit het oorspronkelijke

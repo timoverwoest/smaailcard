@@ -41,13 +41,34 @@ card.setConfig({
   ],
 });
 
-card.hass = {
+const hass = {
   states: {
     "sensor.next_trip": {
       entity_id: "sensor.next_trip",
       state: "LISBON",
       attributes: { friendly_name: "Volgende reis" },
     },
+    "sensor.visited_countries": {
+      entity_id: "sensor.visited_countries",
+      state: "NL, BE, DE, GB, IS, MA, EG, ZA, KE, US, CA, MX, BR, AR, JP, TH, ID, AU",
+      attributes: { friendly_name: "Bezochte landen" },
+    },
   },
   localize: (key: string) => key,
 };
+
+card.hass = hass;
+
+const world = document.getElementById("world") as HTMLElement & {
+  setConfig: (c: unknown) => void;
+  hass: unknown;
+};
+
+if (world) {
+  world.setConfig({
+    type: "custom:smaail-world-card",
+    caption: "worldmap",
+    countries_entity: "sensor.visited_countries",
+  });
+  world.hass = hass;
+}
