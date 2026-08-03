@@ -3,3 +3,6 @@ node_modules/
 .DS_Store
 .vite/
 *.tsbuildinfo
+
+# Source dataset for tools/gen_worldmap.py — downloaded on demand, not vendored.
+tools/ne_110m.geojson

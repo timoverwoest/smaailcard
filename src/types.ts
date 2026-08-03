@@ -67,6 +67,61 @@ export interface SmaailcardConfig extends LovelaceCardConfig {
   unlit_color?: string;
 }
 
+/* ---------------------------------------------------------- world map card */
+
+export interface SmaailWorldConfig extends LovelaceCardConfig {
+  /** Always "custom:smaail-world-card". */
+  type: string;
+
+  /** Header title. Default "WORLD MAP". */
+  title?: string;
+
+  /**
+   * Countries you have visited, as ISO alpha-2 ("NL"), alpha-3 ("NLD"), an
+   * English name ("Netherlands") or a known alias ("USA", "UK"). Their landmass
+   * lights up in the accent colour.
+   */
+  countries?: string[];
+  /**
+   * Entity whose state (or `countries_attribute`) supplies the visited list —
+   * a JSON array, or a comma / newline separated string. Merged with `countries`.
+   */
+  countries_entity?: string;
+  countries_attribute?: string;
+
+  /** Section toggles — all default to true. */
+  show_header?: boolean;
+  /** Per-continent progress meters in the footer. */
+  show_meters?: boolean;
+  /** Small decorative overview map between the meter groups. */
+  show_overview?: boolean;
+  /** "N countries · M continents" line under the title. */
+  show_stats?: boolean;
+
+  /** Small caption under the overview map. Empty hides it. */
+  caption?: string;
+
+  /** Palette overrides. */
+  accent_color?: string;
+  background_color?: string;
+  /** Dim land (unvisited countries). */
+  land_color?: string;
+}
+
+/** World card config with every optional field resolved. */
+export interface ResolvedWorldConfig extends SmaailWorldConfig {
+  title: string;
+  countries: string[];
+  show_header: boolean;
+  show_meters: boolean;
+  show_overview: boolean;
+  show_stats: boolean;
+  caption: string;
+  accent_color: string;
+  background_color: string;
+  land_color: string;
+}
+
 /** Config with every optional field resolved to a concrete value. */
 export interface ResolvedConfig extends SmaailcardConfig {
   title: string;
