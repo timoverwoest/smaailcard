@@ -1031,7 +1031,7 @@ function as(e, t, s) {
     </svg>
   `;
 }
-const ls = "0.2.1", xt = "smaail-card", ae = "Smaailcard";
+const ls = "0.2.2", xt = "smaail-card", ae = "Smaailcard";
 var cs = Object.defineProperty, hs = Object.getOwnPropertyDescriptor, tt = (e, t, s, o) => {
   for (var i = o > 1 ? void 0 : o ? hs(t, s) : t, r = e.length - 1, n; r >= 0; r--)
     (n = e[r]) && (i = (o ? n(t, s, i) : n(i)) || i);
