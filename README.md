@@ -183,6 +183,17 @@ Waar de kaart bewust afwijkt van dat script:
 - **Afkappen.** Te lange tekst wordt afgekapt op wat in de kolom past, zodat een
   bestemming nooit in de jaartalkolom loopt.
 
+## Credits
+
+Het ontwerp van het bord is gebaseerd op een poster van
+**[Smaail](https://smaail.be/index.php/posters/)**. Het dot-matrix-font, de
+rastergeometrie, het kleurenpalet en de mini-wereldkaart zijn overgenomen uit
+het `departures_board.py`-generatorscript dat dat ontwerp nabouwt.
+
+Dit is een persoonlijk Home Assistant-project, niet uitgegeven door of
+verbonden aan Smaail. De rechten op het oorspronkelijke posterontwerp liggen
+bij Smaail; de MIT-licentie hieronder geldt voor de code in deze repository.
+
 ## Licentie
 
 [MIT](LICENSE)
