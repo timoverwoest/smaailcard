@@ -8,7 +8,9 @@ wereldkaart en een tekensetlegenda in de voet.
 De kaart is een vector-SVG, dus hij blijft scherp op elk formaat, en alles wat
 je ziet is instelbaar — via de visuele editor in Home Assistant of in YAML.
 
-![Smaailcard](docs/preview.png)
+<!-- Absolute URL, niet relatief: HACS strijkt relatieve image-paden uit de
+     README weg, waardoor het plaatje daar niet laadt. -->
+![Smaailcard](https://raw.githubusercontent.com/timoverwoest/smaailcard/main/docs/preview.png)
 
 ## Installatie
 
