@@ -6,166 +6,221 @@ import {
   type LovelaceCardEditor,
 } from "custom-card-helpers";
 
+import { BG, DIM, H, W, YELLOW, buildBoard, layout, resolveRows } from "./board";
 import { CARD_NAME, CARD_TYPE, CARD_VERSION } from "./const";
-import type { SmaailcardConfig } from "./types";
+import type { BoardRow, ResolvedConfig, SmaailcardConfig } from "./types";
 
-/* Version banner in the browser console — handy to confirm which build HA loaded. */
 console.info(
   `%c ${CARD_NAME.toUpperCase()} %c ${CARD_VERSION} `,
-  "color: #fff; background: #03a9f4; font-weight: 700;",
-  "color: #03a9f4; background: #fff; font-weight: 700;",
+  "color: #0C0C0C; background: #F2DD00; font-weight: 700;",
+  "color: #F2DD00; background: #0C0C0C; font-weight: 700;",
 );
 
-/* Register in the Lovelace card picker ("Add card" dialog). */
 (window as unknown as { customCards?: unknown[] }).customCards ??= [];
 (window as unknown as { customCards: unknown[] }).customCards.push({
   type: CARD_TYPE,
   name: CARD_NAME,
-  description: "A starter custom card built with Lit + TypeScript.",
+  description:
+    "Dot-matrix departures board — a travel poster of the places you have been.",
   preview: true,
   documentationURL: "https://github.com/timoverwoest/smaailcard",
 });
+
+const DEFAULTS = {
+  title: "DEPARTURES",
+  dest_label: "DESTINATION",
+  year_label: "YEAR",
+  row_count: 9,
+  show_header: true,
+  show_column_labels: true,
+  show_footer: true,
+  show_map: true,
+  show_legend: true,
+  pin: [5.12, 52.09] as [number, number],
+  footer_title: "Travel board",
+  footer_subtitle: "Mapping memories, one destination at a time",
+  footer2_title: "My next adventure",
+  footer2_subtitle: "Just one ticket away",
+  accent_color: YELLOW,
+  background_color: BG,
+  unlit_color: DIM,
+};
 
 @customElement(CARD_TYPE)
 export class Smaailcard extends LitElement implements LovelaceCard {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @state() private _config?: SmaailcardConfig;
+  @state() private _config?: ResolvedConfig;
 
-  /** Lazily provide the visual config editor for the UI. */
+  /** Horizontal nudge that keeps the header group optically centred. */
+  @state() private _headerShift = 0;
+
+  private _measuredTitle?: string;
+
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./editor");
-    return document.createElement(
-      "smaail-card-editor",
-    ) as LovelaceCardEditor;
+    return document.createElement("smaail-card-editor") as LovelaceCardEditor;
   }
 
-  /** Default config used when the card is first added from the picker. */
   public static getStubConfig(): SmaailcardConfig {
-    return { type: `custom:${CARD_TYPE}`, name: CARD_NAME };
+    return {
+      type: `custom:${CARD_TYPE}`,
+      rows: [
+        { dest: "NEW YORK", year: "1997" },
+        { dest: "MADRID", year: "2000" },
+        { dest: "REYKJAVIK", year: "2011" },
+        { dest: "CAPE TOWN", year: "2015" },
+        { dest: "TOKYO", year: "2019" },
+        { dest: "WHAT'S NEXT?", year: "" },
+      ],
+    };
   }
 
   public setConfig(config: SmaailcardConfig): void {
     if (!config) {
       throw new Error("Invalid configuration");
     }
-    this._config = { name: CARD_NAME, ...config };
+    if (config.rows !== undefined && !Array.isArray(config.rows)) {
+      throw new Error("`rows` must be a list");
+    }
+
+    const rows: BoardRow[] = (config.rows ?? []).map((row) =>
+      typeof row === "string" ? parseShorthand(row) : row,
+    );
+
+    const rowCount = clamp(
+      config.row_count ?? Math.max(DEFAULTS.row_count, rows.length),
+      1,
+      40,
+    );
+
+    this._config = {
+      ...DEFAULTS,
+      ...config,
+      rows,
+      row_count: rowCount,
+      pin: config.pin === undefined ? DEFAULTS.pin : config.pin,
+    };
+    this._measuredTitle = undefined;
   }
 
   public getCardSize(): number {
-    return 3;
+    return Math.max(3, Math.round((this._height() / H) * 14));
+  }
+
+  /** Sensible default footprint in a Sections dashboard. */
+  public getGridOptions() {
+    return {
+      columns: 12,
+      min_columns: 6,
+      rows: Math.max(4, Math.round((this._height() / H) * 16)),
+    };
+  }
+
+  private _height(): number {
+    return this._config ? layout(this._config).height : H;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (!this._config) {
       return false;
     }
-    // Always re-render on a config change or the first hass.
-    if (changedProps.has("_config")) {
+    if (changedProps.has("_config") || changedProps.has("_headerShift")) {
       return true;
     }
     const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
     if (!oldHass) {
       return true;
     }
-    // Otherwise only re-render when the bound entity actually changed, so we
-    // don't re-render on every unrelated state update in Home Assistant.
-    const entity = this._config.entity;
-    if (!entity) {
-      return false;
+    /* Only re-render when an entity the board actually shows has changed. */
+    return this._entities().some(
+      (id) => oldHass.states[id] !== this.hass?.states[id],
+    );
+  }
+
+  private _entities(): string[] {
+    const ids: string[] = [];
+    for (const row of this._config?.rows ?? []) {
+      if (row.entity) ids.push(row.entity);
+      if (row.year_entity) ids.push(row.year_entity);
     }
-    return oldHass.states[entity] !== this.hass?.states[entity];
+    return ids;
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config) {
       return nothing;
     }
-
+    const rows = resolveRows(this._config, this.hass?.states ?? {});
     return html`
       <ha-card>
-        ${this._config.header
-          ? html`<h1 class="card-header">${this._config.header}</h1>`
-          : nothing}
-        <div class="card-content">
-          <div class="name">${this._config.name}</div>
-          ${this._renderBody()}
-        </div>
+        ${buildBoard(this._config, rows, { headerShift: this._headerShift })}
       </ha-card>
     `;
   }
 
-  private _renderBody() {
-    const entityId = this._config?.entity;
+  protected updated(): void {
+    this._centreHeader();
+  }
 
-    if (!entityId) {
-      return html`<div class="hint">
-        Stel een <code>entity</code> in om hier de status te tonen — of vervang
-        deze <code>_renderBody()</code> door je eigen inhoud.
-      </div>`;
+  /**
+   * The poster hard-codes the header position for the word "DEPARTURES", which
+   * would sit off-centre for any other title. Measure the rendered group once
+   * per title and shift it so the icon + text block is centred on the board.
+   */
+  private _centreHeader(): void {
+    const cfg = this._config;
+    if (!cfg?.show_header || this._measuredTitle === cfg.title) {
+      return;
     }
-
-    const stateObj = this.hass!.states[entityId];
-    if (!stateObj) {
-      return html`<div class="warning">Entity niet gevonden: ${entityId}</div>`;
+    const group = this.renderRoot?.querySelector<SVGGElement>("#sc-header");
+    if (!group) {
+      return;
     }
-
-    const unit = stateObj.attributes.unit_of_measurement;
-    return html`
-      <div class="entity">
-        <span class="entity-name"
-          >${stateObj.attributes.friendly_name ?? entityId}</span
-        >
-        <span class="state">${stateObj.state}${unit ? ` ${unit}` : ""}</span>
-      </div>
-    `;
+    let box: DOMRect;
+    try {
+      box = group.getBBox();
+    } catch {
+      return; // not laid out yet (e.g. hidden tab)
+    }
+    if (!box.width) {
+      return;
+    }
+    this._measuredTitle = cfg.title;
+    const shift = Math.round((W / 2 - (box.x + box.width / 2)) * 100) / 100;
+    if (shift !== this._headerShift) {
+      this._headerShift = shift;
+    }
   }
 
   static styles = css`
-    .card-header {
-      margin: 0;
-      padding: 16px 16px 0;
-      font-size: 1.4rem;
-      font-weight: 400;
-      line-height: 1.2;
-      letter-spacing: -0.012em;
+    ha-card {
+      overflow: hidden;
+      /* The board brings its own background; let it run to the card edges. */
+      padding: 0;
     }
-    .card-content {
-      padding: 16px;
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
     }
-    .name {
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-    .entity {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .entity-name {
-      color: var(--secondary-text-color, #727272);
-    }
-    .state {
-      font-size: 1.6rem;
-      font-weight: 300;
-    }
-    .hint {
-      color: var(--secondary-text-color, #727272);
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-    .warning {
-      color: var(--error-color, #db4437);
-      font-size: 0.9rem;
-    }
-    code {
-      background: var(--divider-color, rgba(0, 0, 0, 0.12));
-      border-radius: 4px;
-      padding: 1px 5px;
-      font-size: 0.85em;
+    text {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
   `;
+}
+
+function clamp(n: number, lo: number, hi: number): number {
+  return Math.min(hi, Math.max(lo, n));
+}
+
+/** Accepts the generator's "DESTINATION|YEAR" shorthand for a row. */
+function parseShorthand(spec: string): BoardRow {
+  const idx = spec.indexOf("|");
+  if (idx === -1) {
+    return { dest: spec };
+  }
+  return { dest: spec.slice(0, idx), year: spec.slice(idx + 1) };
 }
 
 declare global {
