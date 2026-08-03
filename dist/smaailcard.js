@@ -1031,7 +1031,7 @@ function ls(e, t, o) {
     </svg>
   `;
 }
-const Fe = "0.2.2", oe = "smaail-card", ze = "Smaailcard", se = "smaail-world-card", Ye = "Smaail World Map", L = 100, Yt = 40, yt = ["North America", "South America", "Europe", "Africa", "Asia", "Oceania"], je = [18, 13, 39, 51, 47, 7], tt = [
+const Fe = "0.3.0", oe = "smaail-card", ze = "Smaailcard", se = "smaail-world-card", Ye = "Smaail World Map", L = 100, Yt = 40, yt = ["North America", "South America", "Europe", "Africa", "Asia", "Oceania"], je = [18, 13, 39, 51, 47, 7], tt = [
   { iso2: "FJ", iso3: "FJI", name: "Fiji", cont: 5 },
   { iso2: "TZ", iso3: "TZA", name: "Tanzania", cont: 3 },
   { iso2: "EH", iso3: "ESH", name: "Western Sahara", cont: 3 },
