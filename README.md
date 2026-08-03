@@ -293,18 +293,6 @@ Waar de kaart bewust afwijkt van dat script:
 - **Afkappen.** Te lange tekst wordt afgekapt op wat in de kolom past, zodat een
   bestemming nooit in de jaartalkolom loopt.
 
-### Een release maken
-
-Releases worden door GitHub Actions gemaakt, niet met de hand:
-
-1. Ga naar **Actions** → workflow **Release** → *Run workflow*.
-2. Vul het versienummer in **zonder `v`** (bijvoorbeeld `0.2.0`) en start.
-
-De workflow zet die versie in `package.json` en `src/const.ts`, draait de build,
-commit het resultaat, en maakt de tag `v0.2.0` plus de GitHub Release met
-`dist/smaailcard.js` als asset — dat laatste is wat HACS bij voorkeur
-binnenhaalt. De release-notities worden automatisch uit de commits samengesteld.
-
 ## Credits
 
 Het ontwerp van het bord is gebaseerd op een poster van
