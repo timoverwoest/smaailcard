@@ -990,7 +990,7 @@ function is(e, t, s) {
     </svg>
   `;
 }
-const rs = "0.1.0", xt = "smaail-card", ne = "Smaailcard";
+const rs = "0.2.0", xt = "smaail-card", ne = "Smaailcard";
 var ns = Object.defineProperty, as = Object.getOwnPropertyDescriptor, tt = (e, t, s, o) => {
   for (var i = o > 1 ? void 0 : o ? as(t, s) : t, r = e.length - 1, n; r >= 0; r--)
     (n = e[r]) && (i = (o ? n(t, s, i) : n(i)) || i);
