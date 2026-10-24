@@ -1,47 +1,63 @@
 # Smaailcard
 
-Custom [Home Assistant](https://www.home-assistant.io/) Lovelace-kaarten in de
-stijl van de reisposters van Smaail. Deze repository levert **twee** kaarten uit
-één bundel (één HACS-/Lovelace-resource registreert ze allebei):
+*[Nederlandse versie](README.nl.md)*
 
-- **`custom:smaail-card`** — een **dot-matrix vertrekbord**: elke regel is een
-  bestemming met een jaartal, opgebouwd uit losse LED-puntjes, met een
-  wereldkaart en een tekensetlegenda in de voet.
-- **`custom:smaail-world-card`** — een **dot-matrix wereldkaart** die de landen
-  die je hebt bezocht laat oplichten, met een voortgangsmeter per werelddeel.
-  Zie [World map-kaart](#world-map-kaart).
+Custom [Home Assistant](https://www.home-assistant.io/) Lovelace cards in the
+style of Smaail's travel posters. This repository ships **two** cards from one
+bundle (a single HACS/Lovelace resource registers both):
 
-Beide kaarten zijn vector-SVG, dus ze blijven scherp op elk formaat, en alles
-wat je ziet is instelbaar — via de visuele editor in Home Assistant of in YAML.
+- **`custom:smaail-card`**: a **dot-matrix departures board**. Each row is a
+  destination with a year, built from individual LED dots, with a world map
+  and a character-set legend in the footer.
+- **`custom:smaail-world-card`**: a **dot-matrix world map** that lights up
+  the countries you have visited, with a progress meter per continent.
+  See [World map card](#world-map-card).
+
+Both cards are vector SVG, so they stay sharp at any size, and everything you
+see is configurable, either in the visual editor in Home Assistant or in YAML.
 
 <!-- Absolute URL, niet relatief: HACS strijkt relatieve image-paden uit de
      README weg, waardoor het plaatje daar niet laadt. -->
 ![Smaailcard](https://raw.githubusercontent.com/timoverwoest/smaailcard/main/docs/preview.png)
 
-## Installatie
+## Installation
 
-### Via HACS
+### HACS (recommended)
+
+Smaailcard is in the default [HACS](https://hacs.xyz/) store:
+
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=timoverwoest&repository=smaailcard&category=plugin)
+
+1. Open HACS in Home Assistant and search for **Smaailcard** (or use the
+   button above).
+2. Select **Download**.
+3. Refresh your browser (hard refresh).
+
+### HACS custom repository
+
+Only needed if Smaailcard does not show up in your HACS store, for example
+because HACS has not refreshed its list yet:
 
 1. HACS → menu (⋮) → **Custom repositories**.
-2. Voeg `https://github.com/timoverwoest/smaailcard` toe met categorie
+2. Add `https://github.com/timoverwoest/smaailcard` with category
    **Dashboard**.
-3. Zoek "Smaailcard" in HACS en installeer.
-4. Vernieuw je browser (harde refresh).
+3. Search for "Smaailcard" in HACS and install it.
+4. Refresh your browser (hard refresh).
 
-### Handmatig
+### Manual
 
-1. Kopieer `dist/smaailcard.js` naar `/config/www/smaailcard.js`.
-2. Instellingen → Dashboards → menu (⋮) → **Resources** → toevoegen:
+1. Copy `dist/smaailcard.js` to `/config/www/smaailcard.js`.
+2. Settings → Dashboards → menu (⋮) → **Resources** → add:
    - URL: `/local/smaailcard.js`
-   - Type: **JavaScript-module**
-3. Harde refresh van de browser.
+   - Type: **JavaScript module**
+3. Hard refresh your browser.
 
-## Kaart toevoegen
+## Adding the card
 
-Via de UI: **Kaart toevoegen** → zoek "Smaailcard". De kaart heeft een volledige
-visuele editor, dus YAML is niet nodig.
+From the UI: **Add card** → search for "Smaailcard". The card has a full
+visual editor, so YAML is not required.
 
-Minimaal voorbeeld:
+Minimal example:
 
 ```yaml
 type: custom:smaail-card
@@ -54,56 +70,55 @@ rows:
     year: ""
 ```
 
-## Regels
+## Rows
 
-Elke regel op het bord is een item in `rows`:
+Each row on the board is an item in `rows`:
 
-| Optie | Betekenis |
+| Option | Meaning |
 | --- | --- |
-| `dest` | Vaste tekst voor de bestemming. |
-| `year` | Jaartal. **Weggelaten** = lege jaartalkolom (het raster blijft staan). **`""`** = de regel loopt over de volle breedte. |
-| `color` | `yellow`, `white`, `grey` of een hexcode. Standaard wisselen de regels elkaar af (geel/wit). |
-| `entity` | Entity waarvan de **status** de bestemming wordt, in plaats van `dest`. |
-| `attribute` | Gebruik dit attribuut van `entity` in plaats van de status. |
-| `year_entity` | Entity waarvan de status het jaartal wordt. |
-| `year_attribute` | Gebruik dit attribuut van `year_entity`. |
+| `dest` | Fixed text for the destination. |
+| `year` | Year. **Omitted** = empty year column (the grid stays). **`""`** = the row spans the full width. |
+| `color` | `yellow`, `white`, `grey` or a hex code. By default rows alternate (yellow/white). |
+| `entity` | Entity whose **state** becomes the destination, instead of `dest`. |
+| `attribute` | Use this attribute of `entity` instead of its state. |
+| `year_entity` | Entity whose state becomes the year. |
+| `year_attribute` | Use this attribute of `year_entity`. |
 
-Met `entity` haal je de tekst live uit Home Assistant:
+With `entity` the text comes live from Home Assistant:
 
 ```yaml
 type: custom:smaail-card
 title: NEXT UP
 rows:
-  - entity: sensor.volgende_reis   # status wordt de bestemming
-    year_entity: sensor.reis_jaar
+  - entity: sensor.next_trip   # state becomes the destination
+    year_entity: sensor.trip_year
   - dest: TEXEL
     year: "2025"
 ```
 
-De kaart tekent alleen opnieuw als een entity die daadwerkelijk op het bord
-staat verandert, niet bij elke willekeurige statuswijziging in HA.
+The card only redraws when an entity that is actually on the board changes,
+not on every state change in HA.
 
-### Volgorde
+### Order
 
-De kaart zet de regels zelf op jaartal, dus je hoeft `rows` niet in de goede
-volgorde te zetten. Standaard is dat oplopend (oudste eerst); met `sort: desc`
-draai je dat om en met `sort: none` houdt de kaart de volgorde aan die je in
-`rows` hebt opgegeven.
+The card sorts the rows by year itself, so you don't need to put `rows` in
+order. By default it sorts ascending (oldest first); `sort: desc` reverses
+that, and `sort: none` keeps the order you gave in `rows`.
 
-Regels **zonder** jaartal doen niet mee aan het sorteren: die houden hun eigen
-volgorde en komen onder de gesorteerde regels. Zo blijft een afsluitende regel
-als `WHAT'S NEXT?` gewoon onderaan staan.
+Rows **without** a year are not sorted: they keep their own order and go below
+the sorted rows. That way a closing row such as `WHAT'S NEXT?` stays at the
+bottom.
 
-Jaartallen die geen getal zijn (bijvoorbeeld `SOON`) worden alfabetisch
-gesorteerd en komen ná de numerieke. Regels met hetzelfde jaartal houden
-onderling de volgorde uit `rows`.
+Years that are not numbers (for example `SOON`) are sorted alphabetically and
+come after the numeric ones. Rows with the same year keep their order from
+`rows`.
 
-De geel/wit-afwisseling volgt de volgorde zoals je die op het bord ziet, niet
-die uit de configuratie — een regel met een eigen `color` houdt uiteraard die
-kleur.
+The yellow/white alternation follows the order you see on the board, not the
+order in the configuration. A row with its own `color` keeps that color, of
+course.
 
-De korte schrijfwijze `"BESTEMMING|JAAR"` uit het originele generator-script
-werkt ook:
+The short `"DESTINATION|YEAR"` notation from the original generator script
+also works:
 
 ```yaml
 rows:
@@ -111,39 +126,39 @@ rows:
   - WHAT'S NEXT?|
 ```
 
-## Alle opties
+## All options
 
-| Optie | Standaard | Betekenis |
+| Option | Default | Meaning |
 | --- | --- | --- |
-| `title` | `DEPARTURES` | Tekst in de kop. Wordt automatisch gecentreerd. |
-| `dest_label` | `DESTINATION` | Kop boven de bestemmingskolom. |
-| `year_label` | `YEAR` | Kop boven de jaartalkolom. |
-| `rows` | `[]` | De regels (zie hierboven). |
-| `row_count` | `9` (of meer als je meer regels opgeeft) | Aantal regelposities, inclusief lege. |
-| `sort` | `asc` | Volgorde: `asc` (op jaartal, oudste eerst), `desc` (nieuwste eerst) of `none` (volgorde uit `rows`). |
-| `show_header` | `true` | Kop met vliegtuigicoon en titel. |
-| `show_column_labels` | `true` | Kolomkoppen. |
-| `show_footer` | `true` | De twee voetteksten met pijlen. |
-| `show_map` | `true` | Wereldkaart in de voet. |
-| `show_legend` | `true` | Tekensetlegenda in de voet. |
-| `pin` | `[5.12, 52.09]` | Markering op de wereldkaart als `[lengtegraad, breedtegraad]`. `null` verbergt hem. |
-| `footer_title` | `Travel board` | Eerste voettekst. |
-| `footer_subtitle` | `Mapping memories, one destination at a time` | Ondertitel daarvan. |
-| `footer2_title` | `My next adventure` | Tweede voettekst. |
-| `footer2_subtitle` | `Just one ticket away` | Ondertitel daarvan. |
-| `accent_color` | `#F2DD00` | Accentkleur (icoon, pijlen, legenda, markering). |
-| `background_color` | `#0C0C0C` | Achtergrond van het bord. |
-| `unlit_color` | `#3A3A3A` | Kleur van de gedoofde dots. |
+| `title` | `DEPARTURES` | Header text. Centered automatically. |
+| `dest_label` | `DESTINATION` | Label above the destination column. |
+| `year_label` | `YEAR` | Label above the year column. |
+| `rows` | `[]` | The rows (see above). |
+| `row_count` | `9` (or more if you give more rows) | Number of row slots, including empty ones. |
+| `sort` | `asc` | Order: `asc` (by year, oldest first), `desc` (newest first) or `none` (order from `rows`). |
+| `show_header` | `true` | Header with airplane icon and title. |
+| `show_column_labels` | `true` | Column labels. |
+| `show_footer` | `true` | The two footer texts with arrows. |
+| `show_map` | `true` | World map in the footer. |
+| `show_legend` | `true` | Character-set legend in the footer. |
+| `pin` | `[5.12, 52.09]` | Marker on the world map as `[longitude, latitude]`. `null` hides it. |
+| `footer_title` | `Travel board` | First footer text. |
+| `footer_subtitle` | `Mapping memories, one destination at a time` | Its subtitle. |
+| `footer2_title` | `My next adventure` | Second footer text. |
+| `footer2_subtitle` | `Just one ticket away` | Its subtitle. |
+| `accent_color` | `#F2DD00` | Accent color (icon, arrows, legend, marker). |
+| `background_color` | `#0C0C0C` | Board background. |
+| `unlit_color` | `#3A3A3A` | Color of the unlit dots. |
 
-Zet je secties uit, dan krimpt de kaart mee — de ruimte die een verborgen blok
-zou innemen valt weg, zodat er geen leeg vlak overblijft. Met alle secties aan
-en `row_count: 9` is de kaart exact de originele posterverhouding (1000×1414).
+If you turn sections off, the card shrinks with them: the space a hidden block
+would take is removed, so no empty area is left. With all sections on and
+`row_count: 9` the card has exactly the original poster ratio (1000×1414).
 
-Een compacte variant, bijvoorbeeld naast andere kaarten:
+A compact variant, for example next to other cards:
 
 ```yaml
 type: custom:smaail-card
-title: LOGBOEK
+title: LOGBOOK
 row_count: 4
 show_map: false
 show_legend: false
@@ -155,41 +170,40 @@ rows:
     year: "2025"
 ```
 
-## Tekenset
+## Character set
 
-Het bord gebruikt een 5×7 dot-matrix font met een beperkte tekenset:
+The board uses a 5×7 dot-matrix font with a limited character set:
 
 ```
-A-Z   0-9   spatie   -   .   ?   '
+A-Z   0-9   space   -   .   ?   '
 ```
 
-Tekst wordt automatisch naar hoofdletters omgezet en afgekapt op wat er past:
-**10 tekens** in de bestemmingskolom, **4** in de jaartalkolom, en **16** op een
-regel over de volle breedte.
+Text is converted to upper case and cut off at what fits: **10 characters** in
+the destination column, **4** in the year column, and **16** on a full-width
+row.
 
-Voordat er getekend wordt, worden tekens die buiten die set vallen zo goed
-mogelijk teruggebracht tot iets dat het bord wél kan zetten:
+Before drawing, characters outside that set are brought back, as far as
+possible, to something the board can show:
 
-- **Slimme leestekens** worden rechtgezet. Telefoons en Macs vervangen een
-  getypte `'` stilletjes door een typografische `’`; die wordt weer een gewone
-  apostrof. Hetzelfde geldt voor de en- en em-streepjes (`–`, `—`) en het
-  beletselteken (`…`).
-- **Accenten worden gestript**: `MÁLAGA` → `MALAGA`, `ZÜRICH` → `ZURICH`,
+- **Smart punctuation** is straightened. Phones and Macs quietly replace a
+  typed `'` with a typographic `’`; that becomes a plain apostrophe again. The
+  same goes for en and em dashes (`–`, `—`) and the ellipsis (`…`).
+- **Accents are stripped**: `MÁLAGA` → `MALAGA`, `ZÜRICH` → `ZURICH`,
   `REYKJAVÍK` → `REYKJAVIK`.
-- **Letters die Unicode niet vanzelf ontleedt** worden uitgeschreven:
+- **Letters that Unicode does not decompose** are spelled out:
   `TROMSØ` → `TROMSO`, `ÆRØ` → `AERO`, `ÞINGVELLIR` → `THINGVELLIR`.
 
-Wat daarna nog steeds niet in de tekenset zit, wordt als spatie getekend.
+Anything still outside the character set after that is drawn as a space.
 
-## World map-kaart
+## World map card
 
-`custom:smaail-world-card` tekent een gestippelde wereldkaart waarop de landen
-die je hebt bezocht oplichten in de accentkleur, met onderaan een
-voortgangsmeter per werelddeel (Noord-Amerika … Oceanië) en een klein
-overzichtskaartje. Voeg de kaart toe via **Kaart toevoegen** → zoek "Smaail
-World Map"; ook deze heeft een volledige visuele editor.
+`custom:smaail-world-card` draws a dotted world map on which the countries you
+have visited light up in the accent color, with a progress meter per continent
+at the bottom (North America … Oceania) and a small overview map. Add the card
+with **Add card** → search for "Smaail World Map"; it has a full visual editor
+too.
 
-Minimaal voorbeeld — som de bezochte landen op:
+Minimal example, listing the visited countries:
 
 ```yaml
 type: custom:smaail-world-card
@@ -197,113 +211,112 @@ countries:
   - NL
   - BE
   - FR
-  - Spain          # naam mag ook
-  - USA            # net als een alias
+  - Spain          # a name works too
+  - USA            # and so does an alias
   - JP
   - AU
 ```
 
-Een land mag als **ISO-code** (`NL`, `FR`), **ISO-3** (`NLD`), **Engelse naam**
-(`Netherlands`) of een bekende **alias** (`USA`, `UK`, `UAE`, `South Korea`, …).
-Elk herkend land kleurt zijn landmassa in; de meters tellen per werelddeel hoe
-veel landen je hebt bezocht.
+A country can be an **ISO code** (`NL`, `FR`), **ISO-3** (`NLD`), **English
+name** (`Netherlands`) or a known **alias** (`USA`, `UK`, `UAE`, `South Korea`,
+…). Each recognized country fills its land mass; the meters count per
+continent how many countries you have visited.
 
-Live uit Home Assistant, met een entity die een lijst levert (een JSON-array of
-een lijst gescheiden door komma's/nieuwe regels); die wordt samengevoegd met een
-eventuele vaste `countries`-lijst:
+Live from Home Assistant, with an entity that provides a list (a JSON array or
+a list separated by commas/newlines); it is merged with an optional fixed
+`countries` list:
 
 ```yaml
 type: custom:smaail-world-card
-countries_entity: sensor.bezochte_landen   # status = "NL, BE, MA, JP, ..."
-# countries_attribute: country_codes        # of een attribuut i.p.v. de status
+countries_entity: sensor.visited_countries   # state = "NL, BE, MA, JP, ..."
+# countries_attribute: country_codes          # or an attribute instead of the state
 ```
 
-De kaart tekent alleen opnieuw als die entity daadwerkelijk verandert.
+The card only redraws when that entity actually changes.
 
-### Alle opties (world map)
+### All options (world map)
 
-| Optie | Standaard | Betekenis |
+| Option | Default | Meaning |
 | --- | --- | --- |
-| `title` | `WORLD MAP` | Tekst in de kop. Wordt automatisch gecentreerd. |
-| `countries` | `[]` | Bezochte landen (zie hierboven). |
-| `countries_entity` | — | Entity waarvan de status/attribuut de landenlijst levert. |
-| `countries_attribute` | — | Attribuut van `countries_entity` i.p.v. de status. |
-| `show_header` | `true` | Kop met globe-icoon en titel. |
-| `show_stats` | `true` | Regel "N landen · M/6 werelddelen" onder de titel. |
-| `show_meters` | `true` | Voortgangsmeters per werelddeel. |
-| `show_overview` | `true` | Klein overzichtskaartje tussen de meters. |
-| `caption` | `""` | Bijschrift onder het overzichtskaartje (leeg = geen). |
-| `accent_color` | `#F2DD00` | Accentkleur (bezochte landen, icoon, aantallen). |
-| `background_color` | `#0C0C0C` | Achtergrond. |
-| `land_color` | `#3A3A3A` | Kleur van land dat je (nog) niet bezocht hebt. |
+| `title` | `WORLD MAP` | Header text. Centered automatically. |
+| `countries` | `[]` | Visited countries (see above). |
+| `countries_entity` | — | Entity whose state/attribute provides the country list. |
+| `countries_attribute` | — | Attribute of `countries_entity` instead of the state. |
+| `show_header` | `true` | Header with globe icon and title. |
+| `show_stats` | `true` | "N countries · M/6 continents" line below the title. |
+| `show_meters` | `true` | Progress meters per continent. |
+| `show_overview` | `true` | Small overview map between the meters. |
+| `caption` | `""` | Caption below the overview map (empty = none). |
+| `accent_color` | `#F2DD00` | Accent color (visited countries, icon, counts). |
+| `background_color` | `#0C0C0C` | Background. |
+| `land_color` | `#3A3A3A` | Color of land you have not visited (yet). |
 
-De kaartgeometrie komt van [Natural Earth](https://www.naturalearthdata.com/)
-110m-landgrenzen, gerasterd op een dot-grid met
-[`tools/gen_worldmap.py`](tools/gen_worldmap.py) (zie
-[`tools/README.md`](tools/README.md)). Op dit vrij grove grid krijgen enkele van
-de kleinste landen één representatief puntje; heel kleine eilandstaten kunnen
-ontbreken.
+The map geometry comes from [Natural Earth](https://www.naturalearthdata.com/)
+110m country borders, rasterized onto a dot grid with
+[`tools/gen_worldmap.py`](tools/gen_worldmap.py) (see
+[`tools/README.md`](tools/README.md)). On this fairly coarse grid some of the
+smallest countries get a single representative dot; very small island states
+may be missing.
 
-## Ontwikkelen
+## Development
 
 ```bash
 npm install
-npm run dev      # kaart in de browser met mock-hass, geen Home Assistant nodig
-npm run build    # type-check + dist/smaailcard.js
+npm run dev      # card in the browser with a mock hass, no Home Assistant needed
+npm run build    # type check + dist/smaailcard.js
 npm run typecheck
 ```
 
-`npm run dev` serveert `index.html` met een nagebootst `hass`-object, zodat je
-de kaart live kunt aanpassen zonder draaiende Home Assistant. De mock-data staat
-in `src/dev.ts`.
+`npm run dev` serves `index.html` with a mocked `hass` object, so you can work
+on the card live without a running Home Assistant. The mock data is in
+`src/dev.ts`.
 
-### Projectstructuur
+### Project structure
 
-| Pad | Doel |
+| Path | Purpose |
 | --- | --- |
-| `src/smaailcard.ts` | Vertrekbord-kaart (`<smaail-card>`) + bundle-entry (importeert ook de world map-kaart). |
-| `src/editor.ts` | Visuele config-editor (`<smaail-card-editor>`). |
-| `src/board.ts` | Bouwt de vertrekbord-SVG: geometrie, regels, voet, kaart, legenda. |
-| `src/worldcard.ts` | World map-kaart (`<smaail-world-card>`): config, entity, layout. |
-| `src/worldeditor.ts` | Visuele config-editor (`<smaail-world-card-editor>`). |
-| `src/worldboard.ts` | Bouwt de world map-SVG: kaart, meters, overzichtskaartje. |
-| `src/worldmapdata.ts` | Gegenereerd: per-land dot-grid + landen-/werelddeeltabel. |
-| `src/countries.ts` | Landen matchen (ISO/naam/alias) en de bezochte set oplossen. |
-| `src/font.ts` | Het 5×7 dot-matrix font. |
-| `src/dots.ts` | Dot- en tekst-primitieven. |
-| `src/worldmap.ts` | Continentcontouren + projectie voor de mini-wereldkaart (vertrekbord). |
-| `src/types.ts` | Configuratietypen. |
-| `src/dev.ts`, `index.html` | Browser-dev-harness (toont beide kaarten). |
-| `tools/gen_worldmap.py` | Regenereert `src/worldmapdata.ts` uit Natural Earth (zie `tools/README.md`). |
+| `src/smaailcard.ts` | Departures board card (`<smaail-card>`) + bundle entry (also imports the world map card). |
+| `src/editor.ts` | Visual config editor (`<smaail-card-editor>`). |
+| `src/board.ts` | Builds the departures board SVG: geometry, rows, footer, map, legend. |
+| `src/worldcard.ts` | World map card (`<smaail-world-card>`): config, entity, layout. |
+| `src/worldeditor.ts` | Visual config editor (`<smaail-world-card-editor>`). |
+| `src/worldboard.ts` | Builds the world map SVG: map, meters, overview map. |
+| `src/worldmapdata.ts` | Generated: per-country dot grid + country/continent table. |
+| `src/countries.ts` | Country matching (ISO/name/alias) and resolving the visited set. |
+| `src/font.ts` | The 5×7 dot-matrix font. |
+| `src/dots.ts` | Dot and text primitives. |
+| `src/worldmap.ts` | Continent outlines + projection for the mini world map (departures board). |
+| `src/types.ts` | Configuration types. |
+| `src/dev.ts`, `index.html` | Browser dev harness (shows both cards). |
+| `tools/gen_worldmap.py` | Regenerates `src/worldmapdata.ts` from Natural Earth (see `tools/README.md`). |
 
-De geometrie (rasterafstand, kolombreedtes, kleuren, het font en de
-continentcontouren) is overgenomen uit het oorspronkelijke
-`departures_board.py`-generatorscript, zodat de kaart bij `row_count: 9` exact
-hetzelfde beeld geeft als de poster.
+The geometry (grid spacing, column widths, colors, the font and the continent
+outlines) is taken from the original `departures_board.py` generator script,
+so with `row_count: 9` the card gives exactly the same image as the poster.
 
-Waar de kaart bewust afwijkt van dat script:
+Where the card deliberately differs from that script:
 
-- **Prestaties.** Het script tekent elk puntje als een losse `<circle>` (~5500
-  stuks). Omdat een Lovelace-kaart bij elke statuswijziging opnieuw tekent,
-  gebruikt de kaart één SVG-`pattern` voor het gedoofde raster en bundelt hij de
-  opgelichte dots per kleur in één `<path>`: ~60 DOM-nodes in plaats van ~5500.
-- **Centrering van de kop.** Het script zet de kop op een vaste positie die
-  alleen klopt voor het woord "DEPARTURES". De kaart meet de kop na het tekenen
-  en centreert hem, zodat elke `title` goed staat.
-- **Afkappen.** Te lange tekst wordt afgekapt op wat in de kolom past, zodat een
-  bestemming nooit in de jaartalkolom loopt.
+- **Performance.** The script draws every dot as a separate `<circle>` (~5500
+  of them). Because a Lovelace card redraws on every state change, the card
+  uses one SVG `pattern` for the unlit grid and groups the lit dots per color
+  into one `<path>`: ~60 DOM nodes instead of ~5500.
+- **Header centering.** The script places the header at a fixed position that
+  only works for the word "DEPARTURES". The card measures the header after
+  drawing and centers it, so any `title` lines up.
+- **Truncation.** Text that is too long is cut off at what fits in the column,
+  so a destination never runs into the year column.
 
 ## Credits
 
-Het ontwerp van het bord is gebaseerd op een poster van
-**[Smaail](https://smaail.be/index.php/posters/)**. Het dot-matrix-font, de
-rastergeometrie, het kleurenpalet en de mini-wereldkaart zijn overgenomen uit
-het `departures_board.py`-generatorscript dat dat ontwerp nabouwt.
+The board design is based on a poster by
+**[Smaail](https://smaail.be/index.php/posters/)**. The dot-matrix font, the
+grid geometry, the color palette and the mini world map are taken from the
+`departures_board.py` generator script that recreates that design.
 
-Dit is een persoonlijk Home Assistant-project, niet uitgegeven door of
-verbonden aan Smaail. De rechten op het oorspronkelijke posterontwerp liggen
-bij Smaail; de MIT-licentie hieronder geldt voor de code in deze repository.
+This is a personal Home Assistant project, not published by or affiliated with
+Smaail. The rights to the original poster design belong to Smaail; the MIT
+license below applies to the code in this repository.
 
-## Licentie
+## License
 
 [MIT](LICENSE)
