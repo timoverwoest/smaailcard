@@ -4,7 +4,7 @@
 
 Custom [Home Assistant](https://www.home-assistant.io/) Lovelace cards in the
 style of Smaail's travel posters. This repository ships **two** cards from one
-bundle (a single HACS/Lovelace resource registers both):
+bundle (a single dashboard resource registers both):
 
 - **`custom:smaail-card`**: a **dot-matrix departures board**. Each row is a
   destination with a year, built from individual LED dots, with a world map
@@ -16,33 +16,32 @@ bundle (a single HACS/Lovelace resource registers both):
 Both cards are vector SVG, so they stay sharp at any size, and everything you
 see is configurable, either in the visual editor in Home Assistant or in YAML.
 
-<!-- Absolute URL, niet relatief: HACS strijkt relatieve image-paden uit de
+<!-- Absolute URL, niet relatief: HACS/Marketplace strijkt relatieve image-paden uit de
      README weg, waardoor het plaatje daar niet laadt. -->
 ![Smaailcard](https://raw.githubusercontent.com/timoverwoest/smaailcard/main/docs/preview.png)
 
 ## Installation
 
-### HACS (recommended)
+[![Open your Home Assistant instance and open this repository in the Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=timoverwoest&repository=smaailcard&category=plugin)
 
-Smaailcard is in the default [HACS](https://hacs.xyz/) store:
+The button opens Smaailcard in the Marketplace on Home Assistant 2026.11 and
+newer, and in HACS on older versions.
 
-[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=timoverwoest&repository=smaailcard&category=plugin)
+### Marketplace (Home Assistant 2026.11 and newer)
 
-1. Open HACS in Home Assistant and search for **Smaailcard** (or use the
-   button above).
+1. Go to **Settings** → **Marketplace** and search for **Smaailcard** (or use
+   the button above).
+2. Open Smaailcard, select **Install** and confirm with **Install**.
+3. Reload your browser.
+
+The Marketplace adds the dashboard resource for you. If you manage dashboard
+resources in YAML, the install dialog shows the line to add.
+
+### HACS (Home Assistant 2026.10 and older)
+
+1. Open HACS and search for **Smaailcard** (or use the button above).
 2. Select **Download**.
-3. Refresh your browser (hard refresh).
-
-### HACS custom repository
-
-Only needed if Smaailcard does not show up in your HACS store, for example
-because HACS has not refreshed its list yet:
-
-1. HACS → menu (⋮) → **Custom repositories**.
-2. Add `https://github.com/timoverwoest/smaailcard` with category
-   **Dashboard**.
-3. Search for "Smaailcard" in HACS and install it.
-4. Refresh your browser (hard refresh).
+3. Reload your browser.
 
 ### Manual
 
@@ -51,6 +50,10 @@ because HACS has not refreshed its list yet:
    - URL: `/local/smaailcard.js`
    - Type: **JavaScript module**
 3. Hard refresh your browser.
+
+Smaailcard is a community project: it is maintained here, not by the Home
+Assistant project. Please report problems in this repository's
+[issues](https://github.com/timoverwoest/smaailcard/issues).
 
 ## Adding the card
 

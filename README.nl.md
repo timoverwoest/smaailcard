@@ -4,7 +4,7 @@
 
 Custom [Home Assistant](https://www.home-assistant.io/) Lovelace-kaarten in de
 stijl van de reisposters van Smaail. Deze repository levert **twee** kaarten uit
-één bundel (één HACS-/Lovelace-resource registreert ze allebei):
+één bundel (één dashboard-resource registreert ze allebei):
 
 - **`custom:smaail-card`** — een **dot-matrix vertrekbord**: elke regel is een
   bestemming met een jaartal, opgebouwd uit losse LED-puntjes, met een
@@ -16,33 +16,33 @@ stijl van de reisposters van Smaail. Deze repository levert **twee** kaarten uit
 Beide kaarten zijn vector-SVG, dus ze blijven scherp op elk formaat, en alles
 wat je ziet is instelbaar — via de visuele editor in Home Assistant of in YAML.
 
-<!-- Absolute URL, niet relatief: HACS strijkt relatieve image-paden uit de
+<!-- Absolute URL, niet relatief: HACS/Marketplace strijkt relatieve image-paden uit de
      README weg, waardoor het plaatje daar niet laadt. -->
 ![Smaailcard](https://raw.githubusercontent.com/timoverwoest/smaailcard/main/docs/preview.png)
 
 ## Installatie
 
-### Via HACS (aanbevolen)
+[![Open je Home Assistant en open deze repository in de Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=timoverwoest&repository=smaailcard&category=plugin)
 
-Smaailcard staat in de standaardlijst van [HACS](https://hacs.xyz/):
+De knop opent Smaailcard in de Marketplace vanaf Home Assistant 2026.11, en
+in HACS op oudere versies.
 
-[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=timoverwoest&repository=smaailcard&category=plugin)
+### Marketplace (Home Assistant 2026.11 en nieuwer)
 
-1. Open HACS in Home Assistant en zoek naar **Smaailcard** (of gebruik de knop
-   hierboven).
+1. Ga naar **Instellingen** → **Marketplace** en zoek naar **Smaailcard** (of
+   gebruik de knop hierboven).
+2. Open Smaailcard, kies **Installeren** en bevestig met **Installeren**.
+3. Herlaad je browser.
+
+De Marketplace voegt de dashboard-resource zelf toe. Beheer je
+dashboard-resources in YAML, dan toont het installatievenster de regel die je
+moet toevoegen.
+
+### HACS (Home Assistant 2026.10 en ouder)
+
+1. Open HACS en zoek naar **Smaailcard** (of gebruik de knop hierboven).
 2. Kies **Download**.
-3. Vernieuw je browser (harde refresh).
-
-### Via HACS als aangepaste repository
-
-Alleen nodig als Smaailcard niet in je HACS-lijst verschijnt, bijvoorbeeld
-omdat HACS zijn lijst nog niet heeft bijgewerkt:
-
-1. HACS → menu (⋮) → **Custom repositories**.
-2. Voeg `https://github.com/timoverwoest/smaailcard` toe met categorie
-   **Dashboard**.
-3. Zoek "Smaailcard" in HACS en installeer.
-4. Vernieuw je browser (harde refresh).
+3. Herlaad je browser.
 
 ### Handmatig
 
@@ -51,6 +51,10 @@ omdat HACS zijn lijst nog niet heeft bijgewerkt:
    - URL: `/local/smaailcard.js`
    - Type: **JavaScript-module**
 3. Harde refresh van de browser.
+
+Smaailcard is een communityproject: het wordt hier onderhouden, niet door het
+Home Assistant-project. Meld problemen bij de
+[issues](https://github.com/timoverwoest/smaailcard/issues) van deze repository.
 
 ## Kaart toevoegen
 
