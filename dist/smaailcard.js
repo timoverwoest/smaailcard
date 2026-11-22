@@ -1042,7 +1042,7 @@ function Cs(s, t, e) {
     </svg>
   `;
 }
-const no = "1.1.1", le = "smaail-card", xs = "smaail-card-editor", Rs = "Smaailcard", he = "smaail-world-card", Ts = "smaail-world-card-editor", Ms = "Smaail World Map";
+const no = "1.1.2", le = "smaail-card", xs = "smaail-card-editor", Rs = "Smaailcard", he = "smaail-world-card", Ts = "smaail-world-card-editor", Ms = "Smaail World Map";
 function St(s, t) {
   customElements.get(s) || customElements.define(s, t);
 }
@@ -3237,7 +3237,7 @@ const en = [
           .selector=${on}
           .value=${e}
           .label=${f(t, "country_n", { n: o + 1 })}
-          .required=${!1}
+          .required=${!0}
           data-index=${o}
           @value-changed=${this._countryChanged}
         ></ha-selector>
