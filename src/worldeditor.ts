@@ -52,7 +52,8 @@ const SCHEMA = [
 
 /* HA's own field for each country: a searchable list of the countries the
    map knows, where an ISO-3 code, a name or an alias can be typed as well.
-   The list never changes, so it is built once. */
+   The list never changes, so it is built once. The field is required, so it
+   has no clear button next to the row's own remove button. */
 const COUNTRY_SELECTOR = {
   select: {
     mode: "dropdown",
@@ -115,7 +116,7 @@ export class SmaailWorldCardEditor
           .selector=${COUNTRY_SELECTOR}
           .value=${country}
           .label=${localize(lang, "country_n", { n: index + 1 })}
-          .required=${false}
+          .required=${true}
           data-index=${index}
           @value-changed=${this._countryChanged}
         ></ha-selector>
