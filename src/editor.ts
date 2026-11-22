@@ -101,6 +101,51 @@ const COLORS: [string, LocalizeKey][] = [
   ["grey", "color_grey"],
 ];
 
+/** The marker on the world map as its form shows it. */
+interface PinFormData {
+  pin_toggle: boolean;
+  longitude?: number;
+  latitude?: number;
+}
+
+/* The marker: a switch, and when it is on the two coordinates. */
+const pinSchemas = new Map<boolean, unknown[]>();
+
+function pinSchema(enabled: boolean): unknown[] {
+  let schema = pinSchemas.get(enabled);
+  if (!schema) {
+    schema = [
+      { name: "pin_toggle", selector: { boolean: {} } },
+      ...(enabled
+        ? [
+            {
+              name: "",
+              type: "grid",
+              schema: [
+                {
+                  name: "longitude",
+                  required: true,
+                  selector: {
+                    number: { min: -180, max: 180, step: 0.01, mode: "box" },
+                  },
+                },
+                {
+                  name: "latitude",
+                  required: true,
+                  selector: {
+                    number: { min: -90, max: 90, step: 0.01, mode: "box" },
+                  },
+                },
+              ],
+            },
+          ]
+        : []),
+    ];
+    pinSchemas.set(enabled, schema);
+  }
+  return schema;
+}
+
 /** One row as its form shows it. */
 interface RowFormData {
   dest: string;
@@ -218,40 +263,13 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
 
       <div class="section">
         <div class="section-title">${localize(lang, "pin_section")}</div>
-        <label class="check">
-          <input
-            type="checkbox"
-            .checked=${this._config.pin !== null}
-            @change=${this._togglePin}
-          />
-          ${localize(lang, "pin_toggle")}
-        </label>
-        ${
-          this._config.pin !== null
-            ? html`<div class="grid2">
-                <label
-                  >${localize(lang, "longitude")}
-                  <input
-                    type="number"
-                    step="0.01"
-                    .value=${String(this._config.pin?.[0] ?? DEFAULT_PIN[0])}
-                    data-axis="0"
-                    @change=${this._pinChanged}
-                  />
-                </label>
-                <label
-                  >${localize(lang, "latitude")}
-                  <input
-                    type="number"
-                    step="0.01"
-                    .value=${String(this._config.pin?.[1] ?? DEFAULT_PIN[1])}
-                    data-axis="1"
-                    @change=${this._pinChanged}
-                  />
-                </label>
-              </div>`
-            : nothing
-        }
+        <ha-form
+          .hass=${this.hass}
+          .data=${this._pinData()}
+          .schema=${pinSchema(this._config.pin !== null)}
+          .computeLabel=${this._computeLabel}
+          @value-changed=${this._pinChanged}
+        ></ha-form>
       </div>
     `;
   }
@@ -329,9 +347,40 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     this._updateRows(this._rows.map((r, i) => (i === index ? row : r)));
   }
 
-  private _pinChanged(ev: Event): void {
-    const axis = (ev.currentTarget as HTMLElement).dataset.axis === "1" ? 1 : 0;
-    this._setPin(axis, ev);
+  /** The marker as its form shows it; no `pin` in the config means the default. */
+  private _pinData(): PinFormData {
+    const pin = this._config?.pin;
+    return {
+      pin_toggle: pin !== null,
+      longitude: pin?.[0] ?? DEFAULT_PIN[0],
+      latitude: pin?.[1] ?? DEFAULT_PIN[1],
+    };
+  }
+
+  private _pinChanged(ev: CustomEvent): void {
+    ev.stopPropagation();
+    const value = ev.detail.value as PinFormData;
+    const config = { ...this._config } as SmaailcardConfig;
+    if (!value.pin_toggle) {
+      config.pin = null;
+    } else {
+      const pin: [number, number] = [
+        Number(value.longitude ?? DEFAULT_PIN[0]),
+        Number(value.latitude ?? DEFAULT_PIN[1]),
+      ];
+      /* Like the other options: the default marker is only written when the
+         config already had a pin. */
+      const isDefault = pin[0] === DEFAULT_PIN[0] && pin[1] === DEFAULT_PIN[1];
+      if (
+        isDefault &&
+        (this._config?.pin === undefined || this._config?.pin === null)
+      ) {
+        delete config.pin;
+      } else {
+        config.pin = pin;
+      }
+    }
+    this._emit(config);
   }
 
   private _computeLabel = (schema: { name: string }): string =>
@@ -379,23 +428,6 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     this._updateRows(this._rows.filter((_, i) => i !== index));
   }
 
-  private _togglePin(ev: Event): void {
-    const on = (ev.target as HTMLInputElement).checked;
-    this._emit({
-      ...this._config,
-      pin: on ? [...DEFAULT_PIN] : null,
-    } as SmaailcardConfig);
-  }
-
-  private _setPin(index: 0 | 1, ev: Event): void {
-    const pin: [number, number] = [
-      this._config?.pin?.[0] ?? DEFAULT_PIN[0],
-      this._config?.pin?.[1] ?? DEFAULT_PIN[1],
-    ];
-    pin[index] = Number((ev.target as HTMLInputElement).value);
-    this._emit({ ...this._config, pin } as SmaailcardConfig);
-  }
-
   static styles = css`
     .section {
       margin-block-start: var(--ha-space-5, 20px);
@@ -428,41 +460,6 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     .num {
       font-weight: 500;
       color: var(--secondary-text-color, #727272);
-    }
-    .grid2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--ha-space-2, 8px);
-      margin-block-end: var(--ha-space-2, 8px);
-    }
-    label {
-      display: flex;
-      flex-direction: column;
-      font-size: 0.8rem;
-      color: var(--secondary-text-color, #727272);
-      gap: var(--ha-space-1, 4px);
-    }
-    label.check {
-      flex-direction: row;
-      align-items: center;
-      gap: var(--ha-space-2, 8px);
-      font-size: 0.85rem;
-    }
-    input[type="text"],
-    input[type="number"],
-    select {
-      font: inherit;
-      font-size: 0.95rem;
-      color: var(--primary-text-color, #212121);
-      background: var(--card-background-color, #fff);
-      border: 1px solid var(--divider-color, rgba(0, 0, 0, 0.3));
-      border-radius: var(--ha-border-radius-sm, 4px);
-      padding: var(--ha-space-2, 8px);
-      width: 100%;
-      box-sizing: border-box;
-    }
-    input:disabled {
-      opacity: 0.5;
     }
     button {
       font: inherit;

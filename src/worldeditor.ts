@@ -50,11 +50,16 @@ const SCHEMA = [
   },
 ];
 
-/* The country suggestions never change, so build them once instead of on
-   every editor update (the editor re-renders whenever hass changes). */
-const COUNTRY_OPTIONS = COUNTRIES.map(
-  (c) => html`<option value=${c.iso2}>${c.name}</option>`
-);
+/* HA's own field for each country: a searchable list of the countries the
+   map knows, where an ISO-3 code, a name or an alias can be typed as well.
+   The list never changes, so it is built once. */
+const COUNTRY_SELECTOR = {
+  select: {
+    mode: "dropdown",
+    custom_value: true,
+    options: COUNTRIES.map((c) => ({ value: c.iso2, label: c.name })),
+  },
+};
 
 export class SmaailWorldCardEditor
   extends LitElement
@@ -99,22 +104,21 @@ export class SmaailWorldCardEditor
           </button>
         </div>
       </div>
-
-      <datalist id="swc-countries">${COUNTRY_OPTIONS}</datalist>
     `;
   }
 
   private _renderCountry(lang: Language, country: string, index: number) {
     return html`
       <div class="row">
-        <input
-          type="text"
-          list="swc-countries"
-          aria-label=${localize(lang, "country_n", { n: index + 1 })}
+        <ha-selector
+          .hass=${this.hass}
+          .selector=${COUNTRY_SELECTOR}
           .value=${country}
+          .label=${localize(lang, "country_n", { n: index + 1 })}
+          .required=${false}
           data-index=${index}
-          @change=${this._countryChanged}
-        />
+          @value-changed=${this._countryChanged}
+        ></ha-selector>
         <button
           type="button"
           class="icon"
@@ -131,8 +135,9 @@ export class SmaailWorldCardEditor
 
   /* Template bindings pass methods, not arrow functions (lit/no-template-arrow,
      as in the Home Assistant frontend); the row comes from data-index. */
-  private _countryChanged(ev: Event): void {
-    this._setCountry(rowIndex(ev), value(ev));
+  private _countryChanged(ev: CustomEvent): void {
+    ev.stopPropagation();
+    this._setCountry(rowIndex(ev), String(ev.detail.value ?? "").trim());
   }
 
   private _removeCountryClicked(ev: Event): void {
@@ -199,16 +204,8 @@ export class SmaailWorldCardEditor
       gap: var(--ha-space-2, 8px);
       margin-block-end: var(--ha-space-2, 8px);
     }
-    input[type="text"] {
-      font: inherit;
-      font-size: 0.95rem;
-      color: var(--primary-text-color, #212121);
-      background: var(--card-background-color, #fff);
-      border: 1px solid var(--divider-color, rgba(0, 0, 0, 0.3));
-      border-radius: var(--ha-border-radius-sm, 4px);
-      padding: var(--ha-space-2, 8px);
+    ha-selector {
       flex: 1;
-      box-sizing: border-box;
     }
     button {
       font: inherit;
@@ -239,18 +236,11 @@ export class SmaailWorldCardEditor
     .add {
       margin-block-start: var(--ha-space-1, 4px);
     }
-    datalist {
-      display: none;
-    }
   `;
 }
 
 function rowIndex(ev: Event): number {
   return Number((ev.currentTarget as HTMLElement).dataset.index);
-}
-
-function value(ev: Event): string {
-  return (ev.target as HTMLInputElement).value.trim();
 }
 
 defineElement(WORLD_CARD_EDITOR_TYPE, SmaailWorldCardEditor);
