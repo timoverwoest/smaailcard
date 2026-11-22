@@ -3,16 +3,16 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const ht = globalThis, te = ht.ShadowRoot && (ht.ShadyCSS === void 0 || ht.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, ee = Symbol(), fe = /* @__PURE__ */ new WeakMap();
-let He = class {
+const dt = globalThis, ee = dt.ShadowRoot && (dt.ShadyCSS === void 0 || dt.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, oe = Symbol(), fe = /* @__PURE__ */ new WeakMap();
+let Fe = class {
   constructor(t, e, o) {
-    if (this._$cssResult$ = !0, o !== ee) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    if (this._$cssResult$ = !0, o !== oe) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = t, this.t = e;
   }
   get styleSheet() {
     let t = this.o;
     const e = this.t;
-    if (te && t === void 0) {
+    if (ee && t === void 0) {
       const o = e !== void 0 && e.length === 1;
       o && (t = fe.get(e)), t === void 0 && ((this.o = t = new CSSStyleSheet()).replaceSync(this.cssText), o && fe.set(e, t));
     }
@@ -22,33 +22,33 @@ let He = class {
     return this.cssText;
   }
 };
-const wo = (s) => new He(typeof s == "string" ? s : s + "", void 0, ee), At = (s, ...t) => {
+const Eo = (s) => new Fe(typeof s == "string" ? s : s + "", void 0, oe), At = (s, ...t) => {
   const e = s.length === 1 ? s[0] : t.reduce((o, n, i) => o + ((r) => {
     if (r._$cssResult$ === !0) return r.cssText;
     if (typeof r == "number") return r;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + r + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
   })(n) + s[i + 1], s[0]);
-  return new He(e, s, ee);
-}, So = (s, t) => {
-  if (te) s.adoptedStyleSheets = t.map((e) => e instanceof CSSStyleSheet ? e : e.styleSheet);
+  return new Fe(e, s, oe);
+}, xo = (s, t) => {
+  if (ee) s.adoptedStyleSheets = t.map((e) => e instanceof CSSStyleSheet ? e : e.styleSheet);
   else for (const e of t) {
-    const o = document.createElement("style"), n = ht.litNonce;
+    const o = document.createElement("style"), n = dt.litNonce;
     n !== void 0 && o.setAttribute("nonce", n), o.textContent = e.cssText, s.appendChild(o);
   }
-}, _e = te ? (s) => s : (s) => s instanceof CSSStyleSheet ? ((t) => {
+}, ge = ee ? (s) => s : (s) => s instanceof CSSStyleSheet ? ((t) => {
   let e = "";
   for (const o of t.cssRules) e += o.cssText;
-  return wo(e);
+  return Eo(e);
 })(s) : s;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Eo, defineProperty: xo, getOwnPropertyDescriptor: Co, getOwnPropertyNames: Ro, getOwnPropertySymbols: To, getPrototypeOf: Oo } = Object, bt = globalThis, $e = bt.trustedTypes, Mo = $e ? $e.emptyScript : "", No = bt.reactiveElementPolyfillSupport, V = (s, t) => s, ut = { toAttribute(s, t) {
+const { is: Co, defineProperty: Ro, getOwnPropertyDescriptor: To, getOwnPropertyNames: No, getOwnPropertySymbols: Mo, getPrototypeOf: Oo } = Object, vt = globalThis, $e = vt.trustedTypes, Lo = $e ? $e.emptyScript : "", Po = vt.reactiveElementPolyfillSupport, Z = (s, t) => s, mt = { toAttribute(s, t) {
   switch (t) {
     case Boolean:
-      s = s ? Mo : null;
+      s = s ? Lo : null;
       break;
     case Object:
     case Array:
@@ -73,23 +73,23 @@ const { is: Eo, defineProperty: xo, getOwnPropertyDescriptor: Co, getOwnProperty
       }
   }
   return e;
-} }, oe = (s, t) => !Eo(s, t), ge = { attribute: !0, type: String, converter: ut, reflect: !1, useDefault: !1, hasChanged: oe };
-Symbol.metadata ??= Symbol("metadata"), bt.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
-let D = class extends HTMLElement {
+} }, se = (s, t) => !Co(s, t), ye = { attribute: !0, type: String, converter: mt, reflect: !1, useDefault: !1, hasChanged: se };
+Symbol.metadata ??= Symbol("metadata"), vt.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
+let k = class extends HTMLElement {
   static addInitializer(t) {
     this._$Ei(), (this.l ??= []).push(t);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(t, e = ge) {
+  static createProperty(t, e = ye) {
     if (e.state && (e.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(t) && ((e = Object.create(e)).wrapped = !0), this.elementProperties.set(t, e), !e.noAccessor) {
       const o = Symbol(), n = this.getPropertyDescriptor(t, o, e);
-      n !== void 0 && xo(this.prototype, t, n);
+      n !== void 0 && Ro(this.prototype, t, n);
     }
   }
   static getPropertyDescriptor(t, e, o) {
-    const { get: n, set: i } = Co(this.prototype, t) ?? { get() {
+    const { get: n, set: i } = To(this.prototype, t) ?? { get() {
       return this[e];
     }, set(r) {
       this[e] = r;
@@ -100,17 +100,17 @@ let D = class extends HTMLElement {
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(t) {
-    return this.elementProperties.get(t) ?? ge;
+    return this.elementProperties.get(t) ?? ye;
   }
   static _$Ei() {
-    if (this.hasOwnProperty(V("elementProperties"))) return;
+    if (this.hasOwnProperty(Z("elementProperties"))) return;
     const t = Oo(this);
     t.finalize(), t.l !== void 0 && (this.l = [...t.l]), this.elementProperties = new Map(t.elementProperties);
   }
   static finalize() {
-    if (this.hasOwnProperty(V("finalized"))) return;
-    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(V("properties"))) {
-      const e = this.properties, o = [...Ro(e), ...To(e)];
+    if (this.hasOwnProperty(Z("finalized"))) return;
+    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(Z("properties"))) {
+      const e = this.properties, o = [...No(e), ...Mo(e)];
       for (const n of o) this.createProperty(n, e[n]);
     }
     const t = this[Symbol.metadata];
@@ -129,8 +129,8 @@ let D = class extends HTMLElement {
     const e = [];
     if (Array.isArray(t)) {
       const o = new Set(t.flat(1 / 0).reverse());
-      for (const n of o) e.unshift(_e(n));
-    } else t !== void 0 && e.push(_e(t));
+      for (const n of o) e.unshift(ge(n));
+    } else t !== void 0 && e.push(ge(t));
     return e;
   }
   static _$Eu(t, e) {
@@ -156,7 +156,7 @@ let D = class extends HTMLElement {
   }
   createRenderRoot() {
     const t = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return So(t, this.constructor.elementStyles), t;
+    return xo(t, this.constructor.elementStyles), t;
   }
   connectedCallback() {
     this.renderRoot ??= this.createRenderRoot(), this.enableUpdating(!0), this._$EO?.forEach((t) => t.hostConnected?.());
@@ -172,14 +172,14 @@ let D = class extends HTMLElement {
   _$ET(t, e) {
     const o = this.constructor.elementProperties.get(t), n = this.constructor._$Eu(t, o);
     if (n !== void 0 && o.reflect === !0) {
-      const i = (o.converter?.toAttribute !== void 0 ? o.converter : ut).toAttribute(e, o.type);
+      const i = (o.converter?.toAttribute !== void 0 ? o.converter : mt).toAttribute(e, o.type);
       this._$Em = t, i == null ? this.removeAttribute(n) : this.setAttribute(n, i), this._$Em = null;
     }
   }
   _$AK(t, e) {
     const o = this.constructor, n = o._$Eh.get(t);
     if (n !== void 0 && this._$Em !== n) {
-      const i = o.getPropertyOptions(n), r = typeof i.converter == "function" ? { fromAttribute: i.converter } : i.converter?.fromAttribute !== void 0 ? i.converter : ut;
+      const i = o.getPropertyOptions(n), r = typeof i.converter == "function" ? { fromAttribute: i.converter } : i.converter?.fromAttribute !== void 0 ? i.converter : mt;
       this._$Em = n;
       const c = r.fromAttribute(e, i.type);
       this[n] = c ?? this._$Ej?.get(n) ?? c, this._$Em = null;
@@ -188,7 +188,7 @@ let D = class extends HTMLElement {
   requestUpdate(t, e, o, n = !1, i) {
     if (t !== void 0) {
       const r = this.constructor;
-      if (n === !1 && (i = this[t]), o ??= r.getPropertyOptions(t), !((o.hasChanged ?? oe)(i, e) || o.useDefault && o.reflect && i === this._$Ej?.get(t) && !this.hasAttribute(r._$Eu(t, o)))) return;
+      if (n === !1 && (i = this[t]), o ??= r.getPropertyOptions(t), !((o.hasChanged ?? se)(i, e) || o.useDefault && o.reflect && i === this._$Ej?.get(t) && !this.hasAttribute(r._$Eu(t, o)))) return;
       this.C(t, e, o);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
@@ -256,75 +256,75 @@ let D = class extends HTMLElement {
   firstUpdated(t) {
   }
 };
-D.elementStyles = [], D.shadowRootOptions = { mode: "open" }, D[V("elementProperties")] = /* @__PURE__ */ new Map(), D[V("finalized")] = /* @__PURE__ */ new Map(), No?.({ ReactiveElement: D }), (bt.reactiveElementVersions ??= []).push("2.1.2");
+k.elementStyles = [], k.shadowRootOptions = { mode: "open" }, k[Z("elementProperties")] = /* @__PURE__ */ new Map(), k[Z("finalized")] = /* @__PURE__ */ new Map(), Po?.({ ReactiveElement: k }), (vt.reactiveElementVersions ??= []).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const se = globalThis, Ae = (s) => s, mt = se.trustedTypes, be = mt ? mt.createPolicy("lit-html", { createHTML: (s) => s }) : void 0, Ke = "$lit$", R = `lit$${Math.random().toFixed(9).slice(2)}$`, ze = "?" + R, Lo = `<${ze}>`, I = document, X = () => I.createComment(""), q = (s) => s === null || typeof s != "object" && typeof s != "function", ne = Array.isArray, Po = (s) => ne(s) || typeof s?.[Symbol.iterator] == "function", Mt = `[ 	
-\f\r]`, Y = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ye = /-->/g, ve = />/g, N = RegExp(`>|${Mt}(?:([^\\s"'>=/]+)(${Mt}*=${Mt}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), we = /'/g, Se = /"/g, Fe = /^(?:script|style|textarea|title)$/i, We = (s) => (t, ...e) => ({ _$litType$: s, strings: t, values: e }), O = We(1), _ = We(2), G = Symbol.for("lit-noChange"), m = Symbol.for("lit-nothing"), Ee = /* @__PURE__ */ new WeakMap(), P = I.createTreeWalker(I, 129);
-function Ye(s, t) {
-  if (!ne(s) || !s.hasOwnProperty("raw")) throw Error("invalid template strings array");
-  return be !== void 0 ? be.createHTML(t) : t;
+const ne = globalThis, be = (s) => s, pt = ne.trustedTypes, Ae = pt ? pt.createPolicy("lit-html", { createHTML: (s) => s }) : void 0, ze = "$lit$", T = `lit$${Math.random().toFixed(9).slice(2)}$`, Ye = "?" + T, Io = `<${Ye}>`, D = document, q = () => D.createComment(""), Q = (s) => s === null || typeof s != "object" && typeof s != "function", ie = Array.isArray, Do = (s) => ie(s) || typeof s?.[Symbol.iterator] == "function", Lt = `[ 	
+\f\r]`, j = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ve = /-->/g, we = />/g, L = RegExp(`>|${Lt}(?:([^\\s"'>=/]+)(${Lt}*=${Lt}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), Se = /'/g, Ee = /"/g, We = /^(?:script|style|textarea|title)$/i, je = (s) => (t, ...e) => ({ _$litType$: s, strings: t, values: e }), M = je(1), g = je(2), H = Symbol.for("lit-noChange"), m = Symbol.for("lit-nothing"), xe = /* @__PURE__ */ new WeakMap(), I = D.createTreeWalker(D, 129);
+function Ve(s, t) {
+  if (!ie(s) || !s.hasOwnProperty("raw")) throw Error("invalid template strings array");
+  return Ae !== void 0 ? Ae.createHTML(t) : t;
 }
-const Io = (s, t) => {
+const Uo = (s, t) => {
   const e = s.length - 1, o = [];
-  let n, i = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", r = Y;
+  let n, i = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", r = j;
   for (let c = 0; c < e; c++) {
     const a = s[c];
     let l, h, d = -1, f = 0;
-    for (; f < a.length && (r.lastIndex = f, h = r.exec(a), h !== null); ) f = r.lastIndex, r === Y ? h[1] === "!--" ? r = ye : h[1] !== void 0 ? r = ve : h[2] !== void 0 ? (Fe.test(h[2]) && (n = RegExp("</" + h[2], "g")), r = N) : h[3] !== void 0 && (r = N) : r === N ? h[0] === ">" ? (r = n ?? Y, d = -1) : h[1] === void 0 ? d = -2 : (d = r.lastIndex - h[2].length, l = h[1], r = h[3] === void 0 ? N : h[3] === '"' ? Se : we) : r === Se || r === we ? r = N : r === ye || r === ve ? r = Y : (r = N, n = void 0);
-    const g = r === N && s[c + 1].startsWith("/>") ? " " : "";
-    i += r === Y ? a + Lo : d >= 0 ? (o.push(l), a.slice(0, d) + Ke + a.slice(d) + R + g) : a + R + (d === -2 ? c : g);
+    for (; f < a.length && (r.lastIndex = f, h = r.exec(a), h !== null); ) f = r.lastIndex, r === j ? h[1] === "!--" ? r = ve : h[1] !== void 0 ? r = we : h[2] !== void 0 ? (We.test(h[2]) && (n = RegExp("</" + h[2], "g")), r = L) : h[3] !== void 0 && (r = L) : r === L ? h[0] === ">" ? (r = n ?? j, d = -1) : h[1] === void 0 ? d = -2 : (d = r.lastIndex - h[2].length, l = h[1], r = h[3] === void 0 ? L : h[3] === '"' ? Ee : Se) : r === Ee || r === Se ? r = L : r === ve || r === we ? r = j : (r = L, n = void 0);
+    const y = r === L && s[c + 1].startsWith("/>") ? " " : "";
+    i += r === j ? a + Io : d >= 0 ? (o.push(l), a.slice(0, d) + ze + a.slice(d) + T + y) : a + T + (d === -2 ? c : y);
   }
-  return [Ye(s, i + (s[e] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), o];
+  return [Ve(s, i + (s[e] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), o];
 };
-class Q {
+class tt {
   constructor({ strings: t, _$litType$: e }, o) {
     let n;
     this.parts = [];
     let i = 0, r = 0;
-    const c = t.length - 1, a = this.parts, [l, h] = Io(t, e);
-    if (this.el = Q.createElement(l, o), P.currentNode = this.el.content, e === 2 || e === 3) {
+    const c = t.length - 1, a = this.parts, [l, h] = Uo(t, e);
+    if (this.el = tt.createElement(l, o), I.currentNode = this.el.content, e === 2 || e === 3) {
       const d = this.el.content.firstChild;
       d.replaceWith(...d.childNodes);
     }
-    for (; (n = P.nextNode()) !== null && a.length < c; ) {
+    for (; (n = I.nextNode()) !== null && a.length < c; ) {
       if (n.nodeType === 1) {
-        if (n.hasAttributes()) for (const d of n.getAttributeNames()) if (d.endsWith(Ke)) {
-          const f = h[r++], g = n.getAttribute(d).split(R), v = /([.?@])?(.*)/.exec(f);
-          a.push({ type: 1, index: i, name: v[2], strings: g, ctor: v[1] === "." ? Bo : v[1] === "?" ? Do : v[1] === "@" ? ko : yt }), n.removeAttribute(d);
-        } else d.startsWith(R) && (a.push({ type: 6, index: i }), n.removeAttribute(d));
-        if (Fe.test(n.tagName)) {
-          const d = n.textContent.split(R), f = d.length - 1;
+        if (n.hasAttributes()) for (const d of n.getAttributeNames()) if (d.endsWith(ze)) {
+          const f = h[r++], y = n.getAttribute(d).split(T), w = /([.?@])?(.*)/.exec(f);
+          a.push({ type: 1, index: i, name: w[2], strings: y, ctor: w[1] === "." ? ko : w[1] === "?" ? Go : w[1] === "@" ? Ho : wt }), n.removeAttribute(d);
+        } else d.startsWith(T) && (a.push({ type: 6, index: i }), n.removeAttribute(d));
+        if (We.test(n.tagName)) {
+          const d = n.textContent.split(T), f = d.length - 1;
           if (f > 0) {
-            n.textContent = mt ? mt.emptyScript : "";
-            for (let g = 0; g < f; g++) n.append(d[g], X()), P.nextNode(), a.push({ type: 2, index: ++i });
-            n.append(d[f], X());
+            n.textContent = pt ? pt.emptyScript : "";
+            for (let y = 0; y < f; y++) n.append(d[y], q()), I.nextNode(), a.push({ type: 2, index: ++i });
+            n.append(d[f], q());
           }
         }
-      } else if (n.nodeType === 8) if (n.data === ze) a.push({ type: 2, index: i });
+      } else if (n.nodeType === 8) if (n.data === Ye) a.push({ type: 2, index: i });
       else {
         let d = -1;
-        for (; (d = n.data.indexOf(R, d + 1)) !== -1; ) a.push({ type: 7, index: i }), d += R.length - 1;
+        for (; (d = n.data.indexOf(T, d + 1)) !== -1; ) a.push({ type: 7, index: i }), d += T.length - 1;
       }
       i++;
     }
   }
   static createElement(t, e) {
-    const o = I.createElement("template");
+    const o = D.createElement("template");
     return o.innerHTML = t, o;
   }
 }
-function H(s, t, e = s, o) {
-  if (t === G) return t;
+function K(s, t, e = s, o) {
+  if (t === H) return t;
   let n = o !== void 0 ? e._$Co?.[o] : e._$Cl;
-  const i = q(t) ? void 0 : t._$litDirective$;
-  return n?.constructor !== i && (n?._$AO?.(!1), i === void 0 ? n = void 0 : (n = new i(s), n._$AT(s, e, o)), o !== void 0 ? (e._$Co ??= [])[o] = n : e._$Cl = n), n !== void 0 && (t = H(s, n._$AS(s, t.values), n, o)), t;
+  const i = Q(t) ? void 0 : t._$litDirective$;
+  return n?.constructor !== i && (n?._$AO?.(!1), i === void 0 ? n = void 0 : (n = new i(s), n._$AT(s, e, o)), o !== void 0 ? (e._$Co ??= [])[o] = n : e._$Cl = n), n !== void 0 && (t = K(s, n._$AS(s, t.values), n, o)), t;
 }
-class Uo {
+class Bo {
   constructor(t, e) {
     this._$AV = [], this._$AN = void 0, this._$AD = t, this._$AM = e;
   }
@@ -335,24 +335,24 @@ class Uo {
     return this._$AM._$AU;
   }
   u(t) {
-    const { el: { content: e }, parts: o } = this._$AD, n = (t?.creationScope ?? I).importNode(e, !0);
-    P.currentNode = n;
-    let i = P.nextNode(), r = 0, c = 0, a = o[0];
+    const { el: { content: e }, parts: o } = this._$AD, n = (t?.creationScope ?? D).importNode(e, !0);
+    I.currentNode = n;
+    let i = I.nextNode(), r = 0, c = 0, a = o[0];
     for (; a !== void 0; ) {
       if (r === a.index) {
         let l;
-        a.type === 2 ? l = new ot(i, i.nextSibling, this, t) : a.type === 1 ? l = new a.ctor(i, a.name, a.strings, this, t) : a.type === 6 && (l = new Go(i, this, t)), this._$AV.push(l), a = o[++c];
+        a.type === 2 ? l = new st(i, i.nextSibling, this, t) : a.type === 1 ? l = new a.ctor(i, a.name, a.strings, this, t) : a.type === 6 && (l = new Ko(i, this, t)), this._$AV.push(l), a = o[++c];
       }
-      r !== a?.index && (i = P.nextNode(), r++);
+      r !== a?.index && (i = I.nextNode(), r++);
     }
-    return P.currentNode = I, n;
+    return I.currentNode = D, n;
   }
   p(t) {
     let e = 0;
     for (const o of this._$AV) o !== void 0 && (o.strings !== void 0 ? (o._$AI(t, o, e), e += o.strings.length - 2) : o._$AI(t[e])), e++;
   }
 }
-class ot {
+class st {
   get _$AU() {
     return this._$AM?._$AU ?? this._$Cv;
   }
@@ -371,7 +371,7 @@ class ot {
     return this._$AB;
   }
   _$AI(t, e = this) {
-    t = H(this, t, e), q(t) ? t === m || t == null || t === "" ? (this._$AH !== m && this._$AR(), this._$AH = m) : t !== this._$AH && t !== G && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Po(t) ? this.k(t) : this._(t);
+    t = K(this, t, e), Q(t) ? t === m || t == null || t === "" ? (this._$AH !== m && this._$AR(), this._$AH = m) : t !== this._$AH && t !== H && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Do(t) ? this.k(t) : this._(t);
   }
   O(t) {
     return this._$AA.parentNode.insertBefore(t, this._$AB);
@@ -380,38 +380,38 @@ class ot {
     this._$AH !== t && (this._$AR(), this._$AH = this.O(t));
   }
   _(t) {
-    this._$AH !== m && q(this._$AH) ? this._$AA.nextSibling.data = t : this.T(I.createTextNode(t)), this._$AH = t;
+    this._$AH !== m && Q(this._$AH) ? this._$AA.nextSibling.data = t : this.T(D.createTextNode(t)), this._$AH = t;
   }
   $(t) {
-    const { values: e, _$litType$: o } = t, n = typeof o == "number" ? this._$AC(t) : (o.el === void 0 && (o.el = Q.createElement(Ye(o.h, o.h[0]), this.options)), o);
+    const { values: e, _$litType$: o } = t, n = typeof o == "number" ? this._$AC(t) : (o.el === void 0 && (o.el = tt.createElement(Ve(o.h, o.h[0]), this.options)), o);
     if (this._$AH?._$AD === n) this._$AH.p(e);
     else {
-      const i = new Uo(n, this), r = i.u(this.options);
+      const i = new Bo(n, this), r = i.u(this.options);
       i.p(e), this.T(r), this._$AH = i;
     }
   }
   _$AC(t) {
-    let e = Ee.get(t.strings);
-    return e === void 0 && Ee.set(t.strings, e = new Q(t)), e;
+    let e = xe.get(t.strings);
+    return e === void 0 && xe.set(t.strings, e = new tt(t)), e;
   }
   k(t) {
-    ne(this._$AH) || (this._$AH = [], this._$AR());
+    ie(this._$AH) || (this._$AH = [], this._$AR());
     const e = this._$AH;
     let o, n = 0;
-    for (const i of t) n === e.length ? e.push(o = new ot(this.O(X()), this.O(X()), this, this.options)) : o = e[n], o._$AI(i), n++;
+    for (const i of t) n === e.length ? e.push(o = new st(this.O(q()), this.O(q()), this, this.options)) : o = e[n], o._$AI(i), n++;
     n < e.length && (this._$AR(o && o._$AB.nextSibling, n), e.length = n);
   }
   _$AR(t = this._$AA.nextSibling, e) {
     for (this._$AP?.(!1, !0, e); t !== this._$AB; ) {
-      const o = Ae(t).nextSibling;
-      Ae(t).remove(), t = o;
+      const o = be(t).nextSibling;
+      be(t).remove(), t = o;
     }
   }
   setConnected(t) {
     this._$AM === void 0 && (this._$Cv = t, this._$AP?.(t));
   }
 }
-let yt = class {
+let wt = class {
   get tagName() {
     return this.element.tagName;
   }
@@ -424,11 +424,11 @@ let yt = class {
   _$AI(t, e = this, o, n) {
     const i = this.strings;
     let r = !1;
-    if (i === void 0) t = H(this, t, e, 0), r = !q(t) || t !== this._$AH && t !== G, r && (this._$AH = t);
+    if (i === void 0) t = K(this, t, e, 0), r = !Q(t) || t !== this._$AH && t !== H, r && (this._$AH = t);
     else {
       const c = t;
       let a, l;
-      for (t = i[0], a = 0; a < i.length - 1; a++) l = H(this, c[o + a], e, a), l === G && (l = this._$AH[a]), r ||= !q(l) || l !== this._$AH[a], l === m ? t = m : t !== m && (t += (l ?? "") + i[a + 1]), this._$AH[a] = l;
+      for (t = i[0], a = 0; a < i.length - 1; a++) l = K(this, c[o + a], e, a), l === H && (l = this._$AH[a]), r ||= !Q(l) || l !== this._$AH[a], l === m ? t = m : t !== m && (t += (l ?? "") + i[a + 1]), this._$AH[a] = l;
     }
     r && !n && this.j(t);
   }
@@ -436,7 +436,7 @@ let yt = class {
     t === m ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t ?? "");
   }
 };
-class Bo extends yt {
+class ko extends wt {
   constructor() {
     super(...arguments), this.type = 3;
   }
@@ -444,7 +444,7 @@ class Bo extends yt {
     this.element[this.name] = t === m ? void 0 : t;
   }
 }
-class Do extends yt {
+class Go extends wt {
   constructor() {
     super(...arguments), this.type = 4;
   }
@@ -452,12 +452,12 @@ class Do extends yt {
     this.element.toggleAttribute(this.name, !!t && t !== m);
   }
 }
-class ko extends yt {
+class Ho extends wt {
   constructor(t, e, o, n, i) {
     super(t, e, o, n, i), this.type = 5;
   }
   _$AI(t, e = this) {
-    if ((t = H(this, t, e, 0) ?? m) === G) return;
+    if ((t = K(this, t, e, 0) ?? m) === H) return;
     const o = this._$AH, n = t === m && o !== m || t.capture !== o.capture || t.once !== o.once || t.passive !== o.passive, i = t !== m && (o === m || n);
     n && this.element.removeEventListener(this.name, this, o), i && this.element.addEventListener(this.name, this, t), this._$AH = t;
   }
@@ -465,7 +465,7 @@ class ko extends yt {
     typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, t) : this._$AH.handleEvent(t);
   }
 }
-class Go {
+class Ko {
   constructor(t, e, o) {
     this.element = t, this.type = 6, this._$AN = void 0, this._$AM = e, this.options = o;
   }
@@ -473,17 +473,17 @@ class Go {
     return this._$AM._$AU;
   }
   _$AI(t) {
-    H(this, t);
+    K(this, t);
   }
 }
-const Ho = se.litHtmlPolyfillSupport;
-Ho?.(Q, ot), (se.litHtmlVersions ??= []).push("3.3.3");
-const Ko = (s, t, e) => {
+const Fo = ne.litHtmlPolyfillSupport;
+Fo?.(tt, st), (ne.litHtmlVersions ??= []).push("3.3.3");
+const zo = (s, t, e) => {
   const o = e?.renderBefore ?? t;
   let n = o._$litPart$;
   if (n === void 0) {
     const i = e?.renderBefore ?? null;
-    o._$litPart$ = n = new ot(t.insertBefore(X(), i), i, void 0, e ?? {});
+    o._$litPart$ = n = new st(t.insertBefore(q(), i), i, void 0, e ?? {});
   }
   return n._$AI(s), n;
 };
@@ -492,8 +492,8 @@ const Ko = (s, t, e) => {
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const ie = globalThis;
-class M extends D {
+const re = globalThis;
+class O extends k {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -503,7 +503,7 @@ class M extends D {
   }
   update(t) {
     const e = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t), this._$Do = Ko(e, this.renderRoot, this.renderOptions);
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t), this._$Do = zo(e, this.renderRoot, this.renderOptions);
   }
   connectedCallback() {
     super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -512,19 +512,19 @@ class M extends D {
     super.disconnectedCallback(), this._$Do?.setConnected(!1);
   }
   render() {
-    return G;
+    return H;
   }
 }
-M._$litElement$ = !0, M.finalized = !0, ie.litElementHydrateSupport?.({ LitElement: M });
-const zo = ie.litElementPolyfillSupport;
-zo?.({ LitElement: M });
-(ie.litElementVersions ??= []).push("4.2.2");
+O._$litElement$ = !0, O.finalized = !0, re.litElementHydrateSupport?.({ LitElement: O });
+const Yo = re.litElementPolyfillSupport;
+Yo?.({ LitElement: O });
+(re.litElementVersions ??= []).push("4.2.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const Fo = { attribute: !0, type: String, converter: ut, reflect: !1, hasChanged: oe }, Wo = (s = Fo, t, e) => {
+const Wo = { attribute: !0, type: String, converter: mt, reflect: !1, hasChanged: se }, jo = (s = Wo, t, e) => {
   const { kind: o, metadata: n } = e;
   let i = globalThis.litPropertyMetadata.get(n);
   if (i === void 0 && globalThis.litPropertyMetadata.set(n, i = /* @__PURE__ */ new Map()), o === "setter" && ((s = Object.create(s)).wrapped = !0), i.set(e.name, s), o === "accessor") {
@@ -545,8 +545,8 @@ const Fo = { attribute: !0, type: String, converter: ut, reflect: !1, hasChanged
   }
   throw Error("Unsupported decorator location: " + o);
 };
-function st(s) {
-  return (t, e) => typeof e == "object" ? Wo(s, t, e) : ((o, n, i) => {
+function nt(s) {
+  return (t, e) => typeof e == "object" ? jo(s, t, e) : ((o, n, i) => {
     const r = n.hasOwnProperty(i);
     return n.constructor.createProperty(i, o), r ? Object.getOwnPropertyDescriptor(n, i) : void 0;
   })(s, t, e);
@@ -556,29 +556,29 @@ function st(s) {
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-function F(s) {
-  return st({ ...s, state: !0, attribute: !1 });
+function Y(s) {
+  return nt({ ...s, state: !0, attribute: !1 });
 }
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const Yo = (s, t, e) => (e.configurable = !0, e.enumerable = !0, Reflect.decorate && typeof t != "object" && Object.defineProperty(s, t, e), e);
+const Vo = (s, t, e) => (e.configurable = !0, e.enumerable = !0, Reflect.decorate && typeof t != "object" && Object.defineProperty(s, t, e), e);
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-function je(s, t) {
+function Ze(s, t) {
   return (e, o, n) => {
     const i = (r) => r.renderRoot?.querySelector(s) ?? null;
-    return Yo(e, o, { get() {
+    return Vo(e, o, { get() {
       return i(this);
     } });
   };
 }
-const Kt = {
+const Ft = {
   A: "01110 10001 10001 11111 10001 10001 10001",
   B: "11110 10001 10001 11110 10001 10001 11110",
   C: "01110 10001 10000 10000 10000 10001 01110",
@@ -620,7 +620,7 @@ const Kt = {
   ".": "00000 00000 00000 00000 00000 01100 01100",
   "?": "01110 10001 00001 00010 00100 00000 00100",
   "'": "00100 00100 01000 00000 00000 00000 00000"
-}, jo = {
+}, Zo = {
   "‘": "'",
   // ‘ left single quote
   "’": "'",
@@ -647,7 +647,7 @@ const Kt = {
   // … ellipsis
   " ": " "
   // non-breaking space
-}, Vo = {
+}, Jo = {
   Ø: "O",
   Æ: "AE",
   Œ: "OE",
@@ -658,15 +658,15 @@ const Kt = {
   ı: "I"
   // ı dotless i
 };
-function xe(s) {
-  return s.toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split("").map((t) => jo[t] ?? Vo[t] ?? t).join("");
+function Ce(s) {
+  return s.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split("").map((t) => Zo[t] ?? Jo[t] ?? t).join("");
 }
-const Ve = 5, tt = 7, re = 6;
-function Ze(s) {
-  return (Kt[s.toUpperCase()] ?? Kt[" "]).split(" ");
+const Je = 5, et = 7, ae = 6;
+function Xe(s) {
+  return (Ft[s.toUpperCase()] ?? Ft[" "]).split(" ");
 }
-Object.keys(Kt).join("");
-function E(s, t) {
+Object.keys(Ft).join("");
+function x(s, t) {
   const e = [];
   for (const { x: o, y: n } of s)
     e.push(
@@ -674,35 +674,35 @@ function E(s, t) {
     );
   return e.join("");
 }
-function Ce(s, t, e, o) {
+function Re(s, t, e, o) {
   const n = [];
   let i = 0;
   for (const r of o) {
-    const c = Ze(r);
-    for (let a = 0; a < tt; a++)
-      for (let l = 0; l < Ve; l++)
+    const c = Xe(r);
+    for (let a = 0; a < et; a++)
+      for (let l = 0; l < Je; l++)
         c[a][l] === "1" && n.push({ x: s + (i + l) * e, y: t + a * e });
-    i += re;
+    i += ae;
   }
   return n;
 }
-function Nt(s, t, e, o, n) {
+function Pt(s, t, e, o, n) {
   const i = [];
   let r = 0;
   for (const c of o) {
     if (r >= n) break;
-    const a = Ze(c);
-    for (let l = 0; l < tt; l++)
-      for (let h = 0; h < Ve; h++)
+    const a = Xe(c);
+    for (let l = 0; l < et; l++)
+      for (let h = 0; h < Je; h++)
         a[l][h] === "1" && r + h < n && i.push({ x: s + (r + h) * e, y: t + l * e });
-    r += re;
+    r += ae;
   }
   return i;
 }
-function Re(s) {
-  return Math.max(0, Math.floor((s + 1) / re));
+function Te(s) {
+  return Math.max(0, Math.floor((s + 1) / ae));
 }
-const Zo = [
+const Xo = [
   [-17, 15],
   [-16, 21],
   [-10, 30],
@@ -726,7 +726,7 @@ const Zo = [
   [2, 5],
   [-8, 4],
   [-13, 9]
-], Jo = [
+], qo = [
   [-10, 36],
   [-9, 44],
   [-2, 48],
@@ -777,7 +777,7 @@ const Zo = [
   [12, 45],
   [3, 43],
   [-3, 37]
-], Xo = [
+], Qo = [
   [-168, 66],
   [-160, 58],
   [-150, 60],
@@ -806,7 +806,7 @@ const Zo = [
   [-110, 70],
   [-130, 70],
   [-155, 71]
-], qo = [
+], ts = [
   [-78, 8],
   [-72, 12],
   [-62, 10],
@@ -824,7 +824,7 @@ const Zo = [
   [-72, -20],
   [-77, -8],
   [-80, 0]
-], Qo = [
+], es = [
   [113, -22],
   [114, -33],
   [126, -32],
@@ -837,7 +837,7 @@ const Zo = [
   [137, -12],
   [130, -12],
   [122, -17]
-], ts = [
+], os = [
   [-45, 60],
   [-25, 70],
   [-20, 76],
@@ -845,8 +845,8 @@ const Zo = [
   [-50, 82],
   [-58, 75],
   [-55, 65]
-], es = [Zo, Jo, Xo, qo, Qo, ts], it = -170, Te = 180, rt = 78, Oe = -56;
-function os(s, t, e) {
+], ss = [Xo, qo, Qo, ts, es, os], rt = -170, Ne = 180, at = 78, Me = -56;
+function ns(s, t, e) {
   let o = !1;
   for (let n = 0, i = e.length; n < i; n++) {
     const [r, c] = e[n], [a, l] = e[(n + 1) % i];
@@ -857,64 +857,64 @@ function os(s, t, e) {
   }
   return o;
 }
-function ss(s, t, e, o, n, i) {
+function is(s, t, e, o, n, i) {
   const r = [];
   for (let a = 0; a < o; a++) {
-    const l = rt + (a + 0.5) / o * (Oe - rt);
+    const l = at + (a + 0.5) / o * (Me - at);
     for (let h = 0; h < e; h++) {
-      const d = it + (h + 0.5) / e * (Te - it);
-      es.some((f) => os(d, l, f)) && r.push({ x: s + h * n, y: t + a * n });
+      const d = rt + (h + 0.5) / e * (Ne - rt);
+      ss.some((f) => ns(d, l, f)) && r.push({ x: s + h * n, y: t + a * n });
     }
   }
   let c = null;
   if (i) {
-    const a = Math.round((i[0] - it) / (Te - it) * e - 0.5), l = Math.round((i[1] - rt) / (Oe - rt) * o - 0.5);
+    const a = Math.round((i[0] - rt) / (Ne - rt) * e - 0.5), l = Math.round((i[1] - at) / (Me - at) * o - 0.5);
     a >= 0 && a < e && l >= 0 && l < o && (c = { x: s + a * n, y: t + l * n });
   }
   return { land: r, pin: c };
 }
-const zt = 1e3, Lt = 1414, ns = "#0C0C0C", ae = "#F2DD00", Z = "#FFFFFF", pt = "#C4C4C4", is = "#3A3A3A", j = 70, Ft = 62, ft = 26, Wt = 96, $ = 9, Me = 2.7, Yt = 930 - (ft - 1) * $, rs = Yt - 5 * $ - 12, as = 232, jt = 87, cs = 9, ls = 111, hs = 46, ds = 207, Je = 1105, Xe = 3.4, qe = 22, us = 58, Qe = 1108, Vt = 2.85, ms = 1250, ps = 164, fs = 96, _s = "M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z", Ne = "M100 0 L58 -36 L58 -15 L4 -15 L4 15 L58 15 L58 36 Z", $s = ["ABCDEFGHIJ", "KLMNOPQRST", "UVWXYZ -. ", "0123456789"], gs = {
-  yellow: ae,
-  white: Z,
-  grey: pt,
-  gray: pt
+const zt = 1e3, It = 1414, rs = "#0C0C0C", ce = "#F2DD00", J = "#FFFFFF", _t = "#C4C4C4", as = "#3A3A3A", V = 70, Yt = 62, ft = 26, Wt = 96, $ = 9, Oe = 2.7, jt = 930 - (ft - 1) * $, cs = jt - 5 * $ - 12, ls = 232, Vt = 87, hs = 9, ds = 111, us = 46, ms = 207, qe = 1105, Qe = 3.4, to = 22, ps = 58, eo = 1108, Zt = 2.85, _s = 1250, fs = 164, gs = 96, $s = "M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z", Le = "M100 0 L58 -36 L58 -15 L4 -15 L4 15 L58 15 L58 36 Z", ys = ["ABCDEFGHIJ", "KLMNOPQRST", "UVWXYZ -. ", "0123456789"], bs = {
+  yellow: ce,
+  white: J,
+  grey: _t,
+  gray: _t
 };
-function to(s) {
-  const t = s.row_count, e = s.show_header ? 0 : ls, o = e + (s.show_column_labels ? 0 : hs), n = (cs - t) * jt + o, i = as - o, r = [i + (t - 1) * jt + tt * $];
-  s.show_map && r.push(Je + qe * Xe - n), s.show_legend && r.push(
-    Qe + 3 * 9 * Vt + tt * Vt - n
-  ), s.show_footer && r.push(ms - n);
+function oo(s) {
+  const t = s.row_count, e = s.show_header ? 0 : ds, o = e + (s.show_column_labels ? 0 : us), n = (hs - t) * Vt + o, i = ls - o, r = [i + (t - 1) * Vt + et * $];
+  s.show_map && r.push(qe + to * Qe - n), s.show_legend && r.push(
+    eo + 3 * 9 * Zt + et * Zt - n
+  ), s.show_footer && r.push(_s - n);
   const c = s.show_map || s.show_legend || s.show_footer;
   return {
     topShift: o,
     bottomShift: n,
-    labelsY: ds - e,
+    labelsY: ms - e,
     rowsY0: i,
     height: Math.round(
-      Math.max(...r) + (c ? ps : fs)
+      Math.max(...r) + (c ? fs : gs)
     )
   };
 }
 function As(s, t) {
   const e = s.color;
-  return e ? gs[e.toLowerCase()] ?? e : t % 2 === 0 ? ae : Z;
+  return e ? bs[e.toLowerCase()] ?? e : t % 2 === 0 ? ce : J;
 }
-function bs(s, t) {
+function vs(s, t) {
   const e = Number(s), o = Number(t);
   return Number.isFinite(e) && Number.isFinite(o) ? e - o : s.localeCompare(t);
 }
-function ys(s, t) {
+function ws(s, t) {
   if (t === "none")
     return s;
   const e = [], o = [];
   for (const n of s)
     (n.year ? e : o).push(n);
   return e.sort((n, i) => {
-    const r = bs(n.year, i.year);
+    const r = vs(n.year, i.year);
     return t === "desc" ? -r : r;
   }), [...e, ...o];
 }
-function vs(s, t) {
+function Ss(s, t) {
   const e = s.rows.map((o) => {
     let n = o.dest ?? null;
     if (o.entity) {
@@ -928,58 +928,58 @@ function vs(s, t) {
     }
     return { row: o, dest: n, year: i };
   });
-  return ys(e, s.sort).map(({ row: o, dest: n, year: i }, r) => {
-    const c = i === "" ? Wt : Ft;
+  return ws(e, s.sort).map(({ row: o, dest: n, year: i }, r) => {
+    const c = i === "" ? Wt : Yt;
     return {
-      dest: n === null ? null : xe(n).slice(0, Re(c)),
-      year: i === null || i === "" ? i : xe(i).slice(0, Re(ft)),
+      dest: n === null ? null : Ce(n).slice(0, Te(c)),
+      year: i === null || i === "" ? i : Ce(i).slice(0, Te(ft)),
       color: As(o, r)
     };
   });
 }
-function Pt(s, t, e) {
-  return _`<g transform="translate(${s - $ / 2} ${t - $ / 2})">
-    <rect width=${e * $} height=${tt * $} fill="url(#sc-dim)"/>
+function Dt(s, t, e) {
+  return g`<g transform="translate(${s - $ / 2} ${t - $ / 2})">
+    <rect width=${e * $} height=${et * $} fill="url(#sc-dim)"/>
   </g>`;
 }
-function ws(s, t, e) {
-  const o = s.row_count, { bottomShift: n, labelsY: i, rowsY0: r, height: c } = to(s), a = s.accent_color, l = s.unlit_color, h = /* @__PURE__ */ new Map(), d = (u, p) => {
-    const w = h.get(u);
-    w ? w.push(...p) : h.set(u, [...p]);
+function Es(s, t, e) {
+  const o = s.row_count, { bottomShift: n, labelsY: i, rowsY0: r, height: c } = oo(s), a = s.accent_color, l = s.unlit_color, h = /* @__PURE__ */ new Map(), d = (u, p) => {
+    const S = h.get(u);
+    S ? S.push(...p) : h.set(u, [...p]);
   }, f = [];
   for (let u = 0; u < o; u++) {
-    const p = r + u * jt, w = t[u], S = w?.dest ?? null, A = w?.year ?? null, y = w?.color ?? l;
-    if (A === "") {
-      f.push(Pt(j, p, Wt)), S && d(y, Nt(j, p, $, S, Wt));
+    const p = r + u * Vt, S = t[u], E = S?.dest ?? null, b = S?.year ?? null, v = S?.color ?? l;
+    if (b === "") {
+      f.push(Dt(V, p, Wt)), E && d(v, Pt(V, p, $, E, Wt));
       continue;
     }
-    f.push(Pt(j, p, Ft)), S && d(y, Nt(j, p, $, S, Ft)), d(A ? y : l, Ce(rs, p, $, "'")), f.push(Pt(Yt, p, ft)), A && d(y, Nt(Yt, p, $, A, ft));
+    f.push(Dt(V, p, Yt)), E && d(v, Pt(V, p, $, E, Yt)), d(b ? v : l, Re(cs, p, $, "'")), f.push(Dt(jt, p, ft)), b && d(v, Pt(jt, p, $, b, ft));
   }
-  let g = [];
+  let y = [];
   if (s.show_map) {
-    const { land: u, pin: p } = ss(
+    const { land: u, pin: p } = is(
       540,
-      Je - n,
-      us,
-      qe,
-      Xe,
+      qe - n,
+      ps,
+      to,
+      Qe,
       s.pin
     );
-    g = [
-      _`<path d=${E(u, 1.35)} fill="#575757"/>`,
+    y = [
+      g`<path d=${x(u, 1.35)} fill="#575757"/>`,
       ...p ? [
-        _`<circle cx=${p.x} cy=${p.y} r=${1.35 * 1.9} fill=${a}/>`
+        g`<circle cx=${p.x} cy=${p.y} r=${1.35 * 1.9} fill=${a}/>`
       ] : []
     ];
   }
-  let v = "";
+  let w = "";
   if (s.show_legend) {
-    const u = Vt, p = [];
-    $s.forEach((w, S) => {
-      p.push(...Ce(761, Qe + S * 9 * u - n, u, w));
-    }), v = E(p, 1.15);
+    const u = Zt, p = [];
+    ys.forEach((S, E) => {
+      p.push(...Re(761, eo + E * 9 * u - n, u, S));
+    }), w = x(p, 1.15);
   }
-  return _`
+  return g`
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 ${zt} ${c}"
@@ -994,63 +994,63 @@ function ws(s, t, e) {
           height=${$}
           patternUnits="userSpaceOnUse"
         >
-          <circle cx=${$ / 2} cy=${$ / 2} r=${Me} fill=${l}/>
+          <circle cx=${$ / 2} cy=${$ / 2} r=${Oe} fill=${l}/>
         </pattern>
       </defs>
 
       <rect width=${zt} height=${c} fill=${s.background_color}/>
 
-      ${s.show_header ? _`<g id="sc-header" transform="translate(${e.headerShift} 0)">
+      ${s.show_header ? g`<g id="sc-header" transform="translate(${e.headerShift} 0)">
             <rect x="228" y="96" width="60" height="60" rx="14" fill=${a}/>
             <g transform="translate(258,126) scale(1.55) rotate(45) translate(-12,-12)">
-              <path d=${_s} fill=${s.background_color}/>
+              <path d=${$s} fill=${s.background_color}/>
             </g>
             <text x="306" y="148" font-size="62" font-weight="700"
-                  letter-spacing="1.5" fill=${Z}>${s.title}</text>
+                  letter-spacing="1.5" fill=${J}>${s.title}</text>
           </g>` : ""}
 
-      ${s.show_column_labels ? _`
-            <text x=${j} y=${i} font-size="25" letter-spacing="2.5"
-                  fill=${pt}>${s.dest_label}</text>
+      ${s.show_column_labels ? g`
+            <text x=${V} y=${i} font-size="25" letter-spacing="2.5"
+                  fill=${_t}>${s.dest_label}</text>
             <text x="930" y=${i} font-size="25" letter-spacing="2.5"
-                  text-anchor="end" fill=${pt}>${s.year_label}</text>` : ""}
+                  text-anchor="end" fill=${_t}>${s.year_label}</text>` : ""}
 
       ${f}
       ${[...h.entries()].map(
-    ([u, p]) => _`<path d=${E(p, Me)} fill=${u}/>`
+    ([u, p]) => g`<path d=${x(p, Oe)} fill=${u}/>`
   )}
 
-      ${s.show_footer ? _`
+      ${s.show_footer ? g`
             <g transform="translate(122,${1128 - n}) rotate(-135) scale(0.46)">
-              <path d=${Ne} fill=${a}/>
+              <path d=${Le} fill=${a}/>
             </g>
             <text x="185" y=${1130 - n} font-size="30" font-weight="600"
-                  fill=${Z}>${s.footer_title}</text>
+                  fill=${J}>${s.footer_title}</text>
             <text x="185" y=${1152 - n} font-size="13" letter-spacing="0.4"
                   fill="#8C8C8C">${s.footer_subtitle}</text>
 
             <g transform="translate(98,${1210 - n}) scale(0.46)">
-              <path d=${Ne} fill=${a}/>
+              <path d=${Le} fill=${a}/>
             </g>
             <text x="185" y=${1218 - n} font-size="30" font-weight="600"
-                  fill=${Z}>${s.footer2_title}</text>
+                  fill=${J}>${s.footer2_title}</text>
             <text x="185" y=${1240 - n} font-size="13" letter-spacing="0.4"
                   fill="#8C8C8C">${s.footer2_subtitle}</text>` : ""}
 
-      ${g}
-      ${v ? _`<path d=${v} fill=${a}/>` : ""}
+      ${y}
+      ${w ? g`<path d=${w} fill=${a}/>` : ""}
     </svg>
   `;
 }
-const eo = "1.0.4", ce = "smaail-card", Ss = "smaail-card-editor", Es = "Smaailcard", le = "smaail-world-card", xs = "smaail-world-card-editor", Cs = "Smaail World Map";
-function vt(s, t) {
+const so = "1.1.0", le = "smaail-card", xs = "smaail-card-editor", Cs = "Smaailcard", he = "smaail-world-card", Rs = "smaail-world-card-editor", Ts = "Smaail World Map";
+function St(s, t) {
   customElements.get(s) || customElements.define(s, t);
 }
-function oo(s) {
+function no(s) {
   const t = window;
   t.customCards ??= [], t.customCards.some((e) => e.type === s.type) || t.customCards.push(s);
 }
-const L = 100, Zt = 40, wt = ["North America", "South America", "Europe", "Africa", "Asia", "Oceania"], so = [18, 13, 39, 51, 47, 7], et = [
+const P = 100, Jt = 40, Et = ["North America", "South America", "Europe", "Africa", "Asia", "Oceania"], io = [18, 13, 39, 51, 47, 7], ot = [
   { iso2: "FJ", iso3: "FJI", name: "Fiji", cont: 5 },
   { iso2: "TZ", iso3: "TZA", name: "Tanzania", cont: 3 },
   { iso2: "EH", iso3: "ESH", name: "Western Sahara", cont: 3 },
@@ -1226,7 +1226,7 @@ const L = 100, Zt = 40, wt = ["North America", "South America", "Europe", "Afric
   { iso2: "XK", iso3: "XKX", name: "Kosovo", cont: 2 },
   { iso2: "TT", iso3: "TTO", name: "Trinidad and Tobago", cont: 0 },
   { iso2: "SS", iso3: "SSD", name: "South Sudan", cont: 3 }
-], It = [
+], Ut = [
   0,
   22,
   4,
@@ -2469,10 +2469,10 @@ const L = 100, Zt = 40, wt = ["North America", "South America", "Europe", "Afric
   1,
   0,
   169
-], T = 1e3, Rs = "#0C0C0C", Ts = "#F2DD00", Os = "#3A3A3A", Ms = "#FFFFFF", no = "#8C8C8C", Le = 48, at = 42, C = 66, Ut = 300, Ns = 52, J = 9, dt = 2.7, Ls = (L - 1) * J, Ps = Math.round((T - Ls) / 2), io = 150, _t = 6.6, ct = 2, ro = 4, ao = 13, lt = 26, co = 46, lo = 18, Is = 210, Jt = 15;
-function Us(s, t, e, o) {
+], N = 1e3, Ns = "#0C0C0C", Ms = "#F2DD00", Os = "#3A3A3A", Ls = "#FFFFFF", ro = "#8C8C8C", Pe = 48, ct = 42, R = 66, Bt = 300, Ps = 52, X = 9, ut = 2.7, Is = (P - 1) * X, Ds = Math.round((N - Is) / 2), ao = 150, gt = 6.6, lt = 2, co = 4, lo = 13, ht = 26, ho = 46, uo = 18, Us = 210, Xt = 15;
+function Bs(s, t, e, o) {
   const n = e * 0.13;
-  return _`
+  return g`
     <g fill="none" stroke=${o} stroke-width=${n}>
       <circle cx=${s} cy=${t} r=${e} />
       <ellipse cx=${s} cy=${t} rx=${e * 0.42} ry=${e} />
@@ -2481,121 +2481,121 @@ function Us(s, t, e, o) {
       <path d=${`M${s - e * 0.86} ${t + e * 0.5} Q ${s} ${t + e * 0.28} ${s + e * 0.86} ${t + e * 0.5}`} />
     </g>`;
 }
-let Bt = null;
-function Bs() {
-  if (Bt)
-    return Bt;
+let kt = null;
+function ks() {
+  if (kt)
+    return kt;
   const s = [];
-  for (let t = 0; t < It.length; t += 2) {
-    const e = It[t];
-    for (let o = It[t + 1]; o > 0; o--)
+  for (let t = 0; t < Ut.length; t += 2) {
+    const e = Ut[t];
+    for (let o = Ut[t + 1]; o > 0; o--)
       s.push(e);
   }
-  return Bt = s, s;
+  return kt = s, s;
 }
-function ho(s) {
-  return Math.max(1, Math.ceil(s / ro));
+function mo(s) {
+  return Math.max(1, Math.ceil(s / co));
 }
-function Ds(s) {
-  return s.length * ao * 0.62;
+function Gs(s) {
+  return s.length * lo * 0.62;
 }
-function Dt(s) {
-  const t = ho(so[s]) * _t;
-  return Math.max(t, Ds(wt[s].toUpperCase()));
+function Gt(s) {
+  const t = mo(io[s]) * gt;
+  return Math.max(t, Gs(Et[s].toUpperCase()));
 }
-function Pe(s, t, e, o, n, i) {
-  const r = so[s], c = ho(r);
+function Ie(s, t, e, o, n, i) {
+  const r = io[s], c = mo(r);
   for (let a = 0; a < r; a++) {
     const l = a % c, h = Math.floor(a / c);
-    i(a < n, [{ x: t + l * _t, y: o + h * _t }]);
+    i(a < n, [{ x: t + l * gt, y: o + h * gt }]);
   }
-  return _`<text x=${t} y=${e} font-size=${ao}
-    letter-spacing="0.5" fill=${no}>${wt[s].toUpperCase()}</text>`;
+  return g`<text x=${t} y=${e} font-size=${lo}
+    letter-spacing="0.5" fill=${ro}>${Et[s].toUpperCase()}</text>`;
 }
-function uo(s) {
-  const e = (s.show_header ? io + (s.show_stats ? 22 : 0) : 56) + (Zt - 1) * J + dt;
+function po(s) {
+  const e = (s.show_header ? ao + (s.show_stats ? 22 : 0) : 56) + (Jt - 1) * X + ut;
   let o = e + 40;
-  return s.show_meters && (o = e + co + lo + ro * _t, s.show_overview && (o += Jt + 6)), { height: Math.round(o + 44) };
+  return s.show_meters && (o = e + ho + uo + co * gt, s.show_overview && (o += Xt + 6)), { height: Math.round(o + 44) };
 }
-function ks(s, t, e, o) {
-  const n = s.accent_color, i = s.land_color, r = s.background_color, { height: c } = uo(s), a = s.show_header ? io + (s.show_stats ? 22 : 0) : 56, l = Bs(), h = [], d = [];
-  for (let A = 0; A < l.length; A++) {
-    const y = l[A];
-    if (!y)
+function Hs(s, t, e, o) {
+  const n = s.accent_color, i = s.land_color, r = s.background_color, { height: c } = po(s), a = s.show_header ? ao + (s.show_stats ? 22 : 0) : 56, l = ks(), h = [], d = [];
+  for (let b = 0; b < l.length; b++) {
+    const v = l[b];
+    if (!v)
       continue;
-    const nt = {
-      x: Ps + A % L * J,
-      y: a + Math.floor(A / L) * J
+    const it = {
+      x: Ds + b % P * X,
+      y: a + Math.floor(b / P) * X
     };
-    (t.cells.has(y) ? d : h).push(nt);
+    (t.cells.has(v) ? d : h).push(it);
   }
-  const f = [], g = [], v = [], u = { dim: [], lit: [] };
+  const f = [], y = [], w = [], u = { dim: [], lit: [] };
   let p = "";
   if (s.show_meters) {
-    const y = a + (Zt - 1) * J + dt + co, nt = y + lo, ue = (b, x) => (b ? v : g).push(...x), go = [0, 1, 2], xt = [3, 4, 5];
-    let Ct = Le;
-    for (const b of go)
-      f.push(Pe(b, Ct, y, nt, t.perContinent[b], ue)), Ct += Dt(b) + lt;
-    const Rt = Ct - lt, Ao = xt.reduce((b, x) => b + Dt(x), 0) + lt * (xt.length - 1);
-    let Tt = T - Le - Ao;
-    const Ot = Tt;
-    for (const b of xt)
+    const v = a + (Jt - 1) * X + ut + ho, it = v + uo, me = (A, C) => (A ? w : y).push(...C), bo = [0, 1, 2], Rt = [3, 4, 5];
+    let Tt = Pe;
+    for (const A of bo)
+      f.push(Ie(A, Tt, v, it, t.perContinent[A], me)), Tt += Gt(A) + ht;
+    const Nt = Tt - ht, Ao = Rt.reduce((A, C) => A + Gt(C), 0) + ht * (Rt.length - 1);
+    let Mt = N - Pe - Ao;
+    const Ot = Mt;
+    for (const A of Rt)
       f.push(
-        Pe(b, Tt, y, nt, t.perContinent[b], ue)
-      ), Tt += Dt(b) + lt;
+        Ie(A, Mt, v, it, t.perContinent[A], me)
+      ), Mt += Gt(A) + ht;
     if (s.show_overview) {
-      const b = Ot - Rt - 40, x = Math.max(1.2, Math.min(Is, b) / (L - 1)), bo = (L - 1) * x, yo = (Rt + Ot) / 2 - bo / 2, me = y - 6;
+      const A = Ot - Nt - 40, C = Math.max(1.2, Math.min(Us, A) / (P - 1)), vo = (P - 1) * C, wo = (Nt + Ot) / 2 - vo / 2, pe = v - 6;
       for (let W = 0; W < l.length; W++) {
-        const pe = l[W];
-        if (!pe)
+        const _e = l[W];
+        if (!_e)
           continue;
-        const vo = {
-          x: yo + W % L * x,
-          y: me + Math.floor(W / L) * x
+        const So = {
+          x: wo + W % P * C,
+          y: pe + Math.floor(W / P) * C
         };
-        (t.cells.has(pe) ? u.lit : u.dim).push(vo);
+        (t.cells.has(_e) ? u.lit : u.dim).push(So);
       }
-      s.caption && (p = _`<text x=${(Rt + Ot) / 2}
-          y=${me + Zt * x + Jt + 2} font-size=${Jt}
-          letter-spacing="2" text-anchor="middle" fill=${no}>${s.caption}</text>`);
+      s.caption && (p = g`<text x=${(Nt + Ot) / 2}
+          y=${pe + Jt * C + Xt + 2} font-size=${Xt}
+          letter-spacing="2" text-anchor="middle" fill=${ro}>${s.caption}</text>`);
     }
   }
-  const w = `${e} ${e === 1 ? "COUNTRY" : "COUNTRIES"} · ${t.continentsTouched}/${wt.length} CONTINENTS`, S = [...t.indices].map((A) => et[A].name).sort();
-  return _`
+  const S = `${e} ${e === 1 ? "COUNTRY" : "COUNTRIES"} · ${t.continentsTouched}/${Et.length} CONTINENTS`, E = [...t.indices].map((b) => ot[b].name).sort();
+  return g`
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 ${T} ${c}"
+      viewBox="0 0 ${N} ${c}"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label=${`${s.title}: ${e} countries visited${S.length ? " — " + S.join(", ") : ""}`}
+      aria-label=${`${s.title}: ${e} countries visited${E.length ? " — " + E.join(", ") : ""}`}
     >
-      <rect width=${T} height=${c} fill=${r} />
+      <rect width=${N} height=${c} fill=${r} />
 
-      ${s.show_header ? _`<g id="swc-header" transform="translate(${o.headerShift} 0)">
-            <rect x=${Ut} y=${at} width=${C} height=${C} rx="15" fill=${n}/>
-            ${Us(Ut + C / 2, at + C / 2, C * 0.34, r)}
-            <text x=${Ut + C + 22} y=${at + C * 0.74}
-                  font-size=${Ns} font-weight="700" letter-spacing="2"
-                  fill=${Ms}>${s.title}</text>
+      ${s.show_header ? g`<g id="swc-header" transform="translate(${o.headerShift} 0)">
+            <rect x=${Bt} y=${ct} width=${R} height=${R} rx="15" fill=${n}/>
+            ${Bs(Bt + R / 2, ct + R / 2, R * 0.34, r)}
+            <text x=${Bt + R + 22} y=${ct + R * 0.74}
+                  font-size=${Ps} font-weight="700" letter-spacing="2"
+                  fill=${Ls}>${s.title}</text>
           </g>` : ""}
 
-      ${s.show_header && s.show_stats ? _`<text x=${T / 2} y=${at + C + 30} font-size="16"
-              letter-spacing="3" text-anchor="middle" fill=${n}>${w}</text>` : ""}
+      ${s.show_header && s.show_stats ? g`<text x=${N / 2} y=${ct + R + 30} font-size="16"
+              letter-spacing="3" text-anchor="middle" fill=${n}>${S}</text>` : ""}
 
-      <path d=${E(h, dt)} fill=${i}/>
-      <path d=${E(d, dt)} fill=${n}/>
+      <path d=${x(h, ut)} fill=${i}/>
+      <path d=${x(d, ut)} fill=${n}/>
 
-      ${u.dim.length ? _`<path d=${E(u.dim, ct * 0.62)} fill=${i} opacity="0.7"/>` : ""}
-      ${u.lit.length ? _`<path d=${E(u.lit, ct * 0.62)} fill=${n}/>` : ""}
+      ${u.dim.length ? g`<path d=${x(u.dim, lt * 0.62)} fill=${i} opacity="0.7"/>` : ""}
+      ${u.lit.length ? g`<path d=${x(u.lit, lt * 0.62)} fill=${n}/>` : ""}
       ${p}
 
       ${f}
-      <path d=${E(g, ct)} fill=${i}/>
-      <path d=${E(v, ct)} fill=${n}/>
+      <path d=${x(y, lt)} fill=${i}/>
+      <path d=${x(w, lt)} fill=${n}/>
     </svg>
   `;
 }
-const k = [5.12, 52.09], Xt = {
+const G = [5.12, 52.09], qt = {
   title: "DEPARTURES",
   dest_label: "DESTINATION",
   year_label: "YEAR",
@@ -2606,15 +2606,15 @@ const k = [5.12, 52.09], Xt = {
   show_footer: !0,
   show_map: !0,
   show_legend: !0,
-  pin: k,
+  pin: G,
   footer_title: "Travel board",
   footer_subtitle: "Mapping memories, one destination at a time",
   footer2_title: "My next adventure",
   footer2_subtitle: "Just one ticket away",
-  accent_color: ae,
-  background_color: ns,
-  unlit_color: is
-}, qt = {
+  accent_color: ce,
+  background_color: rs,
+  unlit_color: as
+}, Qt = {
   title: "WORLD MAP",
   countries: [],
   show_header: !0,
@@ -2622,20 +2622,20 @@ const k = [5.12, 52.09], Xt = {
   show_overview: !0,
   show_stats: !0,
   caption: "",
-  accent_color: Ts,
-  background_color: Rs,
+  accent_color: Ms,
+  background_color: Ns,
   land_color: Os
 };
-function mo(s, t, e) {
+function _o(s, t, e) {
   const o = { ...s };
   for (const [n, i] of Object.entries(e))
     !(n in t) && o[n] === i && delete o[n];
   return o;
 }
-function po(s) {
+function fo(s) {
   return s.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z0-9]+/g, " ").trim();
 }
-const Gs = {
+const Ks = {
   USA: "US",
   "UNITED STATES OF AMERICA": "US",
   AMERICA: "US",
@@ -2674,41 +2674,41 @@ const Gs = {
   VATICAN: "VA"
   // not in the 110m data; resolves to unknown, listed as such
 };
-let kt = null;
-function Hs() {
-  if (kt)
-    return kt;
+let Ht = null;
+function Fs() {
+  if (Ht)
+    return Ht;
   const s = /* @__PURE__ */ new Map();
-  et.forEach((e, o) => {
+  ot.forEach((e, o) => {
     for (const n of [e.iso2, e.iso3, e.name]) {
-      const i = po(n);
+      const i = fo(n);
       i && !s.has(i) && s.set(i, o);
     }
   });
-  const t = new Map(et.map((e, o) => [e.iso2, o]));
-  for (const [e, o] of Object.entries(Gs)) {
+  const t = new Map(ot.map((e, o) => [e.iso2, o]));
+  for (const [e, o] of Object.entries(Ks)) {
     const n = t.get(o);
     n !== void 0 && !s.has(e) && s.set(e, n);
   }
-  return kt = s, s;
+  return Ht = s, s;
 }
-function Ks(s) {
-  const t = Hs(), e = /* @__PURE__ */ new Set(), o = [], n = /* @__PURE__ */ new Set();
+function zs(s) {
+  const t = Fs(), e = /* @__PURE__ */ new Set(), o = [], n = /* @__PURE__ */ new Set();
   for (const a of s) {
-    const l = po(String(a ?? ""));
+    const l = fo(String(a ?? ""));
     if (!l || n.has(l))
       continue;
     n.add(l);
     const h = t.get(l);
     h === void 0 ? o.push(String(a).trim()) : e.add(h);
   }
-  const i = new Array(wt.length).fill(0);
+  const i = new Array(Et.length).fill(0);
   for (const a of e)
-    i[et[a].cont] += 1;
+    i[ot[a].cont] += 1;
   const r = new Set([...e].map((a) => a + 1)), c = i.filter((a) => a > 0).length;
   return { cells: r, indices: e, perContinent: i, unknown: o, continentsTouched: c };
 }
-function zs(s) {
+function Ys(s) {
   if (Array.isArray(s))
     return s.map((o) => String(o));
   const t = String(s ?? "").trim();
@@ -2729,30 +2729,30 @@ function zs(s) {
   }
   return e;
 }
-var Fs = Object.defineProperty, St = (s, t, e, o) => {
+var Ws = Object.defineProperty, xt = (s, t, e, o) => {
   for (var n = void 0, i = s.length - 1, r; i >= 0; i--)
     (r = s[i]) && (n = r(t, e, n) || n);
-  return n && Fs(t, e, n), n;
+  return n && Ws(t, e, n), n;
 };
-oo({
-  type: le,
-  name: Cs,
+no({
+  type: he,
+  name: Ts,
   description: "Dot-matrix world map: the countries you have visited, lit up by continent.",
   preview: !0,
   documentationURL: "https://github.com/timoverwoest/smaailcard"
 });
-const Ws = qt, $t = class $t extends M {
+const js = Qt, yt = class yt extends O {
   constructor() {
     super(...arguments), this._headerShift = 0;
   }
   static async getConfigElement() {
-    return await Promise.resolve().then(() => tn), document.createElement(
+    return await Promise.resolve().then(() => sn), document.createElement(
       "smaail-world-card-editor"
     );
   }
   static getStubConfig() {
     return {
-      type: `custom:${le}`,
+      type: `custom:${he}`,
       countries: ["NL", "BE", "FR", "ES", "US", "MA", "JP", "AU", "BR", "ZA"]
     };
   }
@@ -2762,23 +2762,23 @@ const Ws = qt, $t = class $t extends M {
     if (t.countries !== void 0 && !Array.isArray(t.countries))
       throw new Error("`countries` must be a list");
     this._config = {
-      ...Ws,
+      ...js,
       ...t,
       countries: (t.countries ?? []).map((e) => String(e))
     }, this._measuredTitle = void 0;
   }
   getCardSize() {
-    return Math.max(3, Math.round(this._height() / T * 14));
+    return Math.max(3, Math.round(this._height() / N * 14));
   }
   getGridOptions() {
     return {
       columns: 12,
       min_columns: 6,
-      rows: Math.max(4, Math.round(this._height() / T * 20))
+      rows: Math.max(4, Math.round(this._height() / N * 20))
     };
   }
   _height() {
-    return this._config ? uo(this._config).height : 700;
+    return this._config ? po(this._config).height : 700;
   }
   shouldUpdate(t) {
     if (!this._config)
@@ -2801,7 +2801,7 @@ const Ws = qt, $t = class $t extends M {
       const o = this.hass.states[t.countries_entity];
       if (o) {
         const n = t.countries_attribute ? o.attributes[t.countries_attribute] : o.state;
-        e.push(...zs(n));
+        e.push(...Ys(n));
       }
     }
     return e;
@@ -2809,10 +2809,10 @@ const Ws = qt, $t = class $t extends M {
   render() {
     if (!this._config)
       return m;
-    const t = Ks(this._visitedInputs());
-    return O`
+    const t = zs(this._visitedInputs());
+    return M`
       <ha-card>
-        ${ks(this._config, t, t.indices.size, {
+        ${Hs(this._config, t, t.indices.size, {
       headerShift: this._headerShift
     })}
       </ha-card>
@@ -2838,11 +2838,11 @@ const Ws = qt, $t = class $t extends M {
     if (!o.width)
       return;
     this._measuredTitle = t.title;
-    const n = Math.round((T / 2 - (o.x + o.width / 2)) * 100) / 100;
+    const n = Math.round((N / 2 - (o.x + o.width / 2)) * 100) / 100;
     n !== this._headerShift && (this._headerShift = n);
   }
 };
-$t.version = eo, $t.styles = At`
+yt.version = so, yt.styles = At`
     ha-card {
       overflow: hidden;
       padding: 0;
@@ -2856,42 +2856,42 @@ $t.version = eo, $t.styles = At`
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
   `;
-let U = $t;
-St([
-  st({ attribute: !1 })
+let U = yt;
+xt([
+  nt({ attribute: !1 })
 ], U.prototype, "hass");
-St([
-  F()
+xt([
+  Y()
 ], U.prototype, "_config");
-St([
-  F()
+xt([
+  Y()
 ], U.prototype, "_headerShift");
-St([
-  je("#swc-header")
+xt([
+  Ze("#swc-header")
 ], U.prototype, "_header");
-vt(le, U);
-var Ys = Object.defineProperty, Et = (s, t, e, o) => {
+St(he, U);
+var Vs = Object.defineProperty, Ct = (s, t, e, o) => {
   for (var n = void 0, i = s.length - 1, r; i >= 0; i--)
     (r = s[i]) && (n = r(t, e, n) || n);
-  return n && Ys(t, e, n), n;
+  return n && Vs(t, e, n), n;
 };
-oo({
-  type: ce,
-  name: Es,
+no({
+  type: le,
+  name: Cs,
   description: "Dot-matrix departures board: a travel poster of the places you have been.",
   preview: !0,
   documentationURL: "https://github.com/timoverwoest/smaailcard"
 });
-const Gt = Xt, gt = class gt extends M {
+const Kt = qt, bt = class bt extends O {
   constructor() {
     super(...arguments), this._headerShift = 0;
   }
   static async getConfigElement() {
-    return await Promise.resolve().then(() => cn), document.createElement("smaail-card-editor");
+    return await Promise.resolve().then(() => hn), document.createElement("smaail-card-editor");
   }
   static getStubConfig() {
     return {
-      type: `custom:${ce}`,
+      type: `custom:${le}`,
       rows: [
         { dest: "NEW YORK", year: "1997" },
         { dest: "MADRID", year: "2000" },
@@ -2908,33 +2908,33 @@ const Gt = Xt, gt = class gt extends M {
     if (t.rows !== void 0 && !Array.isArray(t.rows))
       throw new Error("`rows` must be a list");
     const e = (t.rows ?? []).map(
-      (n) => typeof n == "string" ? Vs(n) : n
-    ), o = js(
-      t.row_count ?? Math.max(Gt.row_count, e.length),
+      (n) => typeof n == "string" ? Js(n) : n
+    ), o = Zs(
+      t.row_count ?? Math.max(Kt.row_count, e.length),
       1,
       40
     );
     this._config = {
-      ...Gt,
+      ...Kt,
       ...t,
       rows: e,
       row_count: o,
-      pin: t.pin === void 0 ? Gt.pin : t.pin
+      pin: t.pin === void 0 ? Kt.pin : t.pin
     }, this._measuredTitle = void 0;
   }
   getCardSize() {
-    return Math.max(3, Math.round(this._height() / Lt * 14));
+    return Math.max(3, Math.round(this._height() / It * 14));
   }
   /** Sensible default footprint in a Sections dashboard. */
   getGridOptions() {
     return {
       columns: 12,
       min_columns: 6,
-      rows: Math.max(4, Math.round(this._height() / Lt * 16))
+      rows: Math.max(4, Math.round(this._height() / It * 16))
     };
   }
   _height() {
-    return this._config ? to(this._config).height : Lt;
+    return this._config ? oo(this._config).height : It;
   }
   shouldUpdate(t) {
     if (!this._config)
@@ -2955,10 +2955,10 @@ const Gt = Xt, gt = class gt extends M {
   render() {
     if (!this._config)
       return m;
-    const t = vs(this._config, this.hass?.states ?? {});
-    return O`
+    const t = Ss(this._config, this.hass?.states ?? {});
+    return M`
       <ha-card>
-        ${ws(this._config, t, { headerShift: this._headerShift })}
+        ${Es(this._config, t, { headerShift: this._headerShift })}
       </ha-card>
     `;
   }
@@ -2990,7 +2990,7 @@ const Gt = Xt, gt = class gt extends M {
     n !== this._headerShift && (this._headerShift = n);
   }
 };
-gt.version = eo, gt.styles = At`
+bt.version = so, bt.styles = At`
     ha-card {
       overflow: hidden;
       /* The board brings its own background; let it run to the card edges. */
@@ -3005,43 +3005,158 @@ gt.version = eo, gt.styles = At`
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
   `;
-let B = gt;
-Et([
-  st({ attribute: !1 })
+let B = bt;
+Ct([
+  nt({ attribute: !1 })
 ], B.prototype, "hass");
-Et([
-  F()
+Ct([
+  Y()
 ], B.prototype, "_config");
-Et([
-  F()
+Ct([
+  Y()
 ], B.prototype, "_headerShift");
-Et([
-  je("#sc-header")
+Ct([
+  Ze("#sc-header")
 ], B.prototype, "_header");
-vt(ce, B);
-function js(s, t, e) {
+St(le, B);
+function Zs(s, t, e) {
   return Math.min(e, Math.max(t, s));
 }
-function Vs(s) {
+function Js(s) {
   const t = s.indexOf("|");
   return t === -1 ? { dest: s } : { dest: s.slice(0, t), year: s.slice(t + 1) };
 }
-var Ie, Ue;
+var De, Ue;
 (function(s) {
   s.language = "language", s.system = "system", s.comma_decimal = "comma_decimal", s.decimal_comma = "decimal_comma", s.space_comma = "space_comma", s.none = "none";
-})(Ie || (Ie = {})), function(s) {
+})(De || (De = {})), function(s) {
   s.language = "language", s.system = "system", s.am_pm = "12", s.twenty_four = "24";
 }(Ue || (Ue = {}));
-var fo = function(s, t, e, o) {
+var go = function(s, t, e, o) {
   o = o || {}, e = e ?? {};
   var n = new Event(t, { bubbles: o.bubbles === void 0 || o.bubbles, cancelable: !!o.cancelable, composed: o.composed === void 0 || o.composed });
   return n.detail = e, s.dispatchEvent(n), n;
-}, Zs = Object.defineProperty, _o = (s, t, e, o) => {
+};
+const Xs = {
+  title: "Title",
+  dest_label: "Destination heading",
+  year_label: "Year heading",
+  row_count: "Number of rows (including empty ones)",
+  sort: "Order",
+  sort_asc: "By year, oldest first",
+  sort_desc: "By year, newest first",
+  sort_none: "Don't sort (order below)",
+  show_header: "Show header",
+  show_column_labels: "Show column headings",
+  show_footer: "Show footer",
+  show_map: "Show world map",
+  show_legend: "Show character set",
+  footer_title: "Footer 1",
+  footer_subtitle: "Subtitle 1",
+  footer2_title: "Footer 2",
+  footer2_subtitle: "Subtitle 2",
+  accent_color: "Accent color",
+  background_color: "Background color",
+  unlit_color: "Color of unlit dots",
+  rows: "Rows",
+  rows_help: "Leave the year empty for an empty year column. Turn on full width to run the row across the whole board. Pick an entity to take the text from Home Assistant instead of fixed text.",
+  add_row: "+ Add row",
+  remove_row: "Remove row",
+  remove_row_n: "Remove row {n}",
+  dest: "Destination",
+  year: "Year",
+  entity: "Entity (instead of fixed text)",
+  color: "Color",
+  full_width: "Full width (no year column)",
+  color_auto: "Alternating (default)",
+  color_yellow: "Yellow",
+  color_white: "White",
+  color_grey: "Gray",
+  pin_section: "Marker on the world map",
+  pin_toggle: "Mark home base",
+  longitude: "Longitude",
+  latitude: "Latitude",
+  show_stats: "Show counts",
+  show_meters: "Show continent meters",
+  show_overview: "Show overview map",
+  caption: "Caption (below the overview map)",
+  countries_entity: "Entity with a list of countries (optional)",
+  countries_attribute: "Attribute of that entity (optional)",
+  land_color: "Color of land not visited",
+  countries: "Visited countries",
+  countries_help: "Enter countries as an ISO code (NL, FR), ISO-3 (NLD), English name (Netherlands) or a known alias (USA, UK). Every visited country lights up on the map.",
+  add_country: "+ Add country",
+  country_n: "Country {n}",
+  remove_country: "Remove",
+  remove_country_n: "Remove country {n}"
+}, qs = {
+  title: "Titel",
+  dest_label: "Kop bestemmingskolom",
+  year_label: "Kop jaartalkolom",
+  row_count: "Aantal regels (incl. lege)",
+  sort: "Volgorde",
+  sort_asc: "Op jaartal, oudste eerst",
+  sort_desc: "Op jaartal, nieuwste eerst",
+  sort_none: "Niet sorteren (volgorde hieronder)",
+  show_header: "Kop tonen",
+  show_column_labels: "Kolomkoppen tonen",
+  show_footer: "Voettekst tonen",
+  show_map: "Wereldkaart tonen",
+  show_legend: "Tekenset tonen",
+  footer_title: "Voettekst 1",
+  footer_subtitle: "Ondertitel 1",
+  footer2_title: "Voettekst 2",
+  footer2_subtitle: "Ondertitel 2",
+  accent_color: "Accentkleur",
+  background_color: "Achtergrondkleur",
+  unlit_color: "Kleur gedoofde dots",
+  rows: "Regels",
+  rows_help: "Laat het jaar leeg voor een lege jaartalkolom. Zet volle breedte aan om de regel over het hele bord te laten lopen. Kies een entity om de tekst uit Home Assistant te halen in plaats van vaste tekst.",
+  add_row: "+ Regel toevoegen",
+  remove_row: "Regel verwijderen",
+  remove_row_n: "Regel {n} verwijderen",
+  dest: "Bestemming",
+  year: "Jaar",
+  entity: "Entity (in plaats van vaste tekst)",
+  color: "Kleur",
+  full_width: "Volle breedte (geen jaartalkolom)",
+  color_auto: "Afwisselend (standaard)",
+  color_yellow: "Geel",
+  color_white: "Wit",
+  color_grey: "Grijs",
+  pin_section: "Markering op de wereldkaart",
+  pin_toggle: "Thuisbasis markeren",
+  longitude: "Lengtegraad",
+  latitude: "Breedtegraad",
+  show_stats: "Aantallen tonen",
+  show_meters: "Continentmeters tonen",
+  show_overview: "Overzichtskaartje tonen",
+  caption: "Bijschrift (onder kaartje)",
+  countries_entity: "Entity met landenlijst (optioneel)",
+  countries_attribute: "Attribuut van die entity (optioneel)",
+  land_color: "Kleur van land (niet bezocht)",
+  countries: "Bezochte landen",
+  countries_help: "Vul landen in als ISO-code (NL, FR), ISO-3 (NLD), Engelse naam (Netherlands) of een bekende alias (USA, UK). Elk bezocht land licht op de kaart op.",
+  add_country: "+ Land toevoegen",
+  country_n: "Land {n}",
+  remove_country: "Verwijderen",
+  remove_country_n: "Land {n} verwijderen"
+};
+function $t(s) {
+  return (s?.language ?? "").toLowerCase().startsWith("nl") ? "nl" : "en";
+}
+function _(s, t, e = {}) {
+  return ((s === "nl" ? qs : Xs)[t] ?? t).replace(
+    /\{(\w+)\}/g,
+    (n, i) => i in e ? String(e[i]) : n
+  );
+}
+var Qs = Object.defineProperty, $o = (s, t, e, o) => {
   for (var n = void 0, i = s.length - 1, r; i >= 0; i--)
     (r = s[i]) && (n = r(t, e, n) || n);
-  return n && Zs(t, e, n), n;
+  return n && Qs(t, e, n), n;
 };
-const Js = [
+const tn = [
   { name: "title", selector: { text: {} } },
   {
     name: "",
@@ -3071,23 +3186,11 @@ const Js = [
       { name: "land_color", selector: { text: {} } }
     ]
   }
-], Xs = et.map(
-  (s) => O`<option value=${s.iso2}>${s.name}</option>`
-), qs = {
-  title: "Titel",
-  show_header: "Kop tonen",
-  show_stats: "Aantallen tonen",
-  show_meters: "Continentmeters tonen",
-  show_overview: "Overzichtskaartje tonen",
-  caption: "Bijschrift (onder kaartje)",
-  countries_entity: "Entity met landenlijst (optioneel)",
-  countries_attribute: "Attribuut van die entity (optioneel)",
-  accent_color: "Accentkleur",
-  background_color: "Achtergrondkleur",
-  land_color: "Kleur van land (niet bezocht)"
-}, he = class he extends M {
+], en = ot.map(
+  (s) => M`<option value=${s.iso2}>${s.name}</option>`
+), de = class de extends O {
   constructor() {
-    super(...arguments), this._computeLabel = (t) => qs[t.name] ?? t.name;
+    super(...arguments), this._computeLabel = (t) => _($t(this.hass), t.name);
   }
   setConfig(t) {
     this._config = t;
@@ -3096,52 +3199,51 @@ const Js = [
     return this._config?.countries ?? [];
   }
   render() {
-    return !this.hass || !this._config ? m : O`
+    if (!this.hass || !this._config)
+      return m;
+    const t = $t(this.hass);
+    return M`
       <ha-form
         .hass=${this.hass}
-        .data=${{ ...qt, ...this._config }}
-        .schema=${Js}
+        .data=${{ ...Qt, ...this._config }}
+        .schema=${tn}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._formChanged}
       ></ha-form>
 
       <div class="section">
-        <div class="section-title">Bezochte landen</div>
-        <p class="help">
-          Vul landen in als ISO-code (<em>NL</em>, <em>FR</em>), ISO-3
-          (<em>NLD</em>), naam (<em>Netherlands</em>) of een bekende alias
-          (<em>USA</em>, <em>UK</em>). Elk bezocht land licht op de kaart op.
-        </p>
+        <div class="section-title">${_(t, "countries")}</div>
+        <p class="help">${_(t, "countries_help")}</p>
 
-        ${this._countries.map((t, e) => this._renderCountry(t, e))}
+        ${this._countries.map((e, o) => this._renderCountry(t, e, o))}
 
         <div class="add">
           <button type="button" @click=${this._addCountry}>
-            + Land toevoegen
+            ${_(t, "add_country")}
           </button>
         </div>
       </div>
 
-      <datalist id="swc-countries">${Xs}</datalist>
+      <datalist id="swc-countries">${en}</datalist>
     `;
   }
-  _renderCountry(t, e) {
-    return O`
+  _renderCountry(t, e, o) {
+    return M`
       <div class="row">
         <input
           type="text"
           list="swc-countries"
-          aria-label=${`Land ${e + 1}`}
-          .value=${t}
-          data-index=${e}
+          aria-label=${_(t, "country_n", { n: o + 1 })}
+          .value=${e}
+          data-index=${o}
           @change=${this._countryChanged}
         />
         <button
           type="button"
           class="icon"
-          title="Verwijderen"
-          aria-label=${`Land ${e + 1} verwijderen`}
-          data-index=${e}
+          title=${_(t, "remove_country")}
+          aria-label=${_(t, "remove_country_n", { n: o + 1 })}
+          data-index=${o}
           @click=${this._removeCountryClicked}
         >
           <span aria-hidden="true">✕</span>
@@ -3152,22 +3254,22 @@ const Js = [
   /* Template bindings pass methods, not arrow functions (lit/no-template-arrow,
      as in the Home Assistant frontend); the row comes from data-index. */
   _countryChanged(t) {
-    this._setCountry(Be(t), Qs(t));
+    this._setCountry(Be(t), on(t));
   }
   _removeCountryClicked(t) {
     this._removeCountry(Be(t));
   }
   _formChanged(t) {
     t.stopPropagation(), this._emit(
-      mo(
+      _o(
         { ...this._config, ...t.detail.value },
         this._config ?? {},
-        qt
+        Qt
       )
     );
   }
   _emit(t) {
-    this._config = t, fo(this, "config-changed", { config: t });
+    this._config = t, go(this, "config-changed", { config: t });
   }
   _updateCountries(t) {
     this._emit({ ...this._config, countries: t });
@@ -3183,7 +3285,7 @@ const Js = [
     this._updateCountries(this._countries.filter((e, o) => o !== t));
   }
 };
-he.styles = At`
+de.styles = At`
     .section {
       margin-block-start: var(--ha-space-5, 20px);
       border-block-start: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12));
@@ -3249,130 +3351,115 @@ he.styles = At`
       display: none;
     }
   `;
-let K = he;
-_o([
-  st({ attribute: !1 })
-], K.prototype, "hass");
-_o([
-  F()
-], K.prototype, "_config");
+let F = de;
+$o([
+  nt({ attribute: !1 })
+], F.prototype, "hass");
+$o([
+  Y()
+], F.prototype, "_config");
 function Be(s) {
   return Number(s.currentTarget.dataset.index);
 }
-function Qs(s) {
+function on(s) {
   return s.target.value.trim();
 }
-vt(xs, K);
-const tn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+St(Rs, F);
+const sn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  SmaailWorldCardEditor: K
+  SmaailWorldCardEditor: F
 }, Symbol.toStringTag, { value: "Module" }));
-var en = Object.defineProperty, $o = (s, t, e, o) => {
+var nn = Object.defineProperty, yo = (s, t, e, o) => {
   for (var n = void 0, i = s.length - 1, r; i >= 0; i--)
     (r = s[i]) && (n = r(t, e, n) || n);
-  return n && en(t, e, n), n;
+  return n && nn(t, e, n), n;
 };
-const on = [
-  { name: "title", selector: { text: {} } },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "dest_label", selector: { text: {} } },
-      { name: "year_label", selector: { text: {} } }
-    ]
-  },
-  {
-    name: "row_count",
-    selector: { number: { min: 1, max: 40, mode: "box", step: 1 } }
-  },
-  {
-    name: "sort",
-    required: !0,
-    selector: {
-      select: {
-        mode: "dropdown",
-        options: [
-          { value: "asc", label: "Op jaartal, oudste eerst" },
-          { value: "desc", label: "Op jaartal, nieuwste eerst" },
-          { value: "none", label: "Niet sorteren (volgorde hieronder)" }
-        ]
-      }
-    }
-  },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "show_header", selector: { boolean: {} } },
-      { name: "show_column_labels", selector: { boolean: {} } },
-      { name: "show_footer", selector: { boolean: {} } },
-      { name: "show_map", selector: { boolean: {} } },
-      { name: "show_legend", selector: { boolean: {} } }
-    ]
-  },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "footer_title", selector: { text: {} } },
-      { name: "footer_subtitle", selector: { text: {} } },
-      { name: "footer2_title", selector: { text: {} } },
-      { name: "footer2_subtitle", selector: { text: {} } }
-    ]
-  },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "accent_color", selector: { text: {} } },
-      { name: "background_color", selector: { text: {} } },
-      { name: "unlit_color", selector: { text: {} } }
-    ]
-  }
-], sn = {
-  title: "Titel",
-  dest_label: "Kop bestemmingskolom",
-  year_label: "Kop jaartalkolom",
-  row_count: "Aantal regels (incl. lege)",
-  sort: "Volgorde",
-  show_header: "Kop tonen",
-  show_column_labels: "Kolomkoppen tonen",
-  show_footer: "Voettekst tonen",
-  show_map: "Wereldkaart tonen",
-  show_legend: "Tekenset tonen",
-  footer_title: "Voettekst 1",
-  footer_subtitle: "Ondertitel 1",
-  footer2_title: "Voettekst 2",
-  footer2_subtitle: "Ondertitel 2",
-  accent_color: "Accentkleur",
-  background_color: "Achtergrondkleur",
-  unlit_color: "Kleur gedoofde dots"
-}, Qt = "auto", Ht = [
-  { value: Qt, label: "Afwisselend (standaard)" },
-  { value: "yellow", label: "Geel" },
-  { value: "white", label: "Wit" },
-  { value: "grey", label: "Grijs" }
-], nn = {
-  dest: "Bestemming",
-  year: "Jaar",
-  entity: "Entity (in plaats van vaste tekst)",
-  color: "Kleur",
-  full_width: "Volle breedte (geen jaartalkolom)"
-}, De = /* @__PURE__ */ new Map();
+const ke = /* @__PURE__ */ new Map();
 function rn(s) {
-  return Ht.some((t) => t.value === s) ? Ht : [...Ht, { value: s, label: s }];
-}
-function an(s, t, e, o) {
-  const n = `${s}|${t}|${e}|${o}`;
-  let i = De.get(n);
-  return i || (i = [
+  let t = ke.get(s);
+  return t || (t = [
+    { name: "title", selector: { text: {} } },
     {
       name: "",
       type: "grid",
       schema: [
-        { name: "dest", disabled: t, selector: { text: {} } },
-        ...s ? [] : [{ name: "year", disabled: e, selector: { text: {} } }]
+        { name: "dest_label", selector: { text: {} } },
+        { name: "year_label", selector: { text: {} } }
+      ]
+    },
+    {
+      name: "row_count",
+      selector: { number: { min: 1, max: 40, mode: "box", step: 1 } }
+    },
+    {
+      name: "sort",
+      required: !0,
+      selector: {
+        select: {
+          mode: "dropdown",
+          options: [
+            { value: "asc", label: _(s, "sort_asc") },
+            { value: "desc", label: _(s, "sort_desc") },
+            { value: "none", label: _(s, "sort_none") }
+          ]
+        }
+      }
+    },
+    {
+      name: "",
+      type: "grid",
+      schema: [
+        { name: "show_header", selector: { boolean: {} } },
+        { name: "show_column_labels", selector: { boolean: {} } },
+        { name: "show_footer", selector: { boolean: {} } },
+        { name: "show_map", selector: { boolean: {} } },
+        { name: "show_legend", selector: { boolean: {} } }
+      ]
+    },
+    {
+      name: "",
+      type: "grid",
+      schema: [
+        { name: "footer_title", selector: { text: {} } },
+        { name: "footer_subtitle", selector: { text: {} } },
+        { name: "footer2_title", selector: { text: {} } },
+        { name: "footer2_subtitle", selector: { text: {} } }
+      ]
+    },
+    {
+      name: "",
+      type: "grid",
+      schema: [
+        { name: "accent_color", selector: { text: {} } },
+        { name: "background_color", selector: { text: {} } },
+        { name: "unlit_color", selector: { text: {} } }
+      ]
+    }
+  ], ke.set(s, t)), t;
+}
+const te = "auto", an = [
+  [te, "color_auto"],
+  ["yellow", "color_yellow"],
+  ["white", "color_white"],
+  ["grey", "color_grey"]
+], Ge = /* @__PURE__ */ new Map();
+function cn(s, t) {
+  const e = an.map(([o, n]) => ({
+    value: o,
+    label: _(s, n)
+  }));
+  return e.some((o) => o.value === t) ? e : [...e, { value: t, label: t }];
+}
+function ln(s, t, e, o, n) {
+  const i = `${s}|${t}|${e}|${o}|${n}`;
+  let r = Ge.get(i);
+  return r || (r = [
+    {
+      name: "",
+      type: "grid",
+      schema: [
+        { name: "dest", disabled: e, selector: { text: {} } },
+        ...t ? [] : [{ name: "year", disabled: o, selector: { text: {} } }]
       ]
     },
     { name: "entity", selector: { entity: {} } },
@@ -3386,18 +3473,18 @@ function an(s, t, e, o) {
           selector: {
             select: {
               mode: "dropdown",
-              options: rn(o)
+              options: cn(s, n)
             }
           }
         },
         { name: "full_width", selector: { boolean: {} } }
       ]
     }
-  ], De.set(n, i)), i;
+  ], Ge.set(i, r)), r;
 }
-const de = class de extends M {
+const ue = class ue extends O {
   constructor() {
-    super(...arguments), this._computeLabel = (t) => sn[t.name] ?? t.name, this._computeRowLabel = (t) => nn[t.name] ?? t.name;
+    super(...arguments), this._computeLabel = (t) => _($t(this.hass), t.name);
   }
   setConfig(t) {
     this._config = t;
@@ -3406,60 +3493,58 @@ const de = class de extends M {
     return this._config?.rows ?? [];
   }
   render() {
-    return !this.hass || !this._config ? m : O`
+    if (!this.hass || !this._config)
+      return m;
+    const t = $t(this.hass);
+    return M`
       <ha-form
         .hass=${this.hass}
         .data=${this._formData()}
-        .schema=${on}
+        .schema=${rn(t)}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._formChanged}
       ></ha-form>
 
       <div class="section">
-        <div class="section-title">Regels</div>
-        <p class="help">
-          Laat <em>jaar</em> leeg voor een lege jaartalkolom. Vink
-          <em>volle breedte</em> aan om de regel over het hele bord te laten
-          lopen. Vul een <em>entity</em> in om de tekst uit Home Assistant te
-          halen in plaats van vaste tekst.
-        </p>
+        <div class="section-title">${_(t, "rows")}</div>
+        <p class="help">${_(t, "rows_help")}</p>
 
-        ${this._rows.map((t, e) => this._renderRow(t, e))}
+        ${this._rows.map((e, o) => this._renderRow(t, e, o))}
 
         <div class="add">
           <button type="button" @click=${this._addRow}>
-            + Regel toevoegen
+            ${_(t, "add_row")}
           </button>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title">Markering op de wereldkaart</div>
+        <div class="section-title">${_(t, "pin_section")}</div>
         <label class="check">
           <input
             type="checkbox"
             .checked=${this._config.pin !== null}
             @change=${this._togglePin}
           />
-          Thuisbasis markeren
+          ${_(t, "pin_toggle")}
         </label>
-        ${this._config.pin !== null ? O`<div class="grid2">
+        ${this._config.pin !== null ? M`<div class="grid2">
                 <label
-                  >Lengtegraad
+                  >${_(t, "longitude")}
                   <input
                     type="number"
                     step="0.01"
-                    .value=${String(this._config.pin?.[0] ?? k[0])}
+                    .value=${String(this._config.pin?.[0] ?? G[0])}
                     data-axis="0"
                     @change=${this._pinChanged}
                   />
                 </label>
                 <label
-                  >Breedtegraad
+                  >${_(t, "latitude")}
                   <input
                     type="number"
                     step="0.01"
-                    .value=${String(this._config.pin?.[1] ?? k[1])}
+                    .value=${String(this._config.pin?.[1] ?? G[1])}
                     data-axis="1"
                     @change=${this._pinChanged}
                   />
@@ -3468,24 +3553,24 @@ const de = class de extends M {
       </div>
     `;
   }
-  _renderRow(t, e) {
-    const o = t.year === "", n = {
-      dest: t.dest ?? "",
-      year: o ? "" : t.year ?? "",
-      entity: t.entity ?? "",
-      color: t.color ?? Qt,
-      full_width: o
+  _renderRow(t, e, o) {
+    const n = e.year === "", i = {
+      dest: e.dest ?? "",
+      year: n ? "" : e.year ?? "",
+      entity: e.entity ?? "",
+      color: e.color ?? te,
+      full_width: n
     };
-    return O`
+    return M`
       <div class="row">
         <div class="row-head">
-          <span class="num">${e + 1}</span>
+          <span class="num">${o + 1}</span>
           <button
             type="button"
             class="icon"
-            title="Regel verwijderen"
-            aria-label=${`Regel ${e + 1} verwijderen`}
-            data-index=${e}
+            title=${_(t, "remove_row")}
+            aria-label=${_(t, "remove_row_n", { n: o + 1 })}
+            data-index=${o}
             @click=${this._removeRowClicked}
           >
             <span aria-hidden="true">✕</span>
@@ -3493,15 +3578,16 @@ const de = class de extends M {
         </div>
         <ha-form
           .hass=${this.hass}
-          .data=${n}
-          .schema=${an(
-      o,
-      !!t.entity,
-      !!t.year_entity,
-      n.color
+          .data=${i}
+          .schema=${ln(
+      t,
+      n,
+      !!e.entity,
+      !!e.year_entity,
+      i.color
     )}
-          .computeLabel=${this._computeRowLabel}
-          data-index=${e}
+          .computeLabel=${this._computeLabel}
+          data-index=${o}
           @value-changed=${this._rowChanged}
         ></ha-form>
       </div>
@@ -3510,12 +3596,12 @@ const de = class de extends M {
   /* Template bindings pass methods, not arrow functions (lit/no-template-arrow,
      as in the Home Assistant frontend); the row comes from data-index. */
   _removeRowClicked(t) {
-    this._removeRow(ke(t));
+    this._removeRow(He(t));
   }
   _rowChanged(t) {
     t.stopPropagation();
-    const e = ke(t), o = t.detail.value, n = { ...this._rows[e] };
-    Ge(n, "dest", o.dest), Ge(n, "entity", o.entity), o.color && o.color !== Qt ? n.color = o.color : delete n.color;
+    const e = He(t), o = t.detail.value, n = { ...this._rows[e] };
+    Ke(n, "dest", o.dest), Ke(n, "entity", o.entity), o.color && o.color !== te ? n.color = o.color : delete n.color;
     const i = o.year?.trim();
     o.full_width ? n.year = "" : i ? n.year = i : delete n.year, this._updateRows(this._rows.map((r, c) => c === e ? n : r));
   }
@@ -3526,8 +3612,8 @@ const de = class de extends M {
   /** Defaults the card uses, shown in the form when the config leaves them out. */
   _formDefaults() {
     return {
-      ...Xt,
-      row_count: Math.max(Xt.row_count, this._rows.length)
+      ...qt,
+      row_count: Math.max(qt.row_count, this._rows.length)
     };
   }
   _formData() {
@@ -3535,7 +3621,7 @@ const de = class de extends M {
   }
   _formChanged(t) {
     t.stopPropagation(), this._emit(
-      mo(
+      _o(
         { ...this._config, ...t.detail.value },
         this._config ?? {},
         this._formDefaults()
@@ -3543,7 +3629,7 @@ const de = class de extends M {
     );
   }
   _emit(t) {
-    this._config = t, fo(this, "config-changed", { config: t });
+    this._config = t, go(this, "config-changed", { config: t });
   }
   _updateRows(t) {
     this._emit({ ...this._config, rows: t });
@@ -3558,18 +3644,18 @@ const de = class de extends M {
     const e = t.target.checked;
     this._emit({
       ...this._config,
-      pin: e ? [...k] : null
+      pin: e ? [...G] : null
     });
   }
   _setPin(t, e) {
     const o = [
-      this._config?.pin?.[0] ?? k[0],
-      this._config?.pin?.[1] ?? k[1]
+      this._config?.pin?.[0] ?? G[0],
+      this._config?.pin?.[1] ?? G[1]
     ];
     o[t] = Number(e.target.value), this._emit({ ...this._config, pin: o });
   }
 };
-de.styles = At`
+ue.styles = At`
     .section {
       margin-block-start: var(--ha-space-5, 20px);
       border-block-start: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12));
@@ -3667,22 +3753,22 @@ de.styles = At`
       margin-block-start: var(--ha-space-1, 4px);
     }
   `;
-let z = de;
-$o([
-  st({ attribute: !1 })
+let z = ue;
+yo([
+  nt({ attribute: !1 })
 ], z.prototype, "hass");
-$o([
-  F()
+yo([
+  Y()
 ], z.prototype, "_config");
-function ke(s) {
+function He(s) {
   return Number(s.currentTarget.dataset.index);
 }
-function Ge(s, t, e) {
+function Ke(s, t, e) {
   const o = e?.trim();
   o ? s[t] = o : delete s[t];
 }
-vt(Ss, z);
-const cn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+St(xs, z);
+const hn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   SmaailcardEditor: z
 }, Symbol.toStringTag, { value: "Module" }));
