@@ -376,31 +376,32 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
 
   static styles = css`
     .section {
-      margin-top: 20px;
-      border-top: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12));
-      padding-top: 12px;
+      margin-block-start: var(--ha-space-5, 20px);
+      border-block-start: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12));
+      padding-block-start: var(--ha-space-3, 12px);
     }
     .section-title {
       font-weight: 500;
-      margin-bottom: 4px;
+      margin-block-end: var(--ha-space-1, 4px);
     }
     .help {
-      margin: 0 0 12px;
+      margin: 0 0 var(--ha-space-3, 12px);
       font-size: 0.85rem;
       line-height: 1.45;
       color: var(--secondary-text-color, #727272);
     }
     .row {
       border: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12));
-      border-radius: 8px;
-      padding: 10px 12px 12px;
-      margin-bottom: 10px;
+      border-radius: var(--ha-border-radius-md, 8px);
+      padding: var(--ha-space-2, 8px) var(--ha-space-3, 12px)
+        var(--ha-space-3, 12px);
+      margin-block-end: var(--ha-space-2, 8px);
     }
     .row-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 6px;
+      margin-block-end: var(--ha-space-2, 8px);
     }
     .num {
       font-weight: 500;
@@ -409,20 +410,20 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     .grid2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 8px;
+      gap: var(--ha-space-2, 8px);
+      margin-block-end: var(--ha-space-2, 8px);
     }
     label {
       display: flex;
       flex-direction: column;
       font-size: 0.8rem;
       color: var(--secondary-text-color, #727272);
-      gap: 4px;
+      gap: var(--ha-space-1, 4px);
     }
     label.check {
       flex-direction: row;
       align-items: center;
-      gap: 8px;
+      gap: var(--ha-space-2, 8px);
       font-size: 0.85rem;
     }
     input[type="text"],
@@ -433,8 +434,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
       color: var(--primary-text-color, #212121);
       background: var(--card-background-color, #fff);
       border: 1px solid var(--divider-color, rgba(0, 0, 0, 0.3));
-      border-radius: 4px;
-      padding: 7px 8px;
+      border-radius: var(--ha-border-radius-sm, 4px);
+      padding: var(--ha-space-2, 8px);
       width: 100%;
       box-sizing: border-box;
     }
@@ -444,11 +445,11 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     button {
       font: inherit;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: var(--ha-border-radius-sm, 4px);
       border: 1px solid var(--divider-color, rgba(0, 0, 0, 0.3));
       background: var(--card-background-color, #fff);
       color: var(--primary-text-color, #212121);
-      padding: 7px 12px;
+      padding: var(--ha-space-2, 8px) var(--ha-space-3, 12px);
     }
     button.icon {
       border: none;
@@ -468,7 +469,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
       color: var(--primary-color, #03a9f4);
     }
     .add {
-      margin-top: 4px;
+      margin-block-start: var(--ha-space-1, 4px);
     }
   `;
 }
