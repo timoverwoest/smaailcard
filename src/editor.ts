@@ -158,29 +158,28 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
         ${
           this._config.pin !== null
             ? html`<div class="grid2">
-              <label
-                >Lengtegraad
-                <input
-                  type="number"
-                  step="0.01"
-                  .value=${String(this._config.pin?.[0] ?? 5.12)}
-                  @change=${(e: Event) => this._setPin(0, e)}
-                />
-              </label>
-              <label
-                >Breedtegraad
-                <input
-                  type="number"
-                  step="0.01"
-                  .value=${String(this._config.pin?.[1] ?? 52.09)}
-                  @change=${(e: Event) => this._setPin(1, e)}
-                />
-              </label>
-            </div>`
+                <label
+                  >Lengtegraad
+                  <input
+                    type="number"
+                    step="0.01"
+                    .value=${String(this._config.pin?.[0] ?? 5.12)}
+                    @change=${(e: Event) => this._setPin(0, e)}
+                  />
+                </label>
+                <label
+                  >Breedtegraad
+                  <input
+                    type="number"
+                    step="0.01"
+                    .value=${String(this._config.pin?.[1] ?? 52.09)}
+                    @change=${(e: Event) => this._setPin(1, e)}
+                  />
+                </label>
+              </div>`
             : nothing
         }
       </div>
-
     `;
   }
 
