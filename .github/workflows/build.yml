@@ -20,6 +20,22 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+  test:
+    name: Tests (Vitest, as in the Home Assistant frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # The version the Home Assistant frontend uses; only for this check, so
+      # it stays out of package.json and the lock file.
+      - name: Install Vitest
+        run: npm install --no-save --no-package-lock vitest@5.1.1
+      - run: npm test
+
   style:
     name: Style (Prettier and ESLint of the Home Assistant frontend)
     runs-on: ubuntu-latest

@@ -91,7 +91,7 @@ export function normalizeText(text: string): string {
   return text
     .toUpperCase()
     .normalize("NFD") // split accented letters into letter + combining mark
-    .replace(/[̀-ͯ]/g, "") // drop the marks, keep the base letter
+    .replace(/[\u0300-\u036f]/g, "") // drop the marks, keep the base letter
     .split("")
     .map((ch) => PUNCTUATION[ch] ?? LETTERS[ch] ?? ch)
     .join("");
