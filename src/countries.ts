@@ -56,7 +56,7 @@ const ALIASES: Record<string, string> = {
   BOSNIA: "BA",
   FALKLANDS: "FK",
   MALVINAS: "FK",
-  "VATICAN": "VA", // not in the 110m data; resolves to unknown, listed as such
+  VATICAN: "VA", // not in the 110m data; resolves to unknown, listed as such
 };
 
 /** normalized key -> country index (0-based into COUNTRIES). Built once. */

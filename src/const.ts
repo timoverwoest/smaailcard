@@ -15,7 +15,7 @@ export const WORLD_CARD_NAME = "Smaail World Map";
  */
 export function defineElement(
   tag: string,
-  element: CustomElementConstructor,
+  element: CustomElementConstructor
 ): void {
   if (!customElements.get(tag)) {
     customElements.define(tag, element);

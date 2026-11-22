@@ -1,6 +1,12 @@
 import { svg, type SVGTemplateResult } from "lit";
 
-import { dotsPath, maxChars, textDots, textDotsClipped, type Dot } from "./dots";
+import {
+  dotsPath,
+  maxChars,
+  textDots,
+  textDotsClipped,
+  type Dot,
+} from "./dots";
 import { GLYPH_H, normalizeText } from "./font";
 import type { BoardRow, ResolvedConfig, SortOrder } from "./types";
 import { worldMap } from "./worldmap";
@@ -96,7 +102,7 @@ export function layout(cfg: {
   }
   if (cfg.show_legend) {
     bottoms.push(
-      LEGEND_Y + 3 * 9 * LEGEND_PITCH + GLYPH_H * LEGEND_PITCH - bottomShift,
+      LEGEND_Y + 3 * 9 * LEGEND_PITCH + GLYPH_H * LEGEND_PITCH - bottomShift
     );
   }
   if (cfg.show_footer) {
@@ -110,7 +116,7 @@ export function layout(cfg: {
     labelsY: LABELS_Y - headerShift,
     rowsY0,
     height: Math.round(
-      Math.max(...bottoms) + (anyBottom ? BOTTOM_MARGIN : PLAIN_MARGIN),
+      Math.max(...bottoms) + (anyBottom ? BOTTOM_MARGIN : PLAIN_MARGIN)
     ),
   };
 }
@@ -183,7 +189,7 @@ function sortRows(rows: PendingRow[], order: SortOrder): PendingRow[] {
  */
 export function resolveRows(
   cfg: ResolvedConfig,
-  states: Record<string, { state: string; attributes: Record<string, unknown> }>,
+  states: Record<string, { state: string; attributes: Record<string, unknown> }>
 ): ResolvedRow[] {
   const pending: PendingRow[] = cfg.rows.map((row) => {
     let dest = row.dest ?? null;
@@ -242,7 +248,7 @@ export interface BuildOptions {
 export function buildBoard(
   cfg: ResolvedConfig,
   rows: ResolvedRow[],
-  opts: BuildOptions,
+  opts: BuildOptions
 ): SVGTemplateResult {
   const rowCount = cfg.row_count;
   const { bottomShift: shift, labelsY, rowsY0, height } = layout(cfg);
@@ -298,11 +304,15 @@ export function buildBoard(
       MAP_COLS,
       MAP_ROWS,
       MAP_PITCH,
-      cfg.pin,
+      cfg.pin
     );
     mapPaths = [
       svg`<path d=${dotsPath(land, 1.35)} fill="#575757"/>`,
-      ...(pin ? [svg`<circle cx=${pin.x} cy=${pin.y} r=${1.35 * 1.9} fill=${accent}/>`] : []),
+      ...(pin
+        ? [
+            svg`<circle cx=${pin.x} cy=${pin.y} r=${1.35 * 1.9} fill=${accent}/>`,
+          ]
+        : []),
     ];
   }
 
@@ -341,8 +351,9 @@ export function buildBoard(
 
       <rect width=${W} height=${height} fill=${cfg.background_color}/>
 
-      ${cfg.show_header
-        ? svg`<g id="sc-header" transform="translate(${opts.headerShift} 0)">
+      ${
+        cfg.show_header
+          ? svg`<g id="sc-header" transform="translate(${opts.headerShift} 0)">
             <rect x="228" y="96" width="60" height="60" rx="14" fill=${accent}/>
             <g transform="translate(258,126) scale(1.55) rotate(45) translate(-12,-12)">
               <path d=${PLANE} fill=${cfg.background_color}/>
@@ -350,23 +361,27 @@ export function buildBoard(
             <text x="306" y="148" font-size="62" font-weight="700"
                   letter-spacing="1.5" fill=${WHITE}>${cfg.title}</text>
           </g>`
-        : ""}
+          : ""
+      }
 
-      ${cfg.show_column_labels
-        ? svg`
+      ${
+        cfg.show_column_labels
+          ? svg`
             <text x=${DEST_X} y=${labelsY} font-size="25" letter-spacing="2.5"
                   fill=${GREY}>${cfg.dest_label}</text>
             <text x="930" y=${labelsY} font-size="25" letter-spacing="2.5"
                   text-anchor="end" fill=${GREY}>${cfg.year_label}</text>`
-        : ""}
+          : ""
+      }
 
       ${grids}
       ${[...lit.entries()].map(
-        ([color, dots]) => svg`<path d=${dotsPath(dots, RAD)} fill=${color}/>`,
+        ([color, dots]) => svg`<path d=${dotsPath(dots, RAD)} fill=${color}/>`
       )}
 
-      ${cfg.show_footer
-        ? svg`
+      ${
+        cfg.show_footer
+          ? svg`
             <g transform="translate(122,${1128 - shift}) rotate(-135) scale(0.46)">
               <path d=${ARROW} fill=${accent}/>
             </g>
@@ -382,7 +397,8 @@ export function buildBoard(
                   fill=${WHITE}>${cfg.footer2_title}</text>
             <text x="185" y=${1240 - shift} font-size="13" letter-spacing="0.4"
                   fill="#8C8C8C">${cfg.footer2_subtitle}</text>`
-        : ""}
+          : ""
+      }
 
       ${mapPaths}
       ${legendPath ? svg`<path d=${legendPath} fill=${accent}/>` : ""}

@@ -13,7 +13,14 @@ import {
   defineElement,
   registerCustomCard,
 } from "./const";
-import { BG, LAND, W, YELLOW, buildWorldBoard, worldLayout } from "./worldboard";
+import {
+  BG,
+  LAND,
+  W,
+  YELLOW,
+  buildWorldBoard,
+  worldLayout,
+} from "./worldboard";
 import { parseCountryList, resolveVisited } from "./countries";
 import type { ResolvedWorldConfig, SmaailWorldConfig } from "./types";
 
@@ -55,7 +62,7 @@ export class SmaailWorldCard extends LitElement implements LovelaceCard {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./worldeditor");
     return document.createElement(
-      "smaail-world-card-editor",
+      "smaail-world-card-editor"
     ) as LovelaceCardEditor;
   }
 

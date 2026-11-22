@@ -6,7 +6,16 @@ import {
   type LovelaceCardEditor,
 } from "custom-card-helpers";
 
-import { BG, DIM, H, W, YELLOW, buildBoard, layout, resolveRows } from "./board";
+import {
+  BG,
+  DIM,
+  H,
+  W,
+  YELLOW,
+  buildBoard,
+  layout,
+  resolveRows,
+} from "./board";
 import {
   CARD_NAME,
   CARD_TYPE,
@@ -91,13 +100,13 @@ export class Smaailcard extends LitElement implements LovelaceCard {
     }
 
     const rows: BoardRow[] = (config.rows ?? []).map((row) =>
-      typeof row === "string" ? parseShorthand(row) : row,
+      typeof row === "string" ? parseShorthand(row) : row
     );
 
     const rowCount = clamp(
       config.row_count ?? Math.max(DEFAULTS.row_count, rows.length),
       1,
-      40,
+      40
     );
 
     this._config = {
@@ -140,7 +149,7 @@ export class Smaailcard extends LitElement implements LovelaceCard {
     }
     /* Only re-render when an entity the board actually shows has changed. */
     return this._entities().some(
-      (id) => oldHass.states[id] !== this.hass?.states[id],
+      (id) => oldHass.states[id] !== this.hass?.states[id]
     );
   }
 

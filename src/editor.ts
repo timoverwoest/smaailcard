@@ -155,8 +155,9 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
           />
           Thuisbasis markeren
         </label>
-        ${this._config.pin !== null
-          ? html`<div class="grid2">
+        ${
+          this._config.pin !== null
+            ? html`<div class="grid2">
               <label
                 >Lengtegraad
                 <input
@@ -176,7 +177,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
                 />
               </label>
             </div>`
-          : nothing}
+            : nothing
+        }
       </div>
 
     `;
@@ -243,7 +245,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
                     ?selected=${(row.color ?? "") === o.value}
                   >
                     ${o.label}
-                  </option>`,
+                  </option>`
               )}
             </select>
           </label>
@@ -286,7 +288,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
 
   private _setRow(index: number, key: keyof BoardRow, val: unknown): void {
     const rows = this._rows.map((r, i) =>
-      i === index ? { ...r, [key]: val } : r,
+      i === index ? { ...r, [key]: val } : r
     );
     if (val === undefined || val === "") {
       delete (rows[index] as Record<string, unknown>)[key];

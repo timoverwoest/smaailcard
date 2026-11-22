@@ -50,7 +50,12 @@ const OVERVIEW_MAX_W = 210;
 const CAPTION_SIZE = 15;
 
 /* A simple globe drawn in the background colour on the accent logo square. */
-function globe(cx: number, cy: number, r: number, colour: string): SVGTemplateResult {
+function globe(
+  cx: number,
+  cy: number,
+  r: number,
+  colour: string
+): SVGTemplateResult {
   const sw = r * 0.13;
   return svg`
     <g fill="none" stroke=${colour} stroke-width=${sw}>
@@ -102,7 +107,7 @@ function meter(
   yLabel: number,
   yGrid: number,
   visited: number,
-  push: (accent: boolean, dots: Dot[]) => void,
+  push: (accent: boolean, dots: Dot[]) => void
 ): SVGTemplateResult {
   const total = CONTINENT_TOTALS[k];
   const cols = meterCols(total);
@@ -146,7 +151,7 @@ export function buildWorldBoard(
   cfg: ResolvedWorldConfig,
   visited: VisitedResult,
   totalVisited: number,
-  opts: WorldBuildOptions,
+  opts: WorldBuildOptions
 ): SVGTemplateResult {
   const accent = cfg.accent_color;
   const land = cfg.land_color;
@@ -196,21 +201,21 @@ export function buildWorldBoard(
     const leftEnd = x - GAP_IN;
 
     const rightWidth =
-      right.reduce((s, k) => s + meterWidth(k), 0) + GAP_IN * (right.length - 1);
+      right.reduce((s, k) => s + meterWidth(k), 0) +
+      GAP_IN * (right.length - 1);
     let rx = W - MARGIN - rightWidth;
     const rightStart = rx;
     for (const k of right) {
-      metLabels.push(meter(k, rx, yLabel, yGrid, visited.perContinent[k], push));
+      metLabels.push(
+        meter(k, rx, yLabel, yGrid, visited.perContinent[k], push)
+      );
       rx += meterWidth(k) + GAP_IN;
     }
 
     /* Overview map centred in the gap between the two groups. */
     if (cfg.show_overview) {
       const avail = rightStart - leftEnd - 40;
-      const pitch = Math.max(
-        1.2,
-        Math.min(OVERVIEW_MAX_W, avail) / (COLS - 1),
-      );
+      const pitch = Math.max(1.2, Math.min(OVERVIEW_MAX_W, avail) / (COLS - 1));
       const ovW = (COLS - 1) * pitch;
       const ovX = (leftEnd + rightStart) / 2 - ovW / 2;
       const ovY = yLabel - 6;
@@ -246,30 +251,38 @@ export function buildWorldBoard(
     >
       <rect width=${W} height=${height} fill=${bg} />
 
-      ${cfg.show_header
-        ? svg`<g id="swc-header" transform="translate(${opts.headerShift} 0)">
+      ${
+        cfg.show_header
+          ? svg`<g id="swc-header" transform="translate(${opts.headerShift} 0)">
             <rect x=${LOGO_X} y=${HEADER_Y} width=${LOGO} height=${LOGO} rx="15" fill=${accent}/>
             ${globe(LOGO_X + LOGO / 2, HEADER_Y + LOGO / 2, LOGO * 0.34, bg)}
             <text x=${LOGO_X + LOGO + 22} y=${HEADER_Y + LOGO * 0.74}
                   font-size=${TITLE_SIZE} font-weight="700" letter-spacing="2"
                   fill=${WHITE}>${cfg.title}</text>
           </g>`
-        : ""}
+          : ""
+      }
 
-      ${cfg.show_header && cfg.show_stats
-        ? svg`<text x=${W / 2} y=${HEADER_Y + LOGO + 30} font-size="16"
+      ${
+        cfg.show_header && cfg.show_stats
+          ? svg`<text x=${W / 2} y=${HEADER_Y + LOGO + 30} font-size="16"
               letter-spacing="3" text-anchor="middle" fill=${accent}>${statsText}</text>`
-        : ""}
+          : ""
+      }
 
       <path d=${dotsPath(dim, MAP_R)} fill=${land}/>
       <path d=${dotsPath(lit, MAP_R)} fill=${accent}/>
 
-      ${overviewDots.dim.length
-        ? svg`<path d=${dotsPath(overviewDots.dim, MET_R * 0.62)} fill=${land} opacity="0.7"/>`
-        : ""}
-      ${overviewDots.lit.length
-        ? svg`<path d=${dotsPath(overviewDots.lit, MET_R * 0.62)} fill=${accent}/>`
-        : ""}
+      ${
+        overviewDots.dim.length
+          ? svg`<path d=${dotsPath(overviewDots.dim, MET_R * 0.62)} fill=${land} opacity="0.7"/>`
+          : ""
+      }
+      ${
+        overviewDots.lit.length
+          ? svg`<path d=${dotsPath(overviewDots.lit, MET_R * 0.62)} fill=${accent}/>`
+          : ""
+      }
       ${caption}
 
       ${metLabels}

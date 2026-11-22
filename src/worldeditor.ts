@@ -46,7 +46,7 @@ const SCHEMA = [
 /* The country suggestions never change, so build them once instead of on
    every editor update (the editor re-renders whenever hass changes). */
 const COUNTRY_OPTIONS = COUNTRIES.map(
-  (c) => html`<option value=${c.iso2}>${c.name}</option>`,
+  (c) => html`<option value=${c.iso2}>${c.name}</option>`
 );
 
 const LABELS: Record<string, string> = {

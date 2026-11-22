@@ -20,7 +20,7 @@ export function dotsPath(dots: Dot[], r: number): string {
     d.push(
       `M${(x - r).toFixed(2)} ${y.toFixed(2)}` +
         `a${r} ${r} 0 1 0 ${(r * 2).toFixed(2)} 0` +
-        `a${r} ${r} 0 1 0 ${(-r * 2).toFixed(2)} 0`,
+        `a${r} ${r} 0 1 0 ${(-r * 2).toFixed(2)} 0`
     );
   }
   return d.join("");
@@ -31,7 +31,7 @@ export function textDots(
   x0: number,
   y0: number,
   pitch: number,
-  text: string,
+  text: string
 ): Dot[] {
   const dots: Dot[] = [];
   let cx = 0;
@@ -58,7 +58,7 @@ export function textDotsClipped(
   y0: number,
   pitch: number,
   text: string,
-  cols: number,
+  cols: number
 ): Dot[] {
   const dots: Dot[] = [];
   let cx = 0;

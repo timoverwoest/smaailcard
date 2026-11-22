@@ -58,7 +58,7 @@ const PUNCTUATION: Record<string, string> = {
   "‘": "'", // ‘ left single quote
   "’": "'", // ’ right single quote (what iOS/macOS types)
   "‛": "'", // ‛ reversed
-  "ʼ": "'", // ʼ modifier letter apostrophe
+  ʼ: "'", // ʼ modifier letter apostrophe
   "´": "'", // ´ acute accent used as apostrophe
   "′": "'", // ′ prime
   "–": "-", // – en dash
@@ -79,7 +79,7 @@ const LETTERS: Record<string, string> = {
   Ð: "D",
   Đ: "D",
   Ł: "L",
-  "ı": "I", // ı dotless i
+  ı: "I", // ı dotless i
 };
 
 /**

@@ -18,7 +18,7 @@ if (!customElements.get("ha-card")) {
           "box-shadow:0 2px 8px rgba(0,0,0,.15);background:#0C0C0C;" +
           "overflow:hidden}</style><slot></slot>";
       }
-    },
+    }
   );
 }
 
@@ -50,7 +50,8 @@ const hass = {
     },
     "sensor.visited_countries": {
       entity_id: "sensor.visited_countries",
-      state: "NL, BE, DE, GB, IS, MA, EG, ZA, KE, US, CA, MX, BR, AR, JP, TH, ID, AU",
+      state:
+        "NL, BE, DE, GB, IS, MA, EG, ZA, KE, US, CA, MX, BR, AR, JP, TH, ID, AU",
       attributes: { friendly_name: "Bezochte landen" },
     },
   },
