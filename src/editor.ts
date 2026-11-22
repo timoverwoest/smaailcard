@@ -12,106 +12,94 @@ import {
   DEFAULT_PIN,
   withoutUnchangedDefaults,
 } from "./defaults";
+import {
+  type Language,
+  type LocalizeKey,
+  editorLanguage,
+  localize,
+} from "./localize";
 import type { BoardRow, SmaailcardConfig } from "./types";
 
-/* Scalar options go through ha-form so they get native Home Assistant inputs. */
-const SCHEMA = [
-  { name: "title", selector: { text: {} } },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "dest_label", selector: { text: {} } },
-      { name: "year_label", selector: { text: {} } },
-    ],
-  },
-  {
-    name: "row_count",
-    selector: { number: { min: 1, max: 40, mode: "box", step: 1 } },
-  },
-  {
-    name: "sort",
-    required: true,
-    selector: {
-      select: {
-        mode: "dropdown",
-        options: [
-          { value: "asc", label: "Op jaartal, oudste eerst" },
-          { value: "desc", label: "Op jaartal, nieuwste eerst" },
-          { value: "none", label: "Niet sorteren (volgorde hieronder)" },
+/* Scalar options go through ha-form so they get native Home Assistant inputs.
+   The order choices are in the editor language; one schema per language. */
+const boardSchemas = new Map<Language, unknown[]>();
+
+function boardSchema(lang: Language): unknown[] {
+  let schema = boardSchemas.get(lang);
+  if (!schema) {
+    schema = [
+      { name: "title", selector: { text: {} } },
+      {
+        name: "",
+        type: "grid",
+        schema: [
+          { name: "dest_label", selector: { text: {} } },
+          { name: "year_label", selector: { text: {} } },
         ],
       },
-    },
-  },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "show_header", selector: { boolean: {} } },
-      { name: "show_column_labels", selector: { boolean: {} } },
-      { name: "show_footer", selector: { boolean: {} } },
-      { name: "show_map", selector: { boolean: {} } },
-      { name: "show_legend", selector: { boolean: {} } },
-    ],
-  },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "footer_title", selector: { text: {} } },
-      { name: "footer_subtitle", selector: { text: {} } },
-      { name: "footer2_title", selector: { text: {} } },
-      { name: "footer2_subtitle", selector: { text: {} } },
-    ],
-  },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "accent_color", selector: { text: {} } },
-      { name: "background_color", selector: { text: {} } },
-      { name: "unlit_color", selector: { text: {} } },
-    ],
-  },
-];
-
-const LABELS: Record<string, string> = {
-  title: "Titel",
-  dest_label: "Kop bestemmingskolom",
-  year_label: "Kop jaartalkolom",
-  row_count: "Aantal regels (incl. lege)",
-  sort: "Volgorde",
-  show_header: "Kop tonen",
-  show_column_labels: "Kolomkoppen tonen",
-  show_footer: "Voettekst tonen",
-  show_map: "Wereldkaart tonen",
-  show_legend: "Tekenset tonen",
-  footer_title: "Voettekst 1",
-  footer_subtitle: "Ondertitel 1",
-  footer2_title: "Voettekst 2",
-  footer2_subtitle: "Ondertitel 2",
-  accent_color: "Accentkleur",
-  background_color: "Achtergrondkleur",
-  unlit_color: "Kleur gedoofde dots",
-};
+      {
+        name: "row_count",
+        selector: { number: { min: 1, max: 40, mode: "box", step: 1 } },
+      },
+      {
+        name: "sort",
+        required: true,
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: [
+              { value: "asc", label: localize(lang, "sort_asc") },
+              { value: "desc", label: localize(lang, "sort_desc") },
+              { value: "none", label: localize(lang, "sort_none") },
+            ],
+          },
+        },
+      },
+      {
+        name: "",
+        type: "grid",
+        schema: [
+          { name: "show_header", selector: { boolean: {} } },
+          { name: "show_column_labels", selector: { boolean: {} } },
+          { name: "show_footer", selector: { boolean: {} } },
+          { name: "show_map", selector: { boolean: {} } },
+          { name: "show_legend", selector: { boolean: {} } },
+        ],
+      },
+      {
+        name: "",
+        type: "grid",
+        schema: [
+          { name: "footer_title", selector: { text: {} } },
+          { name: "footer_subtitle", selector: { text: {} } },
+          { name: "footer2_title", selector: { text: {} } },
+          { name: "footer2_subtitle", selector: { text: {} } },
+        ],
+      },
+      {
+        name: "",
+        type: "grid",
+        schema: [
+          { name: "accent_color", selector: { text: {} } },
+          { name: "background_color", selector: { text: {} } },
+          { name: "unlit_color", selector: { text: {} } },
+        ],
+      },
+    ];
+    boardSchemas.set(lang, schema);
+  }
+  return schema;
+}
 
 /* "Alternating" is the absence of a colour; the form needs a value for it. */
 const AUTO_COLOR = "auto";
 
-const COLOR_OPTIONS = [
-  { value: AUTO_COLOR, label: "Afwisselend (standaard)" },
-  { value: "yellow", label: "Geel" },
-  { value: "white", label: "Wit" },
-  { value: "grey", label: "Grijs" },
+const COLORS: [string, LocalizeKey][] = [
+  [AUTO_COLOR, "color_auto"],
+  ["yellow", "color_yellow"],
+  ["white", "color_white"],
+  ["grey", "color_grey"],
 ];
-
-const ROW_LABELS: Record<string, string> = {
-  dest: "Bestemming",
-  year: "Jaar",
-  entity: "Entity (in plaats van vaste tekst)",
-  color: "Kleur",
-  full_width: "Volle breedte (geen jaartalkolom)",
-};
 
 /** One row as its form shows it. */
 interface RowFormData {
@@ -124,24 +112,32 @@ interface RowFormData {
 
 /* One ha-form per row, so every field is a native Home Assistant input (the
    entity picker only loads the entity list when it is opened). The schema
-   depends on three switches and on a colour of its own; each variant is built
-   once. */
+   depends on the language, three switches and a colour of its own; each
+   variant is built once. */
 const rowSchemas = new Map<string, unknown[]>();
 
 /** The colour choices, plus a colour from YAML (hex, "gray") as its own entry. */
-function colorOptions(color: string): { value: string; label: string }[] {
-  return COLOR_OPTIONS.some((o) => o.value === color)
-    ? COLOR_OPTIONS
-    : [...COLOR_OPTIONS, { value: color, label: color }];
+function colorOptions(
+  lang: Language,
+  color: string
+): { value: string; label: string }[] {
+  const options = COLORS.map(([value, key]) => ({
+    value,
+    label: localize(lang, key),
+  }));
+  return options.some((o) => o.value === color)
+    ? options
+    : [...options, { value: color, label: color }];
 }
 
 function rowSchema(
+  lang: Language,
   fullWidth: boolean,
   destLocked: boolean,
   yearLocked: boolean,
   color: string
 ): unknown[] {
-  const key = `${fullWidth}|${destLocked}|${yearLocked}|${color}`;
+  const key = `${lang}|${fullWidth}|${destLocked}|${yearLocked}|${color}`;
   let schema = rowSchemas.get(key);
   if (!schema) {
     schema = [
@@ -166,7 +162,7 @@ function rowSchema(
             selector: {
               select: {
                 mode: "dropdown",
-                options: colorOptions(color),
+                options: colorOptions(lang, color),
               },
             },
           },
@@ -197,48 +193,44 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
       return nothing;
     }
 
+    const lang = editorLanguage(this.hass);
     return html`
       <ha-form
         .hass=${this.hass}
         .data=${this._formData()}
-        .schema=${SCHEMA}
+        .schema=${boardSchema(lang)}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._formChanged}
       ></ha-form>
 
       <div class="section">
-        <div class="section-title">Regels</div>
-        <p class="help">
-          Laat <em>jaar</em> leeg voor een lege jaartalkolom. Vink
-          <em>volle breedte</em> aan om de regel over het hele bord te laten
-          lopen. Vul een <em>entity</em> in om de tekst uit Home Assistant te
-          halen in plaats van vaste tekst.
-        </p>
+        <div class="section-title">${localize(lang, "rows")}</div>
+        <p class="help">${localize(lang, "rows_help")}</p>
 
-        ${this._rows.map((row, i) => this._renderRow(row, i))}
+        ${this._rows.map((row, i) => this._renderRow(lang, row, i))}
 
         <div class="add">
           <button type="button" @click=${this._addRow}>
-            + Regel toevoegen
+            ${localize(lang, "add_row")}
           </button>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title">Markering op de wereldkaart</div>
+        <div class="section-title">${localize(lang, "pin_section")}</div>
         <label class="check">
           <input
             type="checkbox"
             .checked=${this._config.pin !== null}
             @change=${this._togglePin}
           />
-          Thuisbasis markeren
+          ${localize(lang, "pin_toggle")}
         </label>
         ${
           this._config.pin !== null
             ? html`<div class="grid2">
                 <label
-                  >Lengtegraad
+                  >${localize(lang, "longitude")}
                   <input
                     type="number"
                     step="0.01"
@@ -248,7 +240,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
                   />
                 </label>
                 <label
-                  >Breedtegraad
+                  >${localize(lang, "latitude")}
                   <input
                     type="number"
                     step="0.01"
@@ -264,7 +256,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     `;
   }
 
-  private _renderRow(row: BoardRow, index: number) {
+  private _renderRow(lang: Language, row: BoardRow, index: number) {
     const fullWidth = row.year === "";
     const data: RowFormData = {
       dest: row.dest ?? "",
@@ -280,8 +272,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
           <button
             type="button"
             class="icon"
-            title="Regel verwijderen"
-            aria-label=${`Regel ${index + 1} verwijderen`}
+            title=${localize(lang, "remove_row")}
+            aria-label=${localize(lang, "remove_row_n", { n: index + 1 })}
             data-index=${index}
             @click=${this._removeRowClicked}
           >
@@ -292,12 +284,13 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
           .hass=${this.hass}
           .data=${data}
           .schema=${rowSchema(
+            lang,
             fullWidth,
             !!row.entity,
             !!row.year_entity,
             data.color
           )}
-          .computeLabel=${this._computeRowLabel}
+          .computeLabel=${this._computeLabel}
           data-index=${index}
           @value-changed=${this._rowChanged}
         ></ha-form>
@@ -342,10 +335,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
   }
 
   private _computeLabel = (schema: { name: string }): string =>
-    LABELS[schema.name] ?? schema.name;
-
-  private _computeRowLabel = (schema: { name: string }): string =>
-    ROW_LABELS[schema.name] ?? schema.name;
+    localize(editorLanguage(this.hass), schema.name as LocalizeKey);
 
   /** Defaults the card uses, shown in the form when the config leaves them out. */
   private _formDefaults(): Record<string, unknown> {

@@ -58,7 +58,9 @@ Assistant project. Please report problems in this repository's
 ## Adding the card
 
 From the UI: **Add card** → search for "Smaailcard". The card has a full
-visual editor, so YAML is not required.
+visual editor, so YAML is not required. The editor is in English, or in Dutch
+when Home Assistant is set to Dutch. It shows the default of every option and
+only writes the options you change.
 
 Minimal example:
 
@@ -268,6 +270,7 @@ npm install
 npm run dev      # card in the browser with a mock hass, no Home Assistant needed
 npm run build    # type check + dist/smaailcard.js
 npm run typecheck
+npm test         # tests for what the cards calculate (needs Vitest, see below)
 ```
 
 `npm run dev` serves `index.html` with a mocked `hass` object, so you can work
@@ -295,6 +298,14 @@ npm run format:check
 npm run lint
 ```
 
+The tests use Vitest, as the frontend does, also installed without changing
+`package.json`. Vitest 5 needs Vite 6.4 or newer, so install that next to it:
+
+```bash
+npm install --no-save --no-package-lock vitest@5.1.1 vite@8.3.8
+npm test
+```
+
 Formatting-only commits are listed in `.git-blame-ignore-revs`; run
 `git config blame.ignoreRevsFile .git-blame-ignore-revs` to skip them in
 `git blame`.
@@ -315,6 +326,9 @@ Formatting-only commits are listed in `.git-blame-ignore-revs`; run
 | `src/dots.ts` | Dot and text primitives. |
 | `src/worldmap.ts` | Continent outlines + projection for the mini world map (departures board). |
 | `src/types.ts` | Configuration types. |
+| `src/defaults.ts` | Defaults shared by the cards and their editors. |
+| `src/localize.ts` | Editor texts in English and Dutch. |
+| `test/` | Tests for what the cards calculate (Vitest). |
 | `src/dev.ts`, `index.html` | Browser dev harness (shows both cards). |
 | `tools/gen_worldmap.py` | Regenerates `src/worldmapdata.ts` from Natural Earth (see `tools/README.md`). |
 

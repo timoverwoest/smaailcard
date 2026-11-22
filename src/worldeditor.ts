@@ -8,6 +8,12 @@ import {
 
 import { WORLD_CARD_EDITOR_TYPE, defineElement } from "./const";
 import { WORLD_DEFAULTS, withoutUnchangedDefaults } from "./defaults";
+import {
+  type Language,
+  type LocalizeKey,
+  editorLanguage,
+  localize,
+} from "./localize";
 import type { SmaailWorldConfig } from "./types";
 import { COUNTRIES } from "./worldmapdata";
 
@@ -50,20 +56,6 @@ const COUNTRY_OPTIONS = COUNTRIES.map(
   (c) => html`<option value=${c.iso2}>${c.name}</option>`
 );
 
-const LABELS: Record<string, string> = {
-  title: "Titel",
-  show_header: "Kop tonen",
-  show_stats: "Aantallen tonen",
-  show_meters: "Continentmeters tonen",
-  show_overview: "Overzichtskaartje tonen",
-  caption: "Bijschrift (onder kaartje)",
-  countries_entity: "Entity met landenlijst (optioneel)",
-  countries_attribute: "Attribuut van die entity (optioneel)",
-  accent_color: "Accentkleur",
-  background_color: "Achtergrondkleur",
-  land_color: "Kleur van land (niet bezocht)",
-};
-
 export class SmaailWorldCardEditor
   extends LitElement
   implements LovelaceCardEditor
@@ -85,6 +77,7 @@ export class SmaailWorldCardEditor
       return nothing;
     }
 
+    const lang = editorLanguage(this.hass);
     return html`
       <ha-form
         .hass=${this.hass}
@@ -95,18 +88,14 @@ export class SmaailWorldCardEditor
       ></ha-form>
 
       <div class="section">
-        <div class="section-title">Bezochte landen</div>
-        <p class="help">
-          Vul landen in als ISO-code (<em>NL</em>, <em>FR</em>), ISO-3
-          (<em>NLD</em>), naam (<em>Netherlands</em>) of een bekende alias
-          (<em>USA</em>, <em>UK</em>). Elk bezocht land licht op de kaart op.
-        </p>
+        <div class="section-title">${localize(lang, "countries")}</div>
+        <p class="help">${localize(lang, "countries_help")}</p>
 
-        ${this._countries.map((c, i) => this._renderCountry(c, i))}
+        ${this._countries.map((c, i) => this._renderCountry(lang, c, i))}
 
         <div class="add">
           <button type="button" @click=${this._addCountry}>
-            + Land toevoegen
+            ${localize(lang, "add_country")}
           </button>
         </div>
       </div>
@@ -115,13 +104,13 @@ export class SmaailWorldCardEditor
     `;
   }
 
-  private _renderCountry(country: string, index: number) {
+  private _renderCountry(lang: Language, country: string, index: number) {
     return html`
       <div class="row">
         <input
           type="text"
           list="swc-countries"
-          aria-label=${`Land ${index + 1}`}
+          aria-label=${localize(lang, "country_n", { n: index + 1 })}
           .value=${country}
           data-index=${index}
           @change=${this._countryChanged}
@@ -129,8 +118,8 @@ export class SmaailWorldCardEditor
         <button
           type="button"
           class="icon"
-          title="Verwijderen"
-          aria-label=${`Land ${index + 1} verwijderen`}
+          title=${localize(lang, "remove_country")}
+          aria-label=${localize(lang, "remove_country_n", { n: index + 1 })}
           data-index=${index}
           @click=${this._removeCountryClicked}
         >
@@ -151,7 +140,7 @@ export class SmaailWorldCardEditor
   }
 
   private _computeLabel = (schema: { name: string }): string =>
-    LABELS[schema.name] ?? schema.name;
+    localize(editorLanguage(this.hass), schema.name as LocalizeKey);
 
   private _formChanged(ev: CustomEvent): void {
     ev.stopPropagation();

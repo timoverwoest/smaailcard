@@ -59,7 +59,9 @@ Home Assistant-project. Meld problemen bij de
 ## Kaart toevoegen
 
 Via de UI: **Kaart toevoegen** → zoek "Smaailcard". De kaart heeft een volledige
-visuele editor, dus YAML is niet nodig.
+visuele editor, dus YAML is niet nodig. De editor is Nederlands als Home
+Assistant op Nederlands staat, anders Engels. Hij toont de standaardwaarde van
+elke optie en schrijft alleen de opties die je verandert.
 
 Minimaal voorbeeld:
 
@@ -271,6 +273,7 @@ npm install
 npm run dev      # kaart in de browser met mock-hass, geen Home Assistant nodig
 npm run build    # type-check + dist/smaailcard.js
 npm run typecheck
+npm test         # tests voor wat de kaarten berekenen (Vitest, zie hieronder)
 ```
 
 `npm run dev` serveert `index.html` met een nagebootst `hass`-object, zodat je
@@ -299,6 +302,14 @@ npm run format:check
 npm run lint
 ```
 
+De tests gebruiken Vitest, net als de frontend, ook zonder `package.json` te
+veranderen. Vitest 5 vraagt Vite 6.4 of nieuwer, dus installeer die erbij:
+
+```bash
+npm install --no-save --no-package-lock vitest@5.1.1 vite@8.3.8
+npm test
+```
+
 Commits met alleen opmaak staan in `.git-blame-ignore-revs`; met
 `git config blame.ignoreRevsFile .git-blame-ignore-revs` slaat `git blame` ze
 over.
@@ -319,6 +330,9 @@ over.
 | `src/dots.ts` | Dot- en tekst-primitieven. |
 | `src/worldmap.ts` | Continentcontouren + projectie voor de mini-wereldkaart (vertrekbord). |
 | `src/types.ts` | Configuratietypen. |
+| `src/defaults.ts` | Standaardwaarden, gedeeld door kaarten en editors. |
+| `src/localize.ts` | Editor-teksten in het Engels en Nederlands. |
+| `test/` | Tests voor wat de kaarten berekenen (Vitest). |
 | `src/dev.ts`, `index.html` | Browser-dev-harness (toont beide kaarten). |
 | `tools/gen_worldmap.py` | Regenereert `src/worldmapdata.ts` uit Natural Earth (zie `tools/README.md`). |
 
