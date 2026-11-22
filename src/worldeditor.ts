@@ -7,6 +7,7 @@ import {
 } from "custom-card-helpers";
 
 import { WORLD_CARD_EDITOR_TYPE, defineElement } from "./const";
+import { WORLD_DEFAULTS, withoutUnchangedDefaults } from "./defaults";
 import type { SmaailWorldConfig } from "./types";
 import { COUNTRIES } from "./worldmapdata";
 
@@ -87,7 +88,7 @@ export class SmaailWorldCardEditor
     return html`
       <ha-form
         .hass=${this.hass}
-        .data=${this._config}
+        .data=${{ ...WORLD_DEFAULTS, ...this._config }}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._formChanged}
@@ -154,8 +155,15 @@ export class SmaailWorldCardEditor
 
   private _formChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    /* ha-form hands back the whole object; keep `countries`, which it doesn't own. */
-    this._emit({ ...this._config, ...ev.detail.value } as SmaailWorldConfig);
+    /* ha-form hands back the whole object; keep `countries`, which it doesn't
+       own, and leave out defaults that were only shown. */
+    this._emit(
+      withoutUnchangedDefaults(
+        { ...this._config, ...ev.detail.value } as SmaailWorldConfig,
+        this._config ?? {},
+        WORLD_DEFAULTS
+      )
+    );
   }
 
   private _emit(config: SmaailWorldConfig): void {

@@ -6,16 +6,7 @@ import type {
   LovelaceCardEditor,
 } from "custom-card-helpers";
 
-import {
-  BG,
-  DIM,
-  H,
-  W,
-  YELLOW,
-  buildBoard,
-  layout,
-  resolveRows,
-} from "./board";
+import { H, W, buildBoard, layout, resolveRows } from "./board";
 import {
   CARD_NAME,
   CARD_TYPE,
@@ -23,6 +14,7 @@ import {
   defineElement,
   registerCustomCard,
 } from "./const";
+import { BOARD_DEFAULTS } from "./defaults";
 import type { BoardRow, ResolvedConfig, SmaailcardConfig } from "./types";
 
 /* The bundle ships both cards from one file (one dashboard resource
@@ -38,26 +30,7 @@ registerCustomCard({
   documentationURL: "https://github.com/timoverwoest/smaailcard",
 });
 
-const DEFAULTS = {
-  title: "DEPARTURES",
-  dest_label: "DESTINATION",
-  year_label: "YEAR",
-  row_count: 9,
-  sort: "asc" as const,
-  show_header: true,
-  show_column_labels: true,
-  show_footer: true,
-  show_map: true,
-  show_legend: true,
-  pin: [5.12, 52.09] as [number, number],
-  footer_title: "Travel board",
-  footer_subtitle: "Mapping memories, one destination at a time",
-  footer2_title: "My next adventure",
-  footer2_subtitle: "Just one ticket away",
-  accent_color: YELLOW,
-  background_color: BG,
-  unlit_color: DIM,
-};
+const DEFAULTS = BOARD_DEFAULTS;
 
 export class Smaailcard extends LitElement implements LovelaceCard {
   /** Installed version, readable as customElements.get("smaail-card").version. */

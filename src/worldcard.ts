@@ -13,15 +13,9 @@ import {
   defineElement,
   registerCustomCard,
 } from "./const";
-import {
-  BG,
-  LAND,
-  W,
-  YELLOW,
-  buildWorldBoard,
-  worldLayout,
-} from "./worldboard";
+import { W, buildWorldBoard, worldLayout } from "./worldboard";
 import { parseCountryList, resolveVisited } from "./countries";
+import { WORLD_DEFAULTS } from "./defaults";
 import type { ResolvedWorldConfig, SmaailWorldConfig } from "./types";
 
 registerCustomCard({
@@ -33,18 +27,7 @@ registerCustomCard({
   documentationURL: "https://github.com/timoverwoest/smaailcard",
 });
 
-const DEFAULTS = {
-  title: "WORLD MAP",
-  countries: [] as string[],
-  show_header: true,
-  show_meters: true,
-  show_overview: true,
-  show_stats: true,
-  caption: "",
-  accent_color: YELLOW,
-  background_color: BG,
-  land_color: LAND,
-};
+const DEFAULTS = WORLD_DEFAULTS;
 
 export class SmaailWorldCard extends LitElement implements LovelaceCard {
   /** Installed version, readable as customElements.get("smaail-world-card").version. */

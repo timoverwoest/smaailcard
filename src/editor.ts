@@ -7,6 +7,11 @@ import {
 } from "custom-card-helpers";
 
 import { CARD_EDITOR_TYPE, defineElement } from "./const";
+import {
+  BOARD_DEFAULTS,
+  DEFAULT_PIN,
+  withoutUnchangedDefaults,
+} from "./defaults";
 import type { BoardRow, SmaailcardConfig } from "./types";
 
 /* Scalar options go through ha-form so they get native Home Assistant inputs. */
@@ -89,16 +94,81 @@ const LABELS: Record<string, string> = {
   unlit_color: "Kleur gedoofde dots",
 };
 
-/* HA's own entity picker: it only loads the entity list when it is opened,
-   instead of a <datalist> with every entity that was rebuilt on each update. */
-const ENTITY_SELECTOR = { entity: {} };
+/* "Alternating" is the absence of a colour; the form needs a value for it. */
+const AUTO_COLOR = "auto";
 
 const COLOR_OPTIONS = [
-  { value: "", label: "Afwisselend (standaard)" },
+  { value: AUTO_COLOR, label: "Afwisselend (standaard)" },
   { value: "yellow", label: "Geel" },
   { value: "white", label: "Wit" },
   { value: "grey", label: "Grijs" },
 ];
+
+const ROW_LABELS: Record<string, string> = {
+  dest: "Bestemming",
+  year: "Jaar",
+  entity: "Entity (in plaats van vaste tekst)",
+  color: "Kleur",
+  full_width: "Volle breedte (geen jaartalkolom)",
+};
+
+/** One row as its form shows it. */
+interface RowFormData {
+  dest: string;
+  year: string;
+  entity: string;
+  color: string;
+  full_width: boolean;
+}
+
+/* One ha-form per row, so every field is a native Home Assistant input (the
+   entity picker only loads the entity list when it is opened). The schema
+   depends on three switches; each variant is built once. */
+const rowSchemas = new Map<string, unknown[]>();
+
+function rowSchema(
+  fullWidth: boolean,
+  destLocked: boolean,
+  yearLocked: boolean
+): unknown[] {
+  const key = `${fullWidth}|${destLocked}|${yearLocked}`;
+  let schema = rowSchemas.get(key);
+  if (!schema) {
+    schema = [
+      {
+        name: "",
+        type: "grid",
+        schema: [
+          { name: "dest", disabled: destLocked, selector: { text: {} } },
+          ...(fullWidth
+            ? []
+            : [{ name: "year", disabled: yearLocked, selector: { text: {} } }]),
+        ],
+      },
+      { name: "entity", selector: { entity: {} } },
+      {
+        name: "",
+        type: "grid",
+        schema: [
+          {
+            name: "color",
+            required: true,
+            selector: {
+              select: {
+                mode: "dropdown",
+                custom_value: true,
+                options: COLOR_OPTIONS,
+              },
+            },
+          },
+          { name: "full_width", selector: { boolean: {} } },
+        ],
+      },
+    ];
+    rowSchemas.set(key, schema);
+  }
+  return schema;
+}
 
 export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
@@ -121,7 +191,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     return html`
       <ha-form
         .hass=${this.hass}
-        .data=${this._config}
+        .data=${this._formData()}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._formChanged}
@@ -163,7 +233,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
                   <input
                     type="number"
                     step="0.01"
-                    .value=${String(this._config.pin?.[0] ?? 5.12)}
+                    .value=${String(this._config.pin?.[0] ?? DEFAULT_PIN[0])}
                     data-axis="0"
                     @change=${this._pinChanged}
                   />
@@ -173,7 +243,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
                   <input
                     type="number"
                     step="0.01"
-                    .value=${String(this._config.pin?.[1] ?? 52.09)}
+                    .value=${String(this._config.pin?.[1] ?? DEFAULT_PIN[1])}
                     data-axis="1"
                     @change=${this._pinChanged}
                   />
@@ -187,6 +257,13 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
 
   private _renderRow(row: BoardRow, index: number) {
     const fullWidth = row.year === "";
+    const data: RowFormData = {
+      dest: row.dest ?? "",
+      year: fullWidth ? "" : (row.year ?? ""),
+      entity: row.entity ?? "",
+      color: row.color ?? AUTO_COLOR,
+      full_width: fullWidth,
+    };
     return html`
       <div class="row">
         <div class="row-head">
@@ -202,69 +279,14 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
             <span aria-hidden="true">✕</span>
           </button>
         </div>
-
-        <div class="grid2">
-          <label
-            >Bestemming
-            <input
-              type="text"
-              .value=${row.dest ?? ""}
-              ?disabled=${!!row.entity}
-              data-index=${index}
-              @change=${this._destChanged}
-            />
-          </label>
-          <label
-            >Jaar
-            <input
-              type="text"
-              .value=${fullWidth ? "" : (row.year ?? "")}
-              ?disabled=${fullWidth || !!row.year_entity}
-              data-index=${index}
-              @change=${this._yearChanged}
-            />
-          </label>
-        </div>
-
-        <div class="grid2">
-          <ha-selector
-            .hass=${this.hass}
-            .selector=${ENTITY_SELECTOR}
-            .value=${row.entity ?? ""}
-            .label=${"Entity (bestemming, optioneel)"}
-            .required=${false}
-            data-index=${index}
-            @value-changed=${this._entityChanged}
-          ></ha-selector>
-          <label
-            >Kleur
-            <select
-              .value=${row.color ?? ""}
-              data-index=${index}
-              @change=${this._colorChanged}
-            >
-              ${COLOR_OPTIONS.map(
-                (o) =>
-                  html`<option
-                    value=${o.value}
-                    ?selected=${(row.color ?? "") === o.value}
-                  >
-                    ${o.label}
-                  </option>`
-              )}
-            </select>
-          </label>
-        </div>
-
-        <label class="check">
-          <input
-            type="checkbox"
-            .checked=${fullWidth}
-            data-index=${index}
-            @change=${this._fullWidthChanged}
-          />
-          Volle breedte (geen jaartalkolom)
-        </label>
+        <ha-form
+          .hass=${this.hass}
+          .data=${data}
+          .schema=${rowSchema(fullWidth, !!row.entity, !!row.year_entity)}
+          .computeLabel=${this._computeRowLabel}
+          data-index=${index}
+          @value-changed=${this._rowChanged}
+        ></ha-form>
       </div>
     `;
   }
@@ -275,25 +297,29 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     this._removeRow(rowIndex(ev));
   }
 
-  private _destChanged(ev: Event): void {
-    this._setRow(rowIndex(ev), "dest", value(ev));
-  }
-
-  private _yearChanged(ev: Event): void {
-    this._setYear(rowIndex(ev), value(ev));
-  }
-
-  private _entityChanged(ev: CustomEvent): void {
+  private _rowChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    this._setRow(rowIndex(ev), "entity", ev.detail.value || undefined);
-  }
-
-  private _colorChanged(ev: Event): void {
-    this._setRow(rowIndex(ev), "color", value(ev) || undefined);
-  }
-
-  private _fullWidthChanged(ev: Event): void {
-    this._setFullWidth(rowIndex(ev), checked(ev));
+    const index = rowIndex(ev);
+    const value = ev.detail.value as RowFormData;
+    /* Start from the row itself, so keys that only YAML sets (attribute,
+       year_entity, year_attribute) survive an edit in the form. */
+    const row: BoardRow = { ...this._rows[index] };
+    setText(row, "dest", value.dest);
+    setText(row, "entity", value.entity);
+    if (value.color && value.color !== AUTO_COLOR) {
+      row.color = value.color;
+    } else {
+      delete row.color;
+    }
+    const year = value.year?.trim();
+    if (value.full_width) {
+      row.year = "";
+    } else if (year) {
+      row.year = year;
+    } else {
+      delete row.year;
+    }
+    this._updateRows(this._rows.map((r, i) => (i === index ? row : r)));
   }
 
   private _pinChanged(ev: Event): void {
@@ -304,10 +330,32 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
   private _computeLabel = (schema: { name: string }): string =>
     LABELS[schema.name] ?? schema.name;
 
+  private _computeRowLabel = (schema: { name: string }): string =>
+    ROW_LABELS[schema.name] ?? schema.name;
+
+  /** Defaults the card uses, shown in the form when the config leaves them out. */
+  private _formDefaults(): Record<string, unknown> {
+    return {
+      ...BOARD_DEFAULTS,
+      row_count: Math.max(BOARD_DEFAULTS.row_count, this._rows.length),
+    };
+  }
+
+  private _formData(): Record<string, unknown> {
+    return { ...this._formDefaults(), ...this._config };
+  }
+
   private _formChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    /* ha-form hands back the whole object; keep rows/pin which it doesn't own. */
-    this._emit({ ...this._config, ...ev.detail.value } as SmaailcardConfig);
+    /* ha-form hands back the whole object; keep rows/pin which it doesn't own,
+       and leave out defaults that were only shown. */
+    this._emit(
+      withoutUnchangedDefaults(
+        { ...this._config, ...ev.detail.value } as SmaailcardConfig,
+        this._config ?? {},
+        this._formDefaults()
+      )
+    );
   }
 
   private _emit(config: SmaailcardConfig): void {
@@ -317,36 +365,6 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
 
   private _updateRows(rows: BoardRow[]): void {
     this._emit({ ...this._config, rows } as SmaailcardConfig);
-  }
-
-  private _setRow(index: number, key: keyof BoardRow, val: unknown): void {
-    const rows = this._rows.map((r, i) =>
-      i === index ? { ...r, [key]: val } : r
-    );
-    if (val === undefined || val === "") {
-      delete (rows[index] as Record<string, unknown>)[key];
-    }
-    this._updateRows(rows);
-  }
-
-  private _setYear(index: number, val: string): void {
-    const rows = this._rows.map((r) => ({ ...r }) as BoardRow);
-    if (val === "") {
-      delete rows[index].year;
-    } else {
-      rows[index].year = val;
-    }
-    this._updateRows(rows);
-  }
-
-  private _setFullWidth(index: number, on: boolean): void {
-    const rows = this._rows.map((r) => ({ ...r }) as BoardRow);
-    if (on) {
-      rows[index].year = "";
-    } else {
-      delete rows[index].year;
-    }
-    this._updateRows(rows);
   }
 
   private _addRow(): void {
@@ -361,14 +379,14 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     const on = (ev.target as HTMLInputElement).checked;
     this._emit({
       ...this._config,
-      pin: on ? [5.12, 52.09] : null,
+      pin: on ? [...DEFAULT_PIN] : null,
     } as SmaailcardConfig);
   }
 
   private _setPin(index: 0 | 1, ev: Event): void {
     const pin: [number, number] = [
-      this._config?.pin?.[0] ?? 5.12,
-      this._config?.pin?.[1] ?? 52.09,
+      this._config?.pin?.[0] ?? DEFAULT_PIN[0],
+      this._config?.pin?.[1] ?? DEFAULT_PIN[1],
     ];
     pin[index] = Number((ev.target as HTMLInputElement).value);
     this._emit({ ...this._config, pin } as SmaailcardConfig);
@@ -474,16 +492,22 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
   `;
 }
 
-function value(ev: Event): string {
-  return (ev.target as HTMLInputElement | HTMLSelectElement).value.trim();
-}
-
 function rowIndex(ev: Event): number {
   return Number((ev.currentTarget as HTMLElement).dataset.index);
 }
 
-function checked(ev: Event): boolean {
-  return (ev.target as HTMLInputElement).checked;
+/** Set a text key of a row, or drop it when the field is empty. */
+function setText(
+  row: BoardRow,
+  key: "dest" | "entity",
+  text: string | undefined
+): void {
+  const trimmed = text?.trim();
+  if (trimmed) {
+    row[key] = trimmed;
+  } else {
+    delete row[key];
+  }
 }
 
 defineElement(CARD_EDITOR_TYPE, SmaailcardEditor);
