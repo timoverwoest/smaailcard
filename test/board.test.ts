@@ -76,13 +76,13 @@ describe("resolveRows", () => {
   it("puts years that are not numbers after the numeric ones, alphabetically", () => {
     const rows = resolveRows(
       config([
-        { dest: "C", year: "SOON" },
+        { dest: "C", year: "TBD" },
         { dest: "B", year: "2019" },
-        { dest: "A", year: "LATER" },
+        { dest: "A", year: "SOON" },
       ]),
       {}
     );
-    expect(rows.map((r) => r.year)).toEqual(["2019", "LATER", "SOON"]);
+    expect(rows.map((r) => r.year)).toEqual(["2019", "SOON", "TBD"]);
   });
 
   it("keeps rows with the same year in configured order", () => {
