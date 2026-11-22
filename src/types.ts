@@ -1,4 +1,4 @@
-import { LovelaceCardConfig } from "custom-card-helpers";
+import type { LovelaceCardConfig } from "custom-card-helpers";
 
 /** How the board orders its rows. */
 export type SortOrder = "asc" | "desc" | "none";

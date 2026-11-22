@@ -122,19 +122,31 @@ export class SmaailWorldCardEditor
           list="swc-countries"
           aria-label=${`Land ${index + 1}`}
           .value=${country}
-          @change=${(e: Event) => this._setCountry(index, value(e))}
+          data-index=${index}
+          @change=${this._countryChanged}
         />
         <button
           type="button"
           class="icon"
           title="Verwijderen"
           aria-label=${`Land ${index + 1} verwijderen`}
-          @click=${() => this._removeCountry(index)}
+          data-index=${index}
+          @click=${this._removeCountryClicked}
         >
           <span aria-hidden="true">✕</span>
         </button>
       </div>
     `;
+  }
+
+  /* Template bindings pass methods, not arrow functions (lit/no-template-arrow,
+     as in the Home Assistant frontend); the row comes from data-index. */
+  private _countryChanged(ev: Event): void {
+    this._setCountry(rowIndex(ev), value(ev));
+  }
+
+  private _removeCountryClicked(ev: Event): void {
+    this._removeCountry(rowIndex(ev));
   }
 
   private _computeLabel = (schema: { name: string }): string =>
@@ -234,6 +246,10 @@ export class SmaailWorldCardEditor
       display: none;
     }
   `;
+}
+
+function rowIndex(ev: Event): number {
+  return Number((ev.currentTarget as HTMLElement).dataset.index);
 }
 
 function value(ev: Event): string {

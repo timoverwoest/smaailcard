@@ -1,9 +1,9 @@
 import { LitElement, html, css, nothing, type PropertyValues } from "lit";
-import { property, state } from "lit/decorators.js";
-import {
-  type HomeAssistant,
-  type LovelaceCard,
-  type LovelaceCardEditor,
+import { property, query, state } from "lit/decorators.js";
+import type {
+  HomeAssistant,
+  LovelaceCard,
+  LovelaceCardEditor,
 } from "custom-card-helpers";
 
 import {
@@ -56,6 +56,8 @@ export class SmaailWorldCard extends LitElement implements LovelaceCard {
 
   /** Horizontal nudge that keeps the header group optically centred. */
   @state() private _headerShift = 0;
+
+  @query("#swc-header") private _header?: SVGGElement;
 
   private _measuredTitle?: string;
 
@@ -162,7 +164,7 @@ export class SmaailWorldCard extends LitElement implements LovelaceCard {
     if (!cfg?.show_header || this._measuredTitle === cfg.title) {
       return;
     }
-    const group = this.renderRoot?.querySelector<SVGGElement>("#swc-header");
+    const group = this._header;
     if (!group) {
       return;
     }

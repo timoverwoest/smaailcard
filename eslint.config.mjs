@@ -10,7 +10,10 @@ import { configs as litConfigs } from "eslint-plugin-lit";
 import { configs as wcConfigs } from "eslint-plugin-wc";
 import { configs as a11yConfigs } from "eslint-plugin-lit-a11y";
 import html from "@html-eslint/eslint-plugin";
-import importX from "eslint-plugin-import-x";
+import {
+  createNodeResolver,
+  flatConfigs as importXConfigs,
+} from "eslint-plugin-import-x";
 
 export default tseslint.config(
   { ignores: ["dist/**", "node_modules/**"] },
@@ -22,7 +25,7 @@ export default tseslint.config(
   tseslint.configs.stylistic,
   wcConfigs["flat/recommended"],
   a11yConfigs.recommended,
-  importX.flatConfigs.recommended,
+  importXConfigs.recommended,
   {
     plugins: {
       "unused-imports": unusedImports,
@@ -38,6 +41,13 @@ export default tseslint.config(
           modules: true,
         },
       },
+    },
+
+    // Instead of the frontend's webpack resolver: resolve "./font" to src/font.ts.
+    settings: {
+      "import-x/resolver-next": [
+        createNodeResolver({ extensions: [".ts", ".js", ".mjs"] }),
+      ],
     },
 
     rules: {

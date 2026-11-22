@@ -164,7 +164,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
                     type="number"
                     step="0.01"
                     .value=${String(this._config.pin?.[0] ?? 5.12)}
-                    @change=${(e: Event) => this._setPin(0, e)}
+                    data-axis="0"
+                    @change=${this._pinChanged}
                   />
                 </label>
                 <label
@@ -173,7 +174,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
                     type="number"
                     step="0.01"
                     .value=${String(this._config.pin?.[1] ?? 52.09)}
-                    @change=${(e: Event) => this._setPin(1, e)}
+                    data-axis="1"
+                    @change=${this._pinChanged}
                   />
                 </label>
               </div>`
@@ -194,7 +196,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
             class="icon"
             title="Regel verwijderen"
             aria-label=${`Regel ${index + 1} verwijderen`}
-            @click=${() => this._removeRow(index)}
+            data-index=${index}
+            @click=${this._removeRowClicked}
           >
             <span aria-hidden="true">✕</span>
           </button>
@@ -207,7 +210,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
               type="text"
               .value=${row.dest ?? ""}
               ?disabled=${!!row.entity}
-              @change=${(e: Event) => this._setRow(index, "dest", value(e))}
+              data-index=${index}
+              @change=${this._destChanged}
             />
           </label>
           <label
@@ -216,7 +220,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
               type="text"
               .value=${fullWidth ? "" : (row.year ?? "")}
               ?disabled=${fullWidth || !!row.year_entity}
-              @change=${(e: Event) => this._setYear(index, value(e))}
+              data-index=${index}
+              @change=${this._yearChanged}
             />
           </label>
         </div>
@@ -228,14 +233,15 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
             .value=${row.entity ?? ""}
             .label=${"Entity (bestemming, optioneel)"}
             .required=${false}
-            @value-changed=${(e: CustomEvent) => this._entityChanged(index, e)}
+            data-index=${index}
+            @value-changed=${this._entityChanged}
           ></ha-selector>
           <label
             >Kleur
             <select
               .value=${row.color ?? ""}
-              @change=${(e: Event) =>
-                this._setRow(index, "color", value(e) || undefined)}
+              data-index=${index}
+              @change=${this._colorChanged}
             >
               ${COLOR_OPTIONS.map(
                 (o) =>
@@ -254,7 +260,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
           <input
             type="checkbox"
             .checked=${fullWidth}
-            @change=${(e: Event) => this._setFullWidth(index, checked(e))}
+            data-index=${index}
+            @change=${this._fullWidthChanged}
           />
           Volle breedte (geen jaartalkolom)
         </label>
@@ -262,9 +269,36 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     `;
   }
 
-  private _entityChanged(index: number, ev: CustomEvent): void {
+  /* Template bindings pass methods, not arrow functions (lit/no-template-arrow,
+     as in the Home Assistant frontend); the row comes from data-index. */
+  private _removeRowClicked(ev: Event): void {
+    this._removeRow(rowIndex(ev));
+  }
+
+  private _destChanged(ev: Event): void {
+    this._setRow(rowIndex(ev), "dest", value(ev));
+  }
+
+  private _yearChanged(ev: Event): void {
+    this._setYear(rowIndex(ev), value(ev));
+  }
+
+  private _entityChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    this._setRow(index, "entity", ev.detail.value || undefined);
+    this._setRow(rowIndex(ev), "entity", ev.detail.value || undefined);
+  }
+
+  private _colorChanged(ev: Event): void {
+    this._setRow(rowIndex(ev), "color", value(ev) || undefined);
+  }
+
+  private _fullWidthChanged(ev: Event): void {
+    this._setFullWidth(rowIndex(ev), checked(ev));
+  }
+
+  private _pinChanged(ev: Event): void {
+    const axis = (ev.currentTarget as HTMLElement).dataset.axis === "1" ? 1 : 0;
+    this._setPin(axis, ev);
   }
 
   private _computeLabel = (schema: { name: string }): string =>
@@ -441,6 +475,10 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
 
 function value(ev: Event): string {
   return (ev.target as HTMLInputElement | HTMLSelectElement).value.trim();
+}
+
+function rowIndex(ev: Event): number {
+  return Number((ev.currentTarget as HTMLElement).dataset.index);
 }
 
 function checked(ev: Event): boolean {
