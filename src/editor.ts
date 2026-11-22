@@ -1,11 +1,12 @@
 import { LitElement, html, css, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import {
   type HomeAssistant,
   type LovelaceCardEditor,
   fireEvent,
 } from "custom-card-helpers";
 
+import { CARD_EDITOR_TYPE, defineElement } from "./const";
 import type { BoardRow, SmaailcardConfig } from "./types";
 
 /* Scalar options go through ha-form so they get native Home Assistant inputs. */
@@ -88,6 +89,10 @@ const LABELS: Record<string, string> = {
   unlit_color: "Kleur gedoofde dots",
 };
 
+/* HA's own entity picker: it only loads the entity list when it is opened,
+   instead of a <datalist> with every entity that was rebuilt on each update. */
+const ENTITY_SELECTOR = { entity: {} };
+
 const COLOR_OPTIONS = [
   { value: "", label: "Afwisselend (standaard)" },
   { value: "yellow", label: "Geel" },
@@ -95,7 +100,6 @@ const COLOR_OPTIONS = [
   { value: "grey", label: "Grijs" },
 ];
 
-@customElement("smaail-card-editor")
 export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
@@ -135,7 +139,9 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
         ${this._rows.map((row, i) => this._renderRow(row, i))}
 
         <div class="add">
-          <button @click=${this._addRow}>+ Regel toevoegen</button>
+          <button type="button" @click=${this._addRow}>
+            + Regel toevoegen
+          </button>
         </div>
       </div>
 
@@ -173,11 +179,6 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
           : nothing}
       </div>
 
-      <datalist id="sc-entities">
-        ${Object.keys(this.hass.states).map(
-          (id) => html`<option value=${id}></option>`,
-        )}
-      </datalist>
     `;
   }
 
@@ -188,11 +189,13 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
         <div class="row-head">
           <span class="num">${index + 1}</span>
           <button
+            type="button"
             class="icon"
             title="Regel verwijderen"
+            aria-label=${`Regel ${index + 1} verwijderen`}
             @click=${() => this._removeRow(index)}
           >
-            ✕
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
 
@@ -218,17 +221,14 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
         </div>
 
         <div class="grid2">
-          <label
-            >Entity (bestemming)
-            <input
-              type="text"
-              list="sc-entities"
-              placeholder="optioneel"
-              .value=${row.entity ?? ""}
-              @change=${(e: Event) =>
-                this._setRow(index, "entity", value(e) || undefined)}
-            />
-          </label>
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${ENTITY_SELECTOR}
+            .value=${row.entity ?? ""}
+            .label=${"Entity (bestemming, optioneel)"}
+            .required=${false}
+            @value-changed=${(e: CustomEvent) => this._entityChanged(index, e)}
+          ></ha-selector>
           <label
             >Kleur
             <select
@@ -259,6 +259,11 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
         </label>
       </div>
     `;
+  }
+
+  private _entityChanged(index: number, ev: CustomEvent): void {
+    ev.stopPropagation();
+    this._setRow(index, "entity", ev.detail.value || undefined);
   }
 
   private _computeLabel = (schema: { name: string }): string =>
@@ -414,8 +419,14 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
       border: none;
       background: none;
       font-size: 1rem;
-      padding: 2px 6px;
+      min-width: 36px;
+      min-height: 36px;
+      padding: 0;
       color: var(--secondary-text-color, #727272);
+    }
+    button:focus-visible {
+      outline: 2px solid var(--primary-color, #03a9f4);
+      outline-offset: 2px;
     }
     button:hover {
       border-color: var(--primary-color, #03a9f4);
@@ -423,9 +434,6 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     }
     .add {
       margin-top: 4px;
-    }
-    datalist {
-      display: none;
     }
   `;
 }
@@ -437,6 +445,8 @@ function value(ev: Event): string {
 function checked(ev: Event): boolean {
   return (ev.target as HTMLInputElement).checked;
 }
+
+defineElement(CARD_EDITOR_TYPE, SmaailcardEditor);
 
 declare global {
   interface HTMLElementTagNameMap {

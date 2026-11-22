@@ -1,22 +1,27 @@
 import { LitElement, html, css, nothing, type PropertyValues } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import {
   type HomeAssistant,
   type LovelaceCard,
   type LovelaceCardEditor,
 } from "custom-card-helpers";
 
-import { CARD_VERSION, WORLD_CARD_NAME, WORLD_CARD_TYPE } from "./const";
+import {
+  CARD_VERSION,
+  WORLD_CARD_NAME,
+  WORLD_CARD_TYPE,
+  defineElement,
+  registerCustomCard,
+} from "./const";
 import { BG, LAND, W, YELLOW, buildWorldBoard, worldLayout } from "./worldboard";
 import { parseCountryList, resolveVisited } from "./countries";
 import type { ResolvedWorldConfig, SmaailWorldConfig } from "./types";
 
-(window as unknown as { customCards?: unknown[] }).customCards ??= [];
-(window as unknown as { customCards: unknown[] }).customCards.push({
+registerCustomCard({
   type: WORLD_CARD_TYPE,
   name: WORLD_CARD_NAME,
   description:
-    "Dot-matrix world map — the countries you have visited, lit up by continent.",
+    "Dot-matrix world map: the countries you have visited, lit up by continent.",
   preview: true,
   documentationURL: "https://github.com/timoverwoest/smaailcard",
 });
@@ -34,8 +39,10 @@ const DEFAULTS = {
   land_color: LAND,
 };
 
-@customElement(WORLD_CARD_TYPE)
 export class SmaailWorldCard extends LitElement implements LovelaceCard {
+  /** Installed version, readable as customElements.get("smaail-world-card").version. */
+  public static readonly version = CARD_VERSION;
+
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private _config?: ResolvedWorldConfig;
@@ -184,11 +191,7 @@ export class SmaailWorldCard extends LitElement implements LovelaceCard {
   `;
 }
 
-console.info(
-  `%c ${WORLD_CARD_NAME.toUpperCase()} %c ${CARD_VERSION} `,
-  "color: #0C0C0C; background: #F2DD00; font-weight: 700;",
-  "color: #F2DD00; background: #0C0C0C; font-weight: 700;",
-);
+defineElement(WORLD_CARD_TYPE, SmaailWorldCard);
 
 declare global {
   interface HTMLElementTagNameMap {

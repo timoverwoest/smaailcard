@@ -1,11 +1,12 @@
 import { LitElement, html, css, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import {
   type HomeAssistant,
   type LovelaceCardEditor,
   fireEvent,
 } from "custom-card-helpers";
 
+import { WORLD_CARD_EDITOR_TYPE, defineElement } from "./const";
 import type { SmaailWorldConfig } from "./types";
 import { COUNTRIES } from "./worldmapdata";
 
@@ -42,6 +43,12 @@ const SCHEMA = [
   },
 ];
 
+/* The country suggestions never change, so build them once instead of on
+   every editor update (the editor re-renders whenever hass changes). */
+const COUNTRY_OPTIONS = COUNTRIES.map(
+  (c) => html`<option value=${c.iso2}>${c.name}</option>`,
+);
+
 const LABELS: Record<string, string> = {
   title: "Titel",
   show_header: "Kop tonen",
@@ -56,7 +63,6 @@ const LABELS: Record<string, string> = {
   land_color: "Kleur van land (niet bezocht)",
 };
 
-@customElement("smaail-world-card-editor")
 export class SmaailWorldCardEditor
   extends LitElement
   implements LovelaceCardEditor
@@ -98,15 +104,13 @@ export class SmaailWorldCardEditor
         ${this._countries.map((c, i) => this._renderCountry(c, i))}
 
         <div class="add">
-          <button @click=${this._addCountry}>+ Land toevoegen</button>
+          <button type="button" @click=${this._addCountry}>
+            + Land toevoegen
+          </button>
         </div>
       </div>
 
-      <datalist id="swc-countries">
-        ${COUNTRIES.map(
-          (c) => html`<option value=${c.iso2}>${c.name}</option>`,
-        )}
-      </datalist>
+      <datalist id="swc-countries">${COUNTRY_OPTIONS}</datalist>
     `;
   }
 
@@ -116,15 +120,18 @@ export class SmaailWorldCardEditor
         <input
           type="text"
           list="swc-countries"
+          aria-label=${`Land ${index + 1}`}
           .value=${country}
           @change=${(e: Event) => this._setCountry(index, value(e))}
         />
         <button
+          type="button"
           class="icon"
           title="Verwijderen"
+          aria-label=${`Land ${index + 1} verwijderen`}
           @click=${() => this._removeCountry(index)}
         >
-          ✕
+          <span aria-hidden="true">✕</span>
         </button>
       </div>
     `;
@@ -207,8 +214,14 @@ export class SmaailWorldCardEditor
       border: none;
       background: none;
       font-size: 1rem;
-      padding: 2px 6px;
+      min-width: 36px;
+      min-height: 36px;
+      padding: 0;
       color: var(--secondary-text-color, #727272);
+    }
+    button:focus-visible {
+      outline: 2px solid var(--primary-color, #03a9f4);
+      outline-offset: 2px;
     }
     button:hover {
       border-color: var(--primary-color, #03a9f4);
@@ -226,6 +239,8 @@ export class SmaailWorldCardEditor
 function value(ev: Event): string {
   return (ev.target as HTMLInputElement).value.trim();
 }
+
+defineElement(WORLD_CARD_EDITOR_TYPE, SmaailWorldCardEditor);
 
 declare global {
   interface HTMLElementTagNameMap {

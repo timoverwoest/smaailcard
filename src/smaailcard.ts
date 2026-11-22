@@ -1,5 +1,5 @@
 import { LitElement, html, css, nothing, type PropertyValues } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import {
   type HomeAssistant,
   type LovelaceCard,
@@ -7,25 +7,24 @@ import {
 } from "custom-card-helpers";
 
 import { BG, DIM, H, W, YELLOW, buildBoard, layout, resolveRows } from "./board";
-import { CARD_NAME, CARD_TYPE, CARD_VERSION } from "./const";
+import {
+  CARD_NAME,
+  CARD_TYPE,
+  CARD_VERSION,
+  defineElement,
+  registerCustomCard,
+} from "./const";
 import type { BoardRow, ResolvedConfig, SmaailcardConfig } from "./types";
 
-/* The bundle ships both cards from one file (one HACS/Lovelace resource
+/* The bundle ships both cards from one file (one dashboard resource
    registers custom:smaail-card and custom:smaail-world-card). */
 import "./worldcard";
 
-console.info(
-  `%c ${CARD_NAME.toUpperCase()} %c ${CARD_VERSION} `,
-  "color: #0C0C0C; background: #F2DD00; font-weight: 700;",
-  "color: #F2DD00; background: #0C0C0C; font-weight: 700;",
-);
-
-(window as unknown as { customCards?: unknown[] }).customCards ??= [];
-(window as unknown as { customCards: unknown[] }).customCards.push({
+registerCustomCard({
   type: CARD_TYPE,
   name: CARD_NAME,
   description:
-    "Dot-matrix departures board — a travel poster of the places you have been.",
+    "Dot-matrix departures board: a travel poster of the places you have been.",
   preview: true,
   documentationURL: "https://github.com/timoverwoest/smaailcard",
 });
@@ -51,8 +50,10 @@ const DEFAULTS = {
   unlit_color: DIM,
 };
 
-@customElement(CARD_TYPE)
 export class Smaailcard extends LitElement implements LovelaceCard {
+  /** Installed version, readable as customElements.get("smaail-card").version. */
+  public static readonly version = CARD_VERSION;
+
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private _config?: ResolvedConfig;
@@ -214,6 +215,8 @@ export class Smaailcard extends LitElement implements LovelaceCard {
     }
   `;
 }
+
+defineElement(CARD_TYPE, Smaailcard);
 
 function clamp(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));
