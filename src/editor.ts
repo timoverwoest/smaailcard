@@ -31,6 +31,7 @@ const SCHEMA = [
   },
   {
     name: "sort",
+    required: true,
     selector: {
       select: {
         mode: "dropdown",
@@ -123,15 +124,24 @@ interface RowFormData {
 
 /* One ha-form per row, so every field is a native Home Assistant input (the
    entity picker only loads the entity list when it is opened). The schema
-   depends on three switches; each variant is built once. */
+   depends on three switches and on a colour of its own; each variant is built
+   once. */
 const rowSchemas = new Map<string, unknown[]>();
+
+/** The colour choices, plus a colour from YAML (hex, "gray") as its own entry. */
+function colorOptions(color: string): { value: string; label: string }[] {
+  return COLOR_OPTIONS.some((o) => o.value === color)
+    ? COLOR_OPTIONS
+    : [...COLOR_OPTIONS, { value: color, label: color }];
+}
 
 function rowSchema(
   fullWidth: boolean,
   destLocked: boolean,
-  yearLocked: boolean
+  yearLocked: boolean,
+  color: string
 ): unknown[] {
-  const key = `${fullWidth}|${destLocked}|${yearLocked}`;
+  const key = `${fullWidth}|${destLocked}|${yearLocked}|${color}`;
   let schema = rowSchemas.get(key);
   if (!schema) {
     schema = [
@@ -156,8 +166,7 @@ function rowSchema(
             selector: {
               select: {
                 mode: "dropdown",
-                custom_value: true,
-                options: COLOR_OPTIONS,
+                options: colorOptions(color),
               },
             },
           },
@@ -282,7 +291,12 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
         <ha-form
           .hass=${this.hass}
           .data=${data}
-          .schema=${rowSchema(fullWidth, !!row.entity, !!row.year_entity)}
+          .schema=${rowSchema(
+            fullWidth,
+            !!row.entity,
+            !!row.year_entity,
+            data.color
+          )}
           .computeLabel=${this._computeRowLabel}
           data-index=${index}
           @value-changed=${this._rowChanged}
