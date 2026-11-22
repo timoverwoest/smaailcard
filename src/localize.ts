@@ -1,7 +1,8 @@
 import type { HomeAssistant } from "custom-card-helpers";
 
-/* Editor texts in US English (sentence case, as in Home Assistant), with a
-   Dutch translation. Placeholders like {n} are filled in by localize(). */
+/* Teksten van de editor in Amerikaans Engels (sentence case, zoals in Home
+   Assistant), met een Nederlandse vertaling. Placeholders als {n} vult
+   localize() in. */
 const EN = {
   title: "Title",
   dest_label: "Destination heading",
@@ -124,18 +125,18 @@ const NL: Record<LocalizeKey, string> = {
 
 export type Language = "en" | "nl";
 
-/** Dutch when Home Assistant is set to Dutch, English otherwise. */
+/** Nederlands als Home Assistant op Nederlands staat, anders Engels. */
 export function editorLanguage(hass?: HomeAssistant): Language {
   return (hass?.language ?? "").toLowerCase().startsWith("nl") ? "nl" : "en";
 }
 
-/** Editor text in the language of Home Assistant, with {n} and the like filled in. */
+/** Tekst van de editor in de taal van Home Assistant, met {n} en dergelijke ingevuld. */
 export function localize(
   language: Language,
   key: LocalizeKey,
   values: Record<string, string | number> = {}
 ): string {
-  // An unknown key (a schema field without a text) shows the key itself.
+  // Een onbekende sleutel (een veld zonder tekst) toont de sleutel zelf.
   const text = (language === "nl" ? NL : EN)[key] ?? key;
   return text.replace(/\{(\w+)\}/g, (match, name: string) =>
     name in values ? String(values[name]) : match

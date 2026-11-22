@@ -1,6 +1,6 @@
-// ESLint as in the Home Assistant frontend (its eslint.config.mjs, November 2026): the same
-// plugins, and its rules in eslint-ha.json, without the parts that only apply to the frontend
-// repository itself (the webpack resolver, its own "ha" rules and the history helpers).
+// ESLint zoals in de Home Assistant-frontend (zijn eslint.config.mjs, november 2026): dezelfde
+// plugins, en zijn regels in eslint-ha.json, zonder de delen die alleen voor de frontend-repo zelf
+// gelden (de webpack-resolver, de eigen "ha"-regels en de history-hulpjes).
 import { readFileSync } from "node:fs";
 import unusedImports from "eslint-plugin-unused-imports";
 import globals from "globals";
@@ -48,7 +48,7 @@ export default tseslint.config(
       },
     },
 
-    // Instead of the frontend's webpack resolver: resolve "./font" to src/font.ts.
+    // In plaats van de webpack-resolver van de frontend: "./font" wordt src/font.ts.
     settings: {
       "import-x/resolver-next": [
         createNodeResolver({ extensions: [".ts", ".js", ".mjs"] }),
@@ -58,7 +58,7 @@ export default tseslint.config(
     rules: ha.rules,
   },
   {
-    // Build config and this file run in Node.js, not in the browser.
+    // De build-config en dit bestand draaien in Node.js, niet in de browser.
     files: ["vite.config.ts", "eslint.config.mjs"],
     languageOptions: {
       globals: globals.node,

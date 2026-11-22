@@ -12,7 +12,7 @@ import {
 } from "./worldmapdata";
 import type { VisitedResult } from "./countries";
 
-/* ------------------------------------------------------------------ palette */
+/* -------------------------------------------------------------------- palet */
 export const W = 1000;
 export const BG = "#0C0C0C";
 export const YELLOW = "#F2DD00";
@@ -20,36 +20,36 @@ export const LAND = "#3A3A3A";
 export const WHITE = "#FFFFFF";
 export const GREY = "#8C8C8C";
 
-/* ----------------------------------------------------------------- geometry */
+/* --------------------------------------------------------------- geometrie */
 const MARGIN = 48;
 
-/* Header. */
+/* Kop. */
 const HEADER_Y = 42;
 const LOGO = 66;
 const LOGO_X = 300;
 const TITLE_SIZE = 52;
 
-/* Main map. */
+/* Hoofdkaart. */
 const MAP_PITCH = 9.0;
 const MAP_R = 2.7;
 const MAP_W = (COLS - 1) * MAP_PITCH;
-const MAP_X0 = Math.round((W - MAP_W) / 2); // centre of the first dot column
-const HEADER_BLOCK = 150; // header height reclaimed when it is hidden
+const MAP_X0 = Math.round((W - MAP_W) / 2); // midden van de eerste dot-kolom
+const HEADER_BLOCK = 150; // hoogte van de kop die vrijkomt als hij verborgen is
 
-/* Continent meters. */
+/* Meters per werelddeel. */
 const MET_PITCH = 6.6;
 const MET_R = 2.0;
 const MET_ROWS = 4;
 const LABEL_SIZE = 13;
-const GAP_IN = 26; // between meters in a group
-const METER_GAP = 46; // map -> meters
-const LABEL_DROP = 18; // label baseline -> first grid row
+const GAP_IN = 26; // tussen de meters in een groep
+const METER_GAP = 46; // kaart -> meters
+const LABEL_DROP = 18; // basislijn van het label -> eerste rasterrij
 
-/* Centre overview map. */
+/* Overzichtskaartje in het midden. */
 const OVERVIEW_MAX_W = 210;
 const CAPTION_SIZE = 15;
 
-/* A simple globe drawn in the background colour on the accent logo square. */
+/* Een eenvoudige globe in de achtergrondkleur op het vierkantje in de accentkleur. */
 function globe(
   cx: number,
   cy: number,
@@ -67,7 +67,7 @@ function globe(
     </g>`;
 }
 
-/* Decode the run-length-encoded grid to a flat row-major array, once. */
+/* Pak het run-length-gecodeerde raster één keer uit tot een platte array, rij voor rij. */
 let FLAT: number[] | null = null;
 function flatGrid(): number[] {
   if (FLAT) {
@@ -84,12 +84,12 @@ function flatGrid(): number[] {
   return f;
 }
 
-/** Grid columns needed for a meter of `total` cells at MET_ROWS rows. */
+/** Benodigde rasterkolommen voor een meter van `total` cellen bij MET_ROWS rijen. */
 function meterCols(total: number): number {
   return Math.max(1, Math.ceil(total / MET_ROWS));
 }
 
-/** Rough width (px) of a Helvetica-caps label at LABEL_SIZE. */
+/** Geschatte breedte (px) van een label in Helvetica-hoofdletters bij LABEL_SIZE. */
 function labelWidth(text: string): number {
   return text.length * LABEL_SIZE * 0.62;
 }
@@ -99,8 +99,9 @@ function meterWidth(k: number): number {
   return Math.max(grid, labelWidth(CONTINENTS[k].toUpperCase()));
 }
 
-/* One continent meter: an upper-case label over a `total`-cell dot grid with
-   the first `visited` cells lit. Returns dim + accent dots and the label. */
+/* Eén meter per werelddeel: een label in hoofdletters boven een dot-raster van
+   `total` cellen, waarvan de eerste `visited` oplichten. Geeft gedoofde dots,
+   dots in de accentkleur en het label terug. */
 function meter(
   k: number,
   x: number,
@@ -124,7 +125,7 @@ export interface WorldLayout {
   height: number;
 }
 
-/** Work out the card height for the given toggles (used for grid sizing). */
+/** Bereken de hoogte van de kaart voor deze schakelaars (voor de maat in het raster). */
 export function worldLayout(cfg: {
   show_header: boolean;
   show_meters: boolean;
@@ -137,7 +138,7 @@ export function worldLayout(cfg: {
   if (cfg.show_meters) {
     bottom = mapBottom + METER_GAP + LABEL_DROP + MET_ROWS * MET_PITCH;
     if (cfg.show_overview) {
-      bottom += CAPTION_SIZE + 6; // caption sits a touch lower than the meters
+      bottom += CAPTION_SIZE + 6; // het bijschrift staat iets lager dan de meters
     }
   }
   return { height: Math.round(bottom + 44) };
@@ -161,7 +162,7 @@ export function buildWorldBoard(
   const mapY0 = cfg.show_header ? HEADER_BLOCK + (cfg.show_stats ? 22 : 0) : 56;
   const flat = flatGrid();
 
-  /* Main map: unvisited land dim, visited land accent. */
+  /* Hoofdkaart: niet bezocht land gedimd, bezocht land in de accentkleur. */
   const dim: Dot[] = [];
   const lit: Dot[] = [];
   for (let i = 0; i < flat.length; i++) {
@@ -176,7 +177,7 @@ export function buildWorldBoard(
     (visited.cells.has(v) ? lit : dim).push(dot);
   }
 
-  /* Footer: continent meters (3 left, 3 right) flanking an overview map. */
+  /* Onderkant: meters per werelddeel (3 links, 3 rechts) rond een overzichtskaartje. */
   const metLabels: SVGTemplateResult[] = [];
   const metDim: Dot[] = [];
   const metLit: Dot[] = [];
@@ -212,7 +213,7 @@ export function buildWorldBoard(
       rx += meterWidth(k) + GAP_IN;
     }
 
-    /* Overview map centred in the gap between the two groups. */
+    /* Overzichtskaartje gecentreerd tussen de twee groepen. */
     if (cfg.show_overview) {
       const avail = rightStart - leftEnd - 40;
       const pitch = Math.max(1.2, Math.min(OVERVIEW_MAX_W, avail) / (COLS - 1));

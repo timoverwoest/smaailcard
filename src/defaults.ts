@@ -1,10 +1,10 @@
 import { BG, DIM, YELLOW } from "./board";
 import { BG as WORLD_BG, LAND, YELLOW as WORLD_YELLOW } from "./worldboard";
 
-/** Marker on the mini world map when `pin` is not set: [longitude, latitude]. */
+/** Markering op de mini-wereldkaart als `pin` niet is gezet: [lengtegraad, breedtegraad]. */
 export const DEFAULT_PIN: [number, number] = [5.12, 52.09];
 
-/** Defaults of the departures board; the card and its editor share them. */
+/** Standaardwaarden van het vertrekbord; kaart en editor delen ze. */
 export const BOARD_DEFAULTS = {
   title: "DEPARTURES",
   dest_label: "DESTINATION",
@@ -26,7 +26,7 @@ export const BOARD_DEFAULTS = {
   unlit_color: DIM,
 };
 
-/** Defaults of the world map; the card and its editor share them. */
+/** Standaardwaarden van de wereldkaart; kaart en editor delen ze. */
 export const WORLD_DEFAULTS = {
   title: "WORLD MAP",
   countries: [] as string[],
@@ -41,9 +41,9 @@ export const WORLD_DEFAULTS = {
 };
 
 /**
- * Editor change without defaults: an option that the form shows with its
- * default value is only written to the config when it was already there, so
- * changing one field does not fill the YAML with every default.
+ * Wijziging uit de editor zonder standaardwaarden: een optie die het formulier
+ * met zijn standaardwaarde toont, komt alleen in de config als hij er al stond.
+ * Zo vult het wijzigen van één veld de YAML niet met alle standaardwaarden.
  */
 export function withoutUnchangedDefaults<T extends Record<string, unknown>>(
   next: T,

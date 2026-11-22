@@ -17,8 +17,8 @@ import {
 import { BOARD_DEFAULTS } from "./defaults";
 import type { BoardRow, ResolvedConfig, SmaailcardConfig } from "./types";
 
-/* The bundle ships both cards from one file (one dashboard resource
-   registers custom:smaail-card and custom:smaail-world-card). */
+/* De bundel levert beide kaarten uit één bestand (één dashboard-resource
+   registreert custom:smaail-card en custom:smaail-world-card). */
 import "./worldcard";
 
 registerCustomCard({
@@ -33,14 +33,14 @@ registerCustomCard({
 const DEFAULTS = BOARD_DEFAULTS;
 
 export class Smaailcard extends LitElement implements LovelaceCard {
-  /** Installed version, readable as customElements.get("smaail-card").version. */
+  /** Geïnstalleerde versie, te lezen als customElements.get("smaail-card").version. */
   public static readonly version = CARD_VERSION;
 
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private _config?: ResolvedConfig;
 
-  /** Horizontal nudge that keeps the header group optically centred. */
+  /** Horizontale verschuiving die de kopgroep optisch gecentreerd houdt. */
   @state() private _headerShift = 0;
 
   @query("#sc-header") private _header?: SVGGElement;
@@ -98,7 +98,7 @@ export class Smaailcard extends LitElement implements LovelaceCard {
     return Math.max(3, Math.round((this._height() / H) * 14));
   }
 
-  /** Sensible default footprint in a Sections dashboard. */
+  /** Redelijke standaardmaat in een dashboard met secties. */
   public getGridOptions() {
     return {
       columns: 12,
@@ -122,7 +122,7 @@ export class Smaailcard extends LitElement implements LovelaceCard {
     if (!oldHass) {
       return true;
     }
-    /* Only re-render when an entity the board actually shows has changed. */
+    /* Alleen opnieuw tekenen als een entity die het bord toont is veranderd. */
     return this._entities().some(
       (id) => oldHass.states[id] !== this.hass?.states[id]
     );
@@ -154,9 +154,9 @@ export class Smaailcard extends LitElement implements LovelaceCard {
   }
 
   /**
-   * The poster hard-codes the header position for the word "DEPARTURES", which
-   * would sit off-centre for any other title. Measure the rendered group once
-   * per title and shift it so the icon + text block is centred on the board.
+   * De poster zet de kop vast voor het woord "DEPARTURES"; elke andere titel
+   * zou dan uit het midden staan. Meet de getekende groep één keer per titel en
+   * verschuif hem, zodat icoon en tekst samen in het midden van het bord staan.
    */
   private _centreHeader(): void {
     const cfg = this._config;
@@ -171,7 +171,7 @@ export class Smaailcard extends LitElement implements LovelaceCard {
     try {
       box = group.getBBox();
     } catch {
-      return; // not laid out yet (e.g. hidden tab)
+      return; // nog niet getekend (bijvoorbeeld een verborgen tabblad)
     }
     if (!box.width) {
       return;
@@ -186,7 +186,7 @@ export class Smaailcard extends LitElement implements LovelaceCard {
   static styles = css`
     ha-card {
       overflow: hidden;
-      /* The board brings its own background; let it run to the card edges. */
+      /* Het bord heeft een eigen achtergrond; laat die tot de randen lopen. */
       padding: 0;
     }
     svg {
@@ -206,7 +206,7 @@ function clamp(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));
 }
 
-/** Accepts the generator's "DESTINATION|YEAR" shorthand for a row. */
+/** Accepteert de korte schrijfwijze "DESTINATION|YEAR" van de generator. */
 function parseShorthand(spec: string): BoardRow {
   const idx = spec.indexOf("|");
   if (idx === -1) {

@@ -1,10 +1,10 @@
 import { defineConfig } from "vite";
 
-// Two modes in one config:
-//  - `vite` (dev server) serves index.html + src/dev.ts as a mock harness.
-//  - `vite build` produces a single ES bundle at dist/smaailcard.js that
-//    Home Assistant / HACS loads as a Lovelace resource (Lit bundled in, no
-//    external imports so it works as one self-contained file).
+// Twee standen in één config:
+//  - `vite` (ontwikkelserver) serveert index.html + src/dev.ts als nagebootste omgeving.
+//  - `vite build` maakt één ES-bundel in dist/smaailcard.js die Home Assistant
+//    (Marketplace/HACS) als dashboard-resource laadt (Lit erin gebundeld, geen
+//    externe imports, dus één zelfstandig bestand).
 export default defineConfig({
   build: {
     lib: {
@@ -16,11 +16,11 @@ export default defineConfig({
     emptyOutDir: true,
     target: "es2021",
     rollupOptions: {
-      // Bundle every dependency (Lit, custom-card-helpers) into the output.
+      // Elke afhankelijkheid (Lit, custom-card-helpers) gaat mee in de bundel.
       external: [],
       output: {
-        // Inline the dynamically-imported editor so the result is ONE file.
-        // HACS/HA only serves `smaailcard.js`; split chunks would 404.
+        // De dynamisch geïmporteerde editor inline, zodat het één bestand blijft.
+        // HA serveert alleen `smaailcard.js`; losse chunks zouden een 404 geven.
         inlineDynamicImports: true,
       },
     },

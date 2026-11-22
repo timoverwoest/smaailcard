@@ -1,10 +1,10 @@
 import { COUNTRIES, CONTINENTS, CONTINENT_TOTALS } from "./worldmapdata";
 
 /**
- * Fold a country reference onto a comparable key: upper case, accents stripped
- * (CÔTE D'IVOIRE -> COTE DIVOIRE), and anything that is not a letter or digit
- * turned into a single space. Keeps ISO codes, plain names and messy user input
- * all landing on the same shape.
+ * Maak van een landverwijzing een vergelijkbare sleutel: hoofdletters, accenten
+ * weg (CÔTE D'IVOIRE -> COTE D IVOIRE) en alles wat geen letter of cijfer is
+ * wordt één spatie. Zo komen ISO-codes, namen en rommelige invoer op dezelfde
+ * vorm uit.
  */
 export function normalizeKey(text: string): string {
   return text
@@ -16,9 +16,9 @@ export function normalizeKey(text: string): string {
 }
 
 /**
- * Common names and abbreviations that are not the ISO code or the Natural Earth
- * name, mapped onto an ISO alpha-2 the data actually carries. Keys are stored
- * normalized. Only fills gaps — ISO codes and the real names win first.
+ * Gangbare namen en afkortingen die niet de ISO-code of de naam van Natural
+ * Earth zijn, gekoppeld aan een ISO alpha-2 die in de data staat. Sleutels zijn
+ * genormaliseerd. Vult alleen gaten: ISO-codes en de echte namen gaan voor.
  */
 const ALIASES: Record<string, string> = {
   USA: "US",
@@ -56,10 +56,10 @@ const ALIASES: Record<string, string> = {
   BOSNIA: "BA",
   FALKLANDS: "FK",
   MALVINAS: "FK",
-  VATICAN: "VA", // not in the 110m data; resolves to unknown, listed as such
+  VATICAN: "VA", // niet in de 110m-data; wordt onbekend en zo gemeld
 };
 
-/** normalized key -> country index (0-based into COUNTRIES). Built once. */
+/** genormaliseerde sleutel -> landindex (vanaf 0 in COUNTRIES). Eén keer gebouwd. */
 let LOOKUP: Map<string, number> | null = null;
 
 function lookup(): Map<string, number> {
@@ -87,21 +87,21 @@ function lookup(): Map<string, number> {
 }
 
 export interface VisitedResult {
-  /** 1-based grid values (country index + 1) for lit cells. */
+  /** Rasterwaarden vanaf 1 (landindex + 1) voor opgelichte cellen. */
   cells: Set<number>;
-  /** Resolved country indices (0-based), de-duplicated. */
+  /** Gevonden landindexen (vanaf 0), zonder dubbele. */
   indices: Set<number>;
-  /** Visited count per continent, indexed like CONTINENTS. */
+  /** Aantal bezochte landen per werelddeel, in de volgorde van CONTINENTS. */
   perContinent: number[];
-  /** Inputs that did not match any country. */
+  /** Invoer die bij geen enkel land past. */
   unknown: string[];
-  /** Number of continents with at least one visited country. */
+  /** Aantal werelddelen met minstens één bezocht land. */
   continentsTouched: number;
 }
 
 /**
- * Resolve a list of country references (ISO alpha-2/alpha-3, English name or a
- * known alias) into the data needed to light the map and fill the meters.
+ * Zet een lijst landverwijzingen (ISO alpha-2/alpha-3, Engelse naam of bekende
+ * alias) om in wat nodig is om de kaart op te lichten en de meters te vullen.
  */
 export function resolveVisited(inputs: readonly string[]): VisitedResult {
   const map = lookup();
@@ -134,9 +134,9 @@ export function resolveVisited(inputs: readonly string[]): VisitedResult {
 }
 
 /**
- * Parse a raw value coming from an entity state or attribute into a list of
- * country references. Accepts a JSON array, or a comma / semicolon / newline /
- * space separated string.
+ * Lees een ruwe waarde uit de status of een attribuut van een entity als lijst
+ * landverwijzingen. Een JSON-array mag, of tekst gescheiden door komma's,
+ * puntkomma's, nieuwe regels of spaties.
  */
 export function parseCountryList(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -153,15 +153,15 @@ export function parseCountryList(value: unknown): string[] {
         return arr.map((v) => String(v));
       }
     } catch {
-      /* fall through to delimiter splitting */
+      /* verder met splitsen op scheidingstekens */
     }
   }
   const parts = text
     .split(/[,;\n]+/)
     .map((s) => s.trim())
     .filter(Boolean);
-  // A single space-separated run of short tokens (e.g. "NL FR US") is a list of
-  // ISO codes; longer tokens are treated as one multi-word name ("United States").
+  // Eén reeks korte woorden met spaties (bijvoorbeeld "NL FR US") is een lijst
+  // ISO-codes; langere woorden zijn één naam van meer woorden ("United States").
   if (parts.length === 1 && /\s/.test(parts[0])) {
     const tokens = parts[0].split(/\s+/);
     if (tokens.every((t) => t.length <= 3)) {

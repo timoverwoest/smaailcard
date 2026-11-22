@@ -1,8 +1,9 @@
 /**
- * 5x7 dot-matrix font, ported verbatim from the original departures_board.py
- * generator so the rendered board is glyph-for-glyph identical to the poster.
+ * 5x7 dot-matrix-lettertype, letterlijk overgenomen uit de oorspronkelijke
+ * generator departures_board.py, zodat het bord teken voor teken gelijk is aan
+ * de poster.
  *
- * Each entry is 7 rows of 5 bits, "1" = lit dot.
+ * Elk teken is 7 rijen van 5 bits, "1" = opgelichte dot.
  */
 export const FONT: Record<string, string> = {
   A: "01110 10001 10001 11111 10001 10001 10001",
@@ -49,28 +50,28 @@ export const FONT: Record<string, string> = {
 };
 
 /*
- * Phones and Macs silently replace typed punctuation with typographic
- * variants — a straight ' becomes a curly ’ — and none of those have a glyph
- * here, so they would render as a blank. Map them onto the characters the
- * board can actually draw.
+ * Telefoons en Macs vervangen getypte leestekens stilletjes door typografische
+ * varianten (een rechte ' wordt een gekrulde ’). Die hebben hier geen teken en
+ * zouden als spatie verschijnen. Zet ze om naar tekens die het bord wel kan
+ * tekenen.
  */
 const PUNCTUATION: Record<string, string> = {
-  "‘": "'", // ‘ left single quote
-  "’": "'", // ’ right single quote (what iOS/macOS types)
-  "‛": "'", // ‛ reversed
-  ʼ: "'", // ʼ modifier letter apostrophe
-  "´": "'", // ´ acute accent used as apostrophe
-  "′": "'", // ′ prime
-  "–": "-", // – en dash
-  "—": "-", // — em dash
-  "‐": "-", // ‐ hyphen
-  "‑": "-", // ‑ non-breaking hyphen
-  "−": "-", // − minus
-  "…": "...", // … ellipsis
-  " ": " ", // non-breaking space
+  "‘": "'", // ‘ enkel aanhalingsteken links
+  "’": "'", // ’ enkel aanhalingsteken rechts (wat iOS/macOS typt)
+  "‛": "'", // ‛ omgekeerd
+  ʼ: "'", // ʼ apostrof als letterteken
+  "´": "'", // ´ accent aigu gebruikt als apostrof
+  "′": "'", // ′ accent (prime)
+  "–": "-", // – kort gedachtestreepje
+  "—": "-", // — lang gedachtestreepje
+  "‐": "-", // ‐ koppelteken
+  "‑": "-", // ‑ vast koppelteken
+  "−": "-", // − minteken
+  "…": "...", // … beletselteken
+  " ": " ", // vaste spatie
 };
 
-/** Letters that Unicode decomposition leaves alone, spelled out instead. */
+/** Letters die Unicode niet ontleedt; die worden uitgeschreven. */
 const LETTERS: Record<string, string> = {
   Ø: "O",
   Æ: "AE",
@@ -79,38 +80,38 @@ const LETTERS: Record<string, string> = {
   Ð: "D",
   Đ: "D",
   Ł: "L",
-  ı: "I", // ı dotless i
+  ı: "I", // ı i zonder punt
 };
 
 /**
- * Fold text onto the board's character set: upper case, accents stripped
- * (MÁLAGA -> MALAGA, ZÜRICH -> ZURICH) and typographic punctuation replaced by
- * its plain equivalent. Anything still unsupported ends up as a blank cell.
+ * Breng tekst terug tot de tekenset van het bord: hoofdletters, accenten weg
+ * (MÁLAGA -> MALAGA, ZÜRICH -> ZURICH) en typografische leestekens vervangen
+ * door hun gewone variant. Wat dan nog niet kan, wordt een lege cel.
  */
 export function normalizeText(text: string): string {
   return text
     .toUpperCase()
-    .normalize("NFD") // split accented letters into letter + combining mark
-    .replace(/[\u0300-\u036f]/g, "") // drop the marks, keep the base letter
+    .normalize("NFD") // letters met accent splitsen in letter + combinatieteken
+    .replace(/[\u0300-\u036f]/g, "") // tekens weg, de letter blijft
     .split("")
     .map((ch) => PUNCTUATION[ch] ?? LETTERS[ch] ?? ch)
     .join("");
 }
 
-/** Glyph cell size and horizontal advance, in dot columns. */
+/** Celgrootte van een teken en horizontale stap, in dot-kolommen. */
 export const GLYPH_W = 5;
 export const GLYPH_H = 7;
 export const ADVANCE = 6;
 
-/** Rows of a glyph; unsupported characters fall back to a blank cell. */
+/** Rijen van een teken; onbekende tekens worden een lege cel. */
 export function glyph(ch: string): string[] {
   return (FONT[ch.toUpperCase()] ?? FONT[" "]).split(" ");
 }
 
-/** Characters the board can actually display. */
+/** Tekens die het bord echt kan tonen. */
 export const SUPPORTED = Object.keys(FONT).join("");
 
-/** Width in dot columns that `text` occupies (last glyph has no trailing gap). */
+/** Breedte van `text` in dot-kolommen (na het laatste teken geen tussenruimte). */
 export function textCols(text: string): number {
   return text.length === 0 ? 0 : text.length * ADVANCE - 1;
 }

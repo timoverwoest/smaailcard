@@ -20,8 +20,9 @@ import {
 } from "./localize";
 import type { BoardRow, SmaailcardConfig } from "./types";
 
-/* Scalar options go through ha-form so they get native Home Assistant inputs.
-   The order choices are in the editor language; one schema per language. */
+/* Losse opties gaan via ha-form, zodat ze velden van Home Assistant krijgen.
+   De keuzes voor de volgorde staan in de taal van de editor; één schema per
+   taal. */
 const boardSchemas = new Map<Language, unknown[]>();
 
 function boardSchema(lang: Language): unknown[] {
@@ -91,7 +92,7 @@ function boardSchema(lang: Language): unknown[] {
   return schema;
 }
 
-/* "Alternating" is the absence of a colour; the form needs a value for it. */
+/* "Afwisselend" is geen kleur; het formulier heeft er wel een waarde voor nodig. */
 const AUTO_COLOR = "auto";
 
 const COLORS: [string, LocalizeKey][] = [
@@ -101,14 +102,14 @@ const COLORS: [string, LocalizeKey][] = [
   ["grey", "color_grey"],
 ];
 
-/** The marker on the world map as its form shows it. */
+/** De markering op de wereldkaart zoals het formulier hem toont. */
 interface PinFormData {
   pin_toggle: boolean;
   longitude?: number;
   latitude?: number;
 }
 
-/* The marker: a switch, and when it is on the two coordinates. */
+/* De markering: een schakelaar, en als die aan staat de twee coördinaten. */
 const pinSchemas = new Map<boolean, unknown[]>();
 
 function pinSchema(enabled: boolean): unknown[] {
@@ -146,7 +147,7 @@ function pinSchema(enabled: boolean): unknown[] {
   return schema;
 }
 
-/** One row as its form shows it. */
+/** Eén regel zoals zijn formulier hem toont. */
 interface RowFormData {
   dest: string;
   year: string;
@@ -155,13 +156,13 @@ interface RowFormData {
   full_width: boolean;
 }
 
-/* One ha-form per row, so every field is a native Home Assistant input (the
-   entity picker only loads the entity list when it is opened). The schema
-   depends on the language, three switches and a colour of its own; each
-   variant is built once. */
+/* Eén ha-form per regel, zodat elk veld een veld van Home Assistant is (de
+   entity-kiezer laadt de lijst pas als hij opengaat). Het schema hangt af van
+   de taal, drie schakelaars en een eigen kleur; elke variant wordt één keer
+   gemaakt. */
 const rowSchemas = new Map<string, unknown[]>();
 
-/** The colour choices, plus a colour from YAML (hex, "gray") as its own entry. */
+/** De kleurkeuzes, plus een kleur uit de YAML (hex, "gray") als eigen keuze. */
 function colorOptions(
   lang: Language,
   color: string
@@ -316,8 +317,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     `;
   }
 
-  /* Template bindings pass methods, not arrow functions (lit/no-template-arrow,
-     as in the Home Assistant frontend); the row comes from data-index. */
+  /* Templates geven methodes door, geen arrow-functies (lit/no-template-arrow,
+     zoals in de Home Assistant-frontend); de regel komt uit data-index. */
   private _removeRowClicked(ev: Event): void {
     this._removeRow(rowIndex(ev));
   }
@@ -326,8 +327,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     ev.stopPropagation();
     const index = rowIndex(ev);
     const value = ev.detail.value as RowFormData;
-    /* Start from the row itself, so keys that only YAML sets (attribute,
-       year_entity, year_attribute) survive an edit in the form. */
+    /* Begin bij de regel zelf, zodat sleutels die alleen in YAML staan
+       (attribute, year_entity, year_attribute) een wijziging overleven. */
     const row: BoardRow = { ...this._rows[index] };
     setText(row, "dest", value.dest);
     setText(row, "entity", value.entity);
@@ -347,7 +348,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
     this._updateRows(this._rows.map((r, i) => (i === index ? row : r)));
   }
 
-  /** The marker as its form shows it; no `pin` in the config means the default. */
+  /** De markering zoals het formulier hem toont; geen `pin` in de config is de standaard. */
   private _pinData(): PinFormData {
     const pin = this._config?.pin;
     return {
@@ -368,8 +369,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
         Number(value.longitude ?? DEFAULT_PIN[0]),
         Number(value.latitude ?? DEFAULT_PIN[1]),
       ];
-      /* Like the other options: the default marker is only written when the
-         config already had a pin. */
+      /* Net als bij de andere opties: de standaardmarkering wordt alleen
+         weggeschreven als de config al een pin had. */
       const isDefault = pin[0] === DEFAULT_PIN[0] && pin[1] === DEFAULT_PIN[1];
       if (
         isDefault &&
@@ -386,7 +387,7 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
   private _computeLabel = (schema: { name: string }): string =>
     localize(editorLanguage(this.hass), schema.name as LocalizeKey);
 
-  /** Defaults the card uses, shown in the form when the config leaves them out. */
+  /** Standaardwaarden van de kaart, in het formulier getoond als de config ze weglaat. */
   private _formDefaults(): Record<string, unknown> {
     return {
       ...BOARD_DEFAULTS,
@@ -400,8 +401,8 @@ export class SmaailcardEditor extends LitElement implements LovelaceCardEditor {
 
   private _formChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    /* ha-form hands back the whole object; keep rows/pin which it doesn't own,
-       and leave out defaults that were only shown. */
+    /* ha-form geeft het hele object terug; houd rows en pin, die niet van het
+       formulier zijn, en laat standaardwaarden weg die alleen getoond werden. */
     this._emit(
       withoutUnchangedDefaults(
         { ...this._config, ...ev.detail.value } as SmaailcardConfig,
@@ -497,7 +498,7 @@ function rowIndex(ev: Event): number {
   return Number((ev.currentTarget as HTMLElement).dataset.index);
 }
 
-/** Set a text key of a row, or drop it when the field is empty. */
+/** Zet een tekstsleutel van een regel, of haal hem weg als het veld leeg is. */
 function setText(
   row: BoardRow,
   key: "dest" | "entity",

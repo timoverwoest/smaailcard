@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
-"""Rasterise Natural Earth 110m countries onto the world card's dot grid.
+"""Raster de landen van Natural Earth 110m op het dot-raster van de wereldkaart.
 
-Download the source first (public domain, ~0.8 MB), next to this script:
+Download eerst de bron (publiek domein, ~0,8 MB) naast dit script:
 
     curl -sSL -o tools/ne_110m.geojson \\
       https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson
 
-then run `python3 tools/gen_worldmap.py` to regenerate src/worldmapdata.ts.
+en draai daarna `python3 tools/gen_worldmap.py` om src/worldmapdata.ts opnieuw te maken.
 
-Reads ne_110m.geojson and, for every cell of an
-equirectangular dot grid, works out which country (if any) covers the cell
-centre. Emits a compact TypeScript module (src/worldmapdata.ts) holding:
+Leest ne_110m.geojson en bepaalt voor elke cel van een equirectangulair
+dot-raster welk land (als er een is) het midden van de cel bedekt. Schrijft een
+compacte TypeScript-module (src/worldmapdata.ts) met:
 
-  - the grid, run-length encoded (cellCountryIndex, runLength) pairs,
-  - the country table (iso a2, iso a3, name, continent index),
-  - the six continent names + how many countries each holds,
-  - a couple of grid constants.
+  - het raster, run-length gecodeerd als paren (landindex van de cel, lengte),
+  - de landentabel (iso a2, iso a3, naam, index van het werelddeel),
+  - de zes werelddelen + hoeveel landen elk heeft,
+  - een paar constanten van het raster.
 
-Index 0 means ocean / no country. Antarctica and open-ocean features are
-dropped. Every country that ends up with no cell of its own (too small for the
-grid) gets its Natural Earth label point forced onto the nearest free cell so it
-can still light up.
+Index 0 betekent oceaan of geen land. Antarctica en open oceaan vallen weg. Elk
+land dat geen eigen cel krijgt (te klein voor het raster) krijgt het labelpunt
+van Natural Earth op de dichtstbijzijnde vrije cel, zodat het toch kan
+oplichten.
 """
 from __future__ import annotations
 
@@ -31,10 +31,11 @@ from pathlib import Path
 SRC = Path(__file__).with_name("ne_110m.geojson")
 OUT = Path(__file__).with_name("worldmapdata.ts")
 
-# Equirectangular window mapped onto the dot grid. West edge, full 360 wide, so
-# New Zealand and the Russian far east don't fall off; Antarctica cropped off
-# the bottom. Degrees-per-column and per-row are kept close so land stays in
-# proportion (plain equirectangular, like the poster's mini map).
+# Equirectangulair venster op het dot-raster. Westrand en volle 360 graden breed,
+# zodat Nieuw-Zeeland en het uiterste oosten van Rusland er niet af vallen;
+# Antarctica valt onderaan weg. Graden per kolom en per rij liggen dicht bij
+# elkaar, zodat land in verhouding blijft (gewoon equirectangulair, zoals de
+# minikaart van de poster).
 LON0 = -169.0
 LON_SPAN = 360.0
 COLS = 100
@@ -48,9 +49,9 @@ DLAT = (LAT_TOP - LAT_BOTTOM) / ROWS
 CONTINENTS = ["North America", "South America", "Europe", "Africa", "Asia", "Oceania"]
 CONT_INDEX = {name: i for i, name in enumerate(CONTINENTS)}
 
-# A handful of disputed / no-ISO territories Natural Earth marks "-99". Give
-# them stable private-use codes so the base map is complete and they remain
-# matchable (mostly by name) in the card config.
+# Een paar betwiste gebieden zonder ISO-code, die Natural Earth "-99" geeft.
+# Geef ze vaste eigen codes, zodat de kaart compleet is en ze in de config te
+# vinden blijven (meestal op naam).
 ISO_OVERRIDES = {
     "Kosovo": ("XK", "XKX"),
     "Somaliland": ("XA", "XAA"),
@@ -76,7 +77,7 @@ def iso_codes(props: dict) -> tuple[str, str]:
 
 
 def ring_contains(ring: list, x: float, y: float) -> bool:
-    """Ray-casting point-in-ring test."""
+    """Test met een straal of een punt binnen een ring ligt."""
     inside = False
     n = len(ring)
     j = n - 1
@@ -92,7 +93,7 @@ def ring_contains(ring: list, x: float, y: float) -> bool:
 
 
 def polygon_contains(rings: list, x: float, y: float) -> bool:
-    """Inside the outer ring and outside every hole."""
+    """Binnen de buitenring en buiten elk gat."""
     if not rings or not ring_contains(rings[0], x, y):
         return False
     for hole in rings[1:]:
@@ -110,15 +111,15 @@ def bbox(rings: list) -> tuple[float, float, float, float]:
 def main() -> None:
     gj = json.loads(SRC.read_text())
 
-    countries: list[dict] = []  # ordered; grid stores index+1
-    polys: list[tuple[int, list, tuple]] = []  # (country_idx, rings, bbox)
+    countries: list[dict] = []  # geordend; het raster bewaart index+1
+    polys: list[tuple[int, list, tuple]] = []  # (landindex, ringen, bbox)
     cont_totals = [0] * len(CONTINENTS)
 
     for feat in gj["features"]:
         props = feat["properties"]
         cont = props.get("CONTINENT")
         if cont not in CONT_INDEX:
-            continue  # Antarctica, open ocean
+            continue  # Antarctica, open oceaan
         a2, a3 = iso_codes(props)
         name = props.get("NAME_LONG") or props.get("ADMIN") or props.get("NAME") or ""
         ci = len(countries)
@@ -139,13 +140,13 @@ def main() -> None:
         for rings in parts:
             polys.append((ci, rings, bbox(rings)))
 
-    # grid[r][c] = country index + 1, or 0 for ocean.
+    # grid[r][c] = landindex + 1, of 0 voor oceaan.
     grid = [[0] * COLS for _ in range(ROWS)]
     for r in range(ROWS):
         lat = LAT_TOP - (r + 0.5) * DLAT
         for c in range(COLS):
             lon = LON0 + (c + 0.5) * DLON
-            g = lon - 360.0 if lon > 180.0 else lon  # wrap into [-180, 180]
+            g = lon - 360.0 if lon > 180.0 else lon  # terug naar [-180, 180]
             for ci, rings, (x0, y0, x1, y1) in polys:
                 if g < x0 or g > x1 or lat < y0 or lat > y1:
                     continue
@@ -154,8 +155,8 @@ def main() -> None:
                     countries[ci]["cells"] += 1
                     break
 
-    # Give every zero-cell country a home on its label point's cell (or the
-    # nearest free/ocean cell), so even the tiniest nation can light up.
+    # Geef elk land zonder cel een plek op de cel van zijn labelpunt (of de
+    # dichtstbijzijnde vrije of oceaancel), zodat zelfs het kleinste land oplicht.
     forced = 0
     for ci, country in enumerate(countries):
         if country["cells"] > 0:
@@ -180,8 +181,8 @@ def main() -> None:
                     break
             if placed:
                 break
-        # Landlocked tinies with no free ocean cell nearby: take over the label
-        # cell from a neighbour that can spare it (has more than one cell).
+        # Kleine landen zonder zee en zonder vrije oceaancel in de buurt: neem de
+        # labelcel over van een buur die er een kan missen (meer dan één cel).
         if not placed and 0 <= cr < ROWS and 0 <= cc < COLS:
             owner = grid[cr][cc]
             if owner and countries[owner - 1]["cells"] > 1:
@@ -192,7 +193,7 @@ def main() -> None:
         if placed:
             forced += 1
 
-    # Run-length encode the flat grid.
+    # Run-length-codering van het platte raster.
     flat = [grid[r][c] for r in range(ROWS) for c in range(COLS)]
     rle: list[int] = []
     i = 0
@@ -212,18 +213,18 @@ def main() -> None:
         return s.replace("\\", "\\\\").replace('"', '\\"')
 
     lines: list[str] = []
-    lines.append("/* GENERATED by tools/gen_worldmap.py — do not edit by hand.")
-    lines.append(" * Source: Natural Earth 110m admin-0 countries (public domain).")
-    lines.append(" * Rasterised onto the world card's equirectangular dot grid. */")
+    lines.append("/* GEGENEREERD door tools/gen_worldmap.py; niet met de hand aanpassen.")
+    lines.append(" * Bron: Natural Earth 110m admin-0 countries (publiek domein).")
+    lines.append(" * Gerasterd op het equirectangulaire dot-raster van de wereldkaart. */")
     lines.append("")
     lines.append("export interface Country {")
-    lines.append("  /** ISO 3166-1 alpha-2 (or a private-use code for disputed areas). */")
+    lines.append("  /** ISO 3166-1 alpha-2 (of een eigen code voor betwiste gebieden). */")
     lines.append("  iso2: string;")
     lines.append("  /** ISO 3166-1 alpha-3. */")
     lines.append("  iso3: string;")
-    lines.append("  /** English country name. */")
+    lines.append("  /** Engelse naam van het land. */")
     lines.append("  name: string;")
-    lines.append("  /** Index into CONTINENTS. */")
+    lines.append("  /** Index in CONTINENTS. */")
     lines.append("  cont: number;")
     lines.append("}")
     lines.append("")
@@ -241,7 +242,7 @@ def main() -> None:
     )
     lines.append("")
     lines.append(
-        "/** Countries per continent present in the data (denominator for the meters). */"
+        "/** Landen per werelddeel in de data (de noemer van de meters). */"
     )
     lines.append(
         "export const CONTINENT_TOTALS: readonly number[] = ["
@@ -249,7 +250,7 @@ def main() -> None:
         + "];"
     )
     lines.append("")
-    lines.append("/** Country table; the grid stores (index + 1), 0 = ocean. */")
+    lines.append("/** Landentabel; het raster bewaart (index + 1), 0 = oceaan. */")
     lines.append("export const COUNTRIES: readonly Country[] = [")
     for c in countries:
         lines.append(
@@ -259,10 +260,10 @@ def main() -> None:
     lines.append("];")
     lines.append("")
     lines.append(
-        "/** Flat row-major grid, run-length encoded as [value, count, value, count, ...]. */"
+        "/** Plat raster, rij voor rij, run-length gecodeerd als [waarde, aantal, waarde, aantal, ...]. */"
     )
     lines.append("export const GRID_RLE: readonly number[] = [")
-    # wrap the RLE numbers at ~20 pairs per line for readability
+    # de RLE-getallen per ~20 paren afbreken, voor de leesbaarheid
     buf = []
     for k in range(0, len(rle), 2):
         buf.append(f"{rle[k]},{rle[k + 1]}")

@@ -2,7 +2,7 @@ import type { Dot } from "./dots";
 
 type Poly = [number, number][];
 
-/* Coarse continent outlines (lon, lat), ported from departures_board.py. */
+/* Grove contouren van de werelddelen (lon, lat), overgenomen uit departures_board.py. */
 const AFRICA: Poly = [
   [-17, 15],
   [-16, 21],
@@ -155,7 +155,7 @@ const GRE: Poly = [
 
 const POLYS: Poly[] = [AFRICA, EURASIA, NAMER, SAMER, AUS, GRE];
 
-/* Equirectangular window the poster maps onto the dot grid. */
+/* Equirectangulair venster dat de poster op het dot-raster afbeeldt. */
 const LON0 = -170.0;
 const LON1 = 180.0;
 const LAT0 = 78.0;
@@ -179,7 +179,7 @@ export interface WorldMap {
   pin: Dot | null;
 }
 
-/** Land dots for the mini world map, plus the optional home-base marker. */
+/** Landdots voor de mini-wereldkaart, plus de optionele markering van de thuisbasis. */
 export function worldMap(
   x0: number,
   y0: number,

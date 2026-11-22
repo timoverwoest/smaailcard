@@ -6,17 +6,17 @@ export interface Dot {
 }
 
 /**
- * Collapse many equal-radius dots into a single SVG path.
+ * Voeg veel dots met dezelfde straal samen tot één SVG-path.
  *
- * The original generator emitted one <circle> per dot, which for a full board
- * is ~5500 DOM nodes. A Lovelace card re-renders on every state change, so we
- * merge same-coloured dots into one <path> of arc subpaths instead — visually
- * identical, but a couple of nodes instead of thousands.
+ * De oorspronkelijke generator maakte één <circle> per dot, voor een vol bord
+ * zo'n 5500 DOM-nodes. Een Lovelace-kaart tekent bij elke statuswijziging
+ * opnieuw, dus voegen we dots van dezelfde kleur samen tot één <path> met
+ * boogstukken: er ziet hetzelfde uit, met een paar nodes in plaats van duizenden.
  */
 export function dotsPath(dots: Dot[], r: number): string {
   const d: string[] = [];
   for (const { x, y } of dots) {
-    // Two half-arcs form a full circle centred on (x, y).
+    // Twee halve bogen vormen een hele cirkel rond (x, y).
     d.push(
       `M${(x - r).toFixed(2)} ${y.toFixed(2)}` +
         `a${r} ${r} 0 1 0 ${(r * 2).toFixed(2)} 0` +
@@ -26,7 +26,7 @@ export function dotsPath(dots: Dot[], r: number): string {
   return d.join("");
 }
 
-/** Lit dot positions for `text`, laid out from (x0, y0) on a `pitch` grid. */
+/** Posities van de opgelichte dots voor `text`, vanaf (x0, y0) op een raster van `pitch`. */
 export function textDots(
   x0: number,
   y0: number,
@@ -50,8 +50,8 @@ export function textDots(
 }
 
 /**
- * Same as `textDots`, but clipped to a block `cols` dot-columns wide so a long
- * destination can never bleed into the year column.
+ * Als `textDots`, maar afgekapt op een blok van `cols` dot-kolommen breed, zodat
+ * een lange bestemming nooit in de jaartalkolom loopt.
  */
 export function textDotsClipped(
   x0: number,
@@ -77,7 +77,7 @@ export function textDotsClipped(
   return dots;
 }
 
-/** How many characters fit in a block `cols` dot-columns wide. */
+/** Hoeveel tekens passen in een blok van `cols` dot-kolommen breed. */
 export function maxChars(cols: number): number {
   return Math.max(0, Math.floor((cols + 1) / ADVANCE));
 }

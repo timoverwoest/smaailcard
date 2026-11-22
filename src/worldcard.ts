@@ -30,14 +30,14 @@ registerCustomCard({
 const DEFAULTS = WORLD_DEFAULTS;
 
 export class SmaailWorldCard extends LitElement implements LovelaceCard {
-  /** Installed version, readable as customElements.get("smaail-world-card").version. */
+  /** Geïnstalleerde versie, te lezen als customElements.get("smaail-world-card").version. */
   public static readonly version = CARD_VERSION;
 
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private _config?: ResolvedWorldConfig;
 
-  /** Horizontal nudge that keeps the header group optically centred. */
+  /** Horizontale verschuiving die de kopgroep optisch gecentreerd houdt. */
   @state() private _headerShift = 0;
 
   @query("#swc-header") private _header?: SVGGElement;
@@ -104,7 +104,7 @@ export class SmaailWorldCard extends LitElement implements LovelaceCard {
     return oldHass.states[id] !== this.hass?.states[id];
   }
 
-  /** Merge the configured country list with any entity-provided list. */
+  /** Voeg de ingestelde landen samen met de lijst uit een entity. */
   private _visitedInputs(): string[] {
     const cfg = this._config;
     if (!cfg) {
@@ -141,7 +141,7 @@ export class SmaailWorldCard extends LitElement implements LovelaceCard {
     this._centreHeader();
   }
 
-  /** Measure the rendered header group once per title and centre it on the board. */
+  /** Meet de getekende kopgroep één keer per titel en centreer hem op het bord. */
   private _centreHeader(): void {
     const cfg = this._config;
     if (!cfg?.show_header || this._measuredTitle === cfg.title) {
@@ -155,7 +155,7 @@ export class SmaailWorldCard extends LitElement implements LovelaceCard {
     try {
       box = group.getBBox();
     } catch {
-      return; // not laid out yet (e.g. hidden tab)
+      return; // nog niet getekend (bijvoorbeeld een verborgen tabblad)
     }
     if (!box.width) {
       return;

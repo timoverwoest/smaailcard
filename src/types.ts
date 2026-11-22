@@ -1,114 +1,115 @@
 import type { LovelaceCardConfig } from "custom-card-helpers";
 
-/** How the board orders its rows. */
+/** Hoe het bord de regels ordent. */
 export type SortOrder = "asc" | "desc" | "none";
 
-/** One line on the board. */
+/** Eén regel op het bord. */
 export interface BoardRow {
-  /** Static destination text. Ignored when `entity` is set. */
+  /** Vaste tekst voor de bestemming. Genegeerd als `entity` is gezet. */
   dest?: string;
   /**
-   * Year column.
-   *  - omitted / null -> empty year column (the dim grid stays)
-   *  - ""             -> the row runs the full width, no year column
-   *  - "1997"         -> shown, preceded by the apostrophe marker
+   * Jaartalkolom.
+   *  - weggelaten / null -> lege jaartalkolom (het gedoofde raster blijft)
+   *  - ""                -> de regel loopt over de volle breedte, geen jaartalkolom
+   *  - "1997"            -> getoond, met de apostrof ervoor
    */
   year?: string | null;
-  /** "yellow" | "white" | "grey" or a hex colour. Default: rows alternate. */
+  /** "yellow" | "white" | "grey" of een hexkleur. Standaard: regels wisselen af. */
   color?: string;
-  /** Entity whose state (or `attribute`) supplies the destination text. */
+  /** Entity waarvan de status (of `attribute`) de bestemming levert. */
   entity?: string;
   attribute?: string;
-  /** Entity whose state (or `year_attribute`) supplies the year text. */
+  /** Entity waarvan de status (of `year_attribute`) het jaartal levert. */
   year_entity?: string;
   year_attribute?: string;
 }
 
 export interface SmaailcardConfig extends LovelaceCardConfig {
-  /** Always "custom:smaail-card". */
+  /** Altijd "custom:smaail-card". */
   type: string;
 
-  /** Header title. Default "DEPARTURES". */
+  /** Titel in de kop. Standaard "DEPARTURES". */
   title?: string;
-  /** Column headings. Defaults "DESTINATION" / "YEAR". */
+  /** Kolomkoppen. Standaard "DESTINATION" / "YEAR". */
   dest_label?: string;
   year_label?: string;
 
-  /** The lines on the board. */
+  /** De regels op het bord. */
   rows?: BoardRow[];
-  /** Total line slots, including empty ones. Default 9. */
+  /** Aantal regelposities, inclusief lege. Standaard 9. */
   row_count?: number;
   /**
-   * Order the rows by year: "asc" (oldest first, the default), "desc"
-   * (newest first) or "none" to keep the order they are configured in.
-   * Rows without a year keep their configured order and follow the rest.
+   * Regels op jaartal ordenen: "asc" (oudste eerst, de standaard), "desc"
+   * (nieuwste eerst) of "none" voor de volgorde uit de configuratie.
+   * Regels zonder jaartal houden hun volgorde en komen na de rest.
    */
   sort?: SortOrder;
 
-  /** Section toggles — all default to true. */
+  /** Onderdelen aan of uit; standaard allemaal aan. */
   show_header?: boolean;
   show_column_labels?: boolean;
   show_footer?: boolean;
   show_map?: boolean;
   show_legend?: boolean;
 
-  /** Home-base marker on the mini map, as [lon, lat]. Null hides it. */
+  /** Markering van de thuisbasis op de minikaart, als [lon, lat]. Null verbergt hem. */
   pin?: [number, number] | null;
 
-  /** Footer blocks. */
+  /** Voetteksten. */
   footer_title?: string;
   footer_subtitle?: string;
   footer2_title?: string;
   footer2_subtitle?: string;
 
-  /** Palette overrides. */
+  /** Eigen kleuren in plaats van het palet. */
   accent_color?: string;
   background_color?: string;
   unlit_color?: string;
 }
 
-/* ---------------------------------------------------------- world map card */
+/* ------------------------------------------------------ wereldkaart-kaart */
 
 export interface SmaailWorldConfig extends LovelaceCardConfig {
-  /** Always "custom:smaail-world-card". */
+  /** Altijd "custom:smaail-world-card". */
   type: string;
 
-  /** Header title. Default "WORLD MAP". */
+  /** Titel in de kop. Standaard "WORLD MAP". */
   title?: string;
 
   /**
-   * Countries you have visited, as ISO alpha-2 ("NL"), alpha-3 ("NLD"), an
-   * English name ("Netherlands") or a known alias ("USA", "UK"). Their landmass
-   * lights up in the accent colour.
+   * Bezochte landen, als ISO alpha-2 ("NL"), alpha-3 ("NLD"), Engelse naam
+   * ("Netherlands") of een bekende alias ("USA", "UK"). Hun landmassa licht
+   * op in de accentkleur.
    */
   countries?: string[];
   /**
-   * Entity whose state (or `countries_attribute`) supplies the visited list —
-   * a JSON array, or a comma / newline separated string. Merged with `countries`.
+   * Entity waarvan de status (of `countries_attribute`) de bezochte landen
+   * levert: een JSON-array of tekst gescheiden door komma's of nieuwe regels.
+   * Wordt samengevoegd met `countries`.
    */
   countries_entity?: string;
   countries_attribute?: string;
 
-  /** Section toggles — all default to true. */
+  /** Onderdelen aan of uit; standaard allemaal aan. */
   show_header?: boolean;
-  /** Per-continent progress meters in the footer. */
+  /** Voortgangsmeters per werelddeel onderaan. */
   show_meters?: boolean;
-  /** Small decorative overview map between the meter groups. */
+  /** Klein overzichtskaartje tussen de meters. */
   show_overview?: boolean;
-  /** "N countries · M continents" line under the title. */
+  /** Regel "N countries · M continents" onder de titel. */
   show_stats?: boolean;
 
-  /** Small caption under the overview map. Empty hides it. */
+  /** Bijschrift onder het overzichtskaartje. Leeg verbergt het. */
   caption?: string;
 
-  /** Palette overrides. */
+  /** Eigen kleuren in plaats van het palet. */
   accent_color?: string;
   background_color?: string;
-  /** Dim land (unvisited countries). */
+  /** Gedimd land (niet bezochte landen). */
   land_color?: string;
 }
 
-/** World card config with every optional field resolved. */
+/** Config van de wereldkaart met elk optioneel veld ingevuld. */
 export interface ResolvedWorldConfig extends SmaailWorldConfig {
   title: string;
   countries: string[];
@@ -122,7 +123,7 @@ export interface ResolvedWorldConfig extends SmaailWorldConfig {
   land_color: string;
 }
 
-/** Config with every optional field resolved to a concrete value. */
+/** Config met elk optioneel veld ingevuld met een concrete waarde. */
 export interface ResolvedConfig extends SmaailcardConfig {
   title: string;
   dest_label: string;

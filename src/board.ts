@@ -11,9 +11,9 @@ import { GLYPH_H, normalizeText } from "./font";
 import type { BoardRow, ResolvedConfig, SortOrder } from "./types";
 import { worldMap } from "./worldmap";
 
-/* ---------------------------------------------------------------- geometry */
-/* All of these come straight from departures_board.py so the card matches the
-   original poster exactly at row_count = 9. */
+/* ---------------------------------------------------------------- geometrie */
+/* Al deze waarden komen rechtstreeks uit departures_board.py, zodat de kaart bij
+   row_count = 9 precies gelijk is aan de originele poster. */
 export const W = 1000;
 export const H = 1414;
 
@@ -35,10 +35,10 @@ const ROW_Y0 = 232;
 const ROW_STEP = 87;
 const DESIGN_ROWS = 9;
 
-/* Vertical space each optional block occupies, used to close the gap it
-   leaves behind when it is switched off. */
-const HEADER_BLOCK = 111; // header rect + the gap down to the column labels
-const LABEL_BLOCK = 46; // column labels + the gap down to the first row
+/* Verticale ruimte van elk optioneel blok; daarmee sluit de kaart het gat dat
+   het achterlaat als het uit staat. */
+const HEADER_BLOCK = 111; // kopvlak + de ruimte tot de kolomkoppen
+const LABEL_BLOCK = 46; // kolomkoppen + de ruimte tot de eerste regel
 const LABELS_Y = 207;
 const MAP_Y = 1105;
 const MAP_PITCH = 3.4;
@@ -47,8 +47,8 @@ const MAP_COLS = 58;
 const LEGEND_Y = 1108;
 const LEGEND_PITCH = 2.85;
 const FOOTER_BOTTOM = 1250;
-const BOTTOM_MARGIN = 164; // poster margin below the footer block
-const PLAIN_MARGIN = 96; // margin when nothing sits below the rows
+const BOTTOM_MARGIN = 164; // marge van de poster onder de voetteksten
+const PLAIN_MARGIN = 96; // marge als er niets onder de regels staat
 
 const PLANE =
   "M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19" +
@@ -65,22 +65,21 @@ export const NAMED_COLORS: Record<string, string> = {
 };
 
 export interface Layout {
-  /** Upward shift of the rows when the header and/or labels are hidden. */
+  /** Verschuiving omhoog van de regels als kop en/of kolomkoppen verborgen zijn. */
   topShift: number;
-  /** Upward shift of the footer, map and legend. */
+  /** Verschuiving omhoog van voettekst, kaart en legenda. */
   bottomShift: number;
-  /** Y of the column labels' baseline. */
+  /** Y van de basislijn van de kolomkoppen. */
   labelsY: number;
-  /** Y of the first row block. */
+  /** Y van het eerste regelblok. */
   rowsY0: number;
   height: number;
 }
 
 /**
- * Work out the board's vertical layout. Every optional block that is switched
- * off collapses the space it would have taken, so the card never renders a
- * large empty area — at row_count 9 with everything on, this reproduces the
- * poster's 1000x1414 exactly.
+ * Bereken de verticale indeling van het bord. Elk optioneel blok dat uit staat,
+ * geeft zijn ruimte terug, zodat de kaart nooit een groot leeg vlak toont. Bij
+ * row_count 9 met alles aan is dat precies de 1000x1414 van de poster.
  */
 export function layout(cfg: {
   row_count: number;
@@ -121,7 +120,7 @@ export function layout(cfg: {
   };
 }
 
-/* ------------------------------------------------------------------ helpers */
+/* ------------------------------------------------------------------ hulpjes */
 
 interface ResolvedRow {
   dest: string | null;
@@ -129,7 +128,7 @@ interface ResolvedRow {
   color: string;
 }
 
-/** Look up a row's colour, falling back to the alternating default. */
+/** Kleur van een regel; anders de afwisselende standaard. */
 function rowColor(row: BoardRow, index: number): string {
   const c = row.color;
   if (c) {
@@ -144,7 +143,7 @@ interface PendingRow {
   year: string | null;
 }
 
-/** Compare two year strings numerically when possible, alphabetically if not. */
+/** Vergelijk twee jaartallen als getal als dat kan, anders alfabetisch. */
 function compareYears(a: string, b: string): number {
   const na = Number(a);
   const nb = Number(b);
@@ -155,12 +154,12 @@ function compareYears(a: string, b: string): number {
 }
 
 /**
- * Order the rows by year.
+ * Orden de regels op jaartal.
  *
- * Only rows that actually carry a year take part. Rows with an empty year
- * column and full-width rows (the "WHAT'S NEXT?" kind) have nothing to sort on,
- * so they keep their configured order and follow the sorted ones — which is
- * also what keeps a closing statement line at the bottom of the board.
+ * Alleen regels met een jaartal doen mee. Regels met een lege jaartalkolom en
+ * regels over de volle breedte (zoals "WHAT'S NEXT?") hebben niets om op te
+ * sorteren. Ze houden hun volgorde en komen na de gesorteerde regels, zodat een
+ * afsluitende regel onderaan het bord blijft.
  */
 function sortRows(rows: PendingRow[], order: SortOrder): PendingRow[] {
   if (order === "none") {
@@ -171,7 +170,7 @@ function sortRows(rows: PendingRow[], order: SortOrder): PendingRow[] {
   for (const row of rows) {
     (row.year ? dated : undated).push(row);
   }
-  /* Array.sort is stable, so rows sharing a year stay in configured order. */
+  /* Array.sort is stabiel: regels met hetzelfde jaartal houden hun volgorde. */
   dated.sort((a, b) => {
     const cmp = compareYears(a.year as string, b.year as string);
     return order === "desc" ? -cmp : cmp;
@@ -180,12 +179,12 @@ function sortRows(rows: PendingRow[], order: SortOrder): PendingRow[] {
 }
 
 /**
- * Turn configured rows into plain text, pulling from entities where asked,
- * ordering them by year, and truncating to what physically fits in each
- * dot-matrix block.
+ * Zet de geconfigureerde regels om naar platte tekst: uit entities waar dat
+ * gevraagd is, geordend op jaartal en afgekapt op wat in elk dot-matrixblok
+ * past.
  *
- * Colours are assigned after sorting, so the default yellow/white alternation
- * follows the order you see on the board rather than the order in the config.
+ * Kleuren worden na het sorteren toegekend, zodat de standaard geel/wit-
+ * afwisseling de volgorde op het bord volgt en niet die uit de configuratie.
  */
 export function resolveRows(
   cfg: ResolvedConfig,
@@ -231,17 +230,17 @@ export function resolveRows(
   });
 }
 
-/** One dim dot-grid block: a single rect filled with the dot pattern. */
+/** Eén gedoofd dot-rasterblok: één rect gevuld met het dot-patroon. */
 function grid(x0: number, y0: number, cols: number): SVGTemplateResult {
   return svg`<g transform="translate(${x0 - PITCH / 2} ${y0 - PITCH / 2})">
     <rect width=${cols * PITCH} height=${GLYPH_H * PITCH} fill="url(#sc-dim)"/>
   </g>`;
 }
 
-/* -------------------------------------------------------------------- board */
+/* --------------------------------------------------------------------- bord */
 
 export interface BuildOptions {
-  /** Horizontal nudge that optically centres the header group. */
+  /** Horizontale verschuiving die de kopgroep optisch centreert. */
   headerShift: number;
 }
 
@@ -255,7 +254,7 @@ export function buildBoard(
   const accent = cfg.accent_color;
   const unlit = cfg.unlit_color;
 
-  /* Lit dots, bucketed by colour so each colour costs a single <path>. */
+  /* Opgelichte dots per kleur gebundeld, zodat elke kleur één <path> kost. */
   const lit = new Map<string, Dot[]>();
   const push = (color: string, dots: Dot[]) => {
     const bucket = lit.get(color);
@@ -287,7 +286,7 @@ export function buildBoard(
     if (dest) {
       push(color, textDotsClipped(DEST_X, y, PITCH, dest, DEST_COLS));
     }
-    /* Apostrophe marker in front of the year, dim when there is no year. */
+    /* Apostrof vóór het jaartal, gedoofd als er geen jaartal is. */
     push(year ? color : unlit, textDots(APOS_X, y, PITCH, "'"));
     grids.push(grid(YEAR_X, y, YEAR_COLS));
     if (year) {
@@ -295,7 +294,7 @@ export function buildBoard(
     }
   }
 
-  /* Mini world map. */
+  /* Mini-wereldkaart. */
   let mapPaths: SVGTemplateResult[] = [];
   if (cfg.show_map) {
     const { land, pin } = worldMap(
@@ -316,7 +315,7 @@ export function buildBoard(
     ];
   }
 
-  /* Character-set legend. */
+  /* Legenda met de tekenset. */
   let legendPath = "";
   if (cfg.show_legend) {
     const lp = LEGEND_PITCH;

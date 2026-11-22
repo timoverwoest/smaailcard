@@ -17,7 +17,7 @@ import {
 import type { SmaailWorldConfig } from "./types";
 import { COUNTRIES } from "./worldmapdata";
 
-/* Scalar options go through ha-form so they get native Home Assistant inputs. */
+/* Losse opties gaan via ha-form, zodat ze velden van Home Assistant krijgen. */
 const SCHEMA = [
   { name: "title", selector: { text: {} } },
   {
@@ -50,10 +50,10 @@ const SCHEMA = [
   },
 ];
 
-/* HA's own field for each country: a searchable list of the countries the
-   map knows, where an ISO-3 code, a name or an alias can be typed as well.
-   The list never changes, so it is built once. The field is required, so it
-   has no clear button next to the row's own remove button. */
+/* Een eigen HA-veld per land: een doorzoekbare lijst van de landen die de
+   kaart kent, waarin je ook een ISO-3-code, naam of alias kunt typen. De
+   lijst verandert nooit en wordt één keer gemaakt. Het veld is verplicht,
+   zodat er geen wisknop naast de verwijderknop van de regel staat. */
 const COUNTRY_SELECTOR = {
   select: {
     mode: "dropdown",
@@ -134,8 +134,8 @@ export class SmaailWorldCardEditor
     `;
   }
 
-  /* Template bindings pass methods, not arrow functions (lit/no-template-arrow,
-     as in the Home Assistant frontend); the row comes from data-index. */
+  /* Templates geven methodes door, geen arrow-functies (lit/no-template-arrow,
+     zoals in de Home Assistant-frontend); de regel komt uit data-index. */
   private _countryChanged(ev: CustomEvent): void {
     ev.stopPropagation();
     this._setCountry(rowIndex(ev), String(ev.detail.value ?? "").trim());
@@ -150,8 +150,8 @@ export class SmaailWorldCardEditor
 
   private _formChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    /* ha-form hands back the whole object; keep `countries`, which it doesn't
-       own, and leave out defaults that were only shown. */
+    /* ha-form geeft het hele object terug; houd `countries`, dat niet van het
+       formulier is, en laat standaardwaarden weg die alleen getoond werden. */
     this._emit(
       withoutUnchangedDefaults(
         { ...this._config, ...ev.detail.value } as SmaailWorldConfig,

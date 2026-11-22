@@ -27,7 +27,7 @@ describe("resolveVisited", () => {
     expect(result.continentsTouched).toBe(3);
     expect(result.perContinent).toHaveLength(CONTINENTS.length);
     expect(result.perContinent.reduce((a, b) => a + b, 0)).toBe(4);
-    // Cells are 1-based country indices, one per country.
+    // Cellen zijn landindexen vanaf 1, één per land.
     expect([...result.cells]).toEqual([...result.indices].map((i) => i + 1));
   });
 

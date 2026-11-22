@@ -9,9 +9,10 @@ export const WORLD_CARD_EDITOR_TYPE = "smaail-world-card-editor";
 export const WORLD_CARD_NAME = "Smaail World Map";
 
 /**
- * Define a custom element only once. The same bundle can end up loaded twice
- * (for example via an old /hacsfiles/ resource next to the /local/community/
- * one the Marketplace uses); a second define would throw and break the card.
+ * Registreer een custom element maar één keer. Dezelfde bundel kan twee keer
+ * laden (bijvoorbeeld via een oude /hacsfiles/-resource naast de
+ * /local/community/-resource van de Marketplace); een tweede define gooit een
+ * fout en breekt de kaart.
  */
 export function defineElement(
   tag: string,
@@ -22,7 +23,7 @@ export function defineElement(
   }
 }
 
-/** Entry for the card picker in Home Assistant ("Add card"). */
+/** Ingang voor de kaartkiezer in Home Assistant ("Kaart toevoegen"). */
 export interface CustomCardEntry {
   type: string;
   name: string;
@@ -31,7 +32,7 @@ export interface CustomCardEntry {
   documentationURL: string;
 }
 
-/** Add a card to the card picker, once, even if the bundle loads twice. */
+/** Zet een kaart één keer in de kaartkiezer, ook als de bundel twee keer laadt. */
 export function registerCustomCard(entry: CustomCardEntry): void {
   const w = window as unknown as { customCards?: CustomCardEntry[] };
   w.customCards ??= [];

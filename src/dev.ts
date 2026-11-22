@@ -1,8 +1,9 @@
 /*
- * Dev-only harness entry, loaded by index.html via `npm run dev`.
- * Fakes just enough of Home Assistant (a minimal <ha-card> and a `hass` object
- * with a couple of entities) to render the board in a plain browser. Never
- * shipped: `vite build` bundles src/smaailcard.ts, not this file.
+ * Alleen voor ontwikkelen: geladen door index.html via `npm run dev`.
+ * Bootst net genoeg van Home Assistant na (een minimale <ha-card> en een
+ * `hass`-object met een paar entities) om het bord in een gewone browser te
+ * tekenen. Gaat nooit mee: `vite build` bundelt src/smaailcard.ts, niet dit
+ * bestand.
  */
 import "./smaailcard";
 
@@ -29,8 +30,8 @@ const card = document.getElementById("card") as HTMLElement & {
 
 card.setConfig({
   type: "custom:smaail-card",
-  /* Deliberately out of order: the card sorts by year, so this should render
-     as 1997, 2000, 2011, 2015, 2019 with the statement line last. */
+  /* Bewust door elkaar: de kaart sorteert op jaartal, dus dit moet verschijnen
+     als 1997, 2000, 2011, 2015, 2019 met de afsluitende regel als laatste. */
   rows: [
     { dest: "TOKYO", year: "2019" },
     { dest: "WHAT'S NEXT?", year: "" },
