@@ -30,10 +30,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # The version the Home Assistant frontend uses; only for this check, so
-      # it stays out of package.json and the lock file.
+      # The versions the Home Assistant frontend uses; only for this check, so
+      # they stay out of package.json and the lock file. Vitest 5 needs Vite 6.4
+      # or newer; the build job keeps the Vite of the lock file.
       - name: Install Vitest
-        run: npm install --no-save --no-package-lock vitest@5.1.1
+        run: npm install --no-save --no-package-lock vitest@5.1.1 vite@8.3.8
       - run: npm test
 
   style:
