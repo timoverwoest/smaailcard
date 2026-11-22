@@ -277,6 +277,32 @@ npm run typecheck
 de kaart live kunt aanpassen zonder draaiende Home Assistant. De mock-data staat
 in `src/dev.ts`.
 
+### Codestijl
+
+De code volgt de
+[coding guidelines van de Home Assistant-frontend](https://contributors.home-assistant.io/frontend/development/guidelines/)
+en de pagina's over [custom cards](https://contributors.home-assistant.io/frontend/custom-ui/card/),
+met dezelfde Prettier- en ESLint-instellingen als de frontend
+(`.prettierrc.json`, `eslint.config.mjs`, regels in `eslint-ha.json`). De
+Build-workflow controleert beide bij elke push. Zelf controleren kan door de
+tools te installeren zonder `package.json` te veranderen (de versies van de
+frontend):
+
+```bash
+npm install --no-save --no-package-lock prettier@3.10.1 eslint@10.15.0 \
+  @eslint/js@10.0.1 globals@17.14.0 typescript-eslint@8.73.0 \
+  eslint-config-prettier@10.1.8 eslint-plugin-lit@2.3.1 \
+  eslint-plugin-lit-a11y@5.1.3 eslint-plugin-wc@3.1.0 \
+  eslint-plugin-import-x@4.18.1 eslint-plugin-unused-imports@4.4.1 \
+  @html-eslint/eslint-plugin@0.68.0
+npm run format:check
+npm run lint
+```
+
+Commits met alleen opmaak staan in `.git-blame-ignore-revs`; met
+`git config blame.ignoreRevsFile .git-blame-ignore-revs` slaat `git blame` ze
+over.
+
 ### Projectstructuur
 
 | Pad | Doel |

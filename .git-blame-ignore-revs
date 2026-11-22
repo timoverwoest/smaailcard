@@ -1,0 +1,6 @@
+# Commits that only change formatting. GitHub's blame view skips them; locally:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Prettier with the settings of the Home Assistant frontend (2026-11-22)
+ef3f7db88947714ef3f4b6ad4fe1a90ff493c109
+94d163eeef599ced262f4a18479ce939038e707a

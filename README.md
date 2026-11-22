@@ -274,6 +274,31 @@ npm run typecheck
 on the card live without a running Home Assistant. The mock data is in
 `src/dev.ts`.
 
+### Code style
+
+The code follows the
+[coding guidelines of the Home Assistant frontend](https://contributors.home-assistant.io/frontend/development/guidelines/)
+and the pages on [custom cards](https://contributors.home-assistant.io/frontend/custom-ui/card/),
+with the same Prettier and ESLint setup as the frontend (`.prettierrc.json`,
+`eslint.config.mjs`, rules in `eslint-ha.json`). The Build workflow checks both
+on every push. To run the check yourself, install the tools without changing
+`package.json` (the versions the frontend uses):
+
+```bash
+npm install --no-save --no-package-lock prettier@3.10.1 eslint@10.15.0 \
+  @eslint/js@10.0.1 globals@17.14.0 typescript-eslint@8.73.0 \
+  eslint-config-prettier@10.1.8 eslint-plugin-lit@2.3.1 \
+  eslint-plugin-lit-a11y@5.1.3 eslint-plugin-wc@3.1.0 \
+  eslint-plugin-import-x@4.18.1 eslint-plugin-unused-imports@4.4.1 \
+  @html-eslint/eslint-plugin@0.68.0
+npm run format:check
+npm run lint
+```
+
+Formatting-only commits are listed in `.git-blame-ignore-revs`; run
+`git config blame.ignoreRevsFile .git-blame-ignore-revs` to skip them in
+`git blame`.
+
 ### Project structure
 
 | Path | Purpose |
